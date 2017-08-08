@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MyNSB</string>
+    <string name="title_activity_home">Home</string>
+
+
+    <string name="action_settings">Settings</string>
+</resources>

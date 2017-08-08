@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="bannerHeight">240dp</dimen>
+    <dimen name="marginBottomBox">52dp</dimen>
+    <dimen name="loginBoxHeight">260dp</dimen>
+    <dimen name="loginBoxWidth">250dp</dimen>
+    <dimen name="logoMargin">2dp</dimen>
+    <dimen name="textMargin">3dp</dimen>
+    <dimen name="userNameInputMargin">15dp</dimen>
+    <dimen name="passwordInputMargin">90dp</dimen>
+</resources>
