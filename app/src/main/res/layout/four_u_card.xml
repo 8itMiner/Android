@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_marginTop="16dp"
+        android:id="@+id/four_u"
+        app:cardElevation="5dp"
+        app:cardCornerRadius="3dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@mipmap/falc"
+                android:scaleType="centerCrop"
+                android:id="@+id/imageView" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="30dp"
+                android:text="July Edition"
+                android:textStyle="bold"
+                android:textColor="#fff"
+                android:id="@+id/editionName"
+                android:layout_marginLeft="20dp"
+                android:layout_alignBottom="@+id/imageView"
+                android:layout_alignParentStart="true"
+                android:layout_marginBottom="35dp" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="17dp"
+                android:layout_marginLeft="15dp"
+                android:id="@+id/description"
+                android:text="In the July edition of the 4U paper we .... lorem ipsum.
+                \nLearn more about the 4U Paper and more cool stuff!!!!"
+                android:layout_marginTop="14dp"
+                android:layout_below="@+id/imageView"
+                android:layout_alignParentEnd="true" />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:background="@drawable/bottom_banner"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Read"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/readID"
+                    android:background="@drawable/ripple_blank"
+                    android:textColor="@color/colorPrimary"/>
+            </RelativeLayout>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

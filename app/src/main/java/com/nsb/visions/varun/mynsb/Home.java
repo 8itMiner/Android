@@ -8,6 +8,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -15,6 +16,7 @@ import java.util.Locale;
 public class Home extends AppCompatActivity {
 
     private TextView mTextMessage;
+    static boolean HomeOpen = false;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -24,9 +26,18 @@ public class Home extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     mTextMessage.setText("Home");
-                    return true;
+                    if (!HomeOpen) {
+                        // Load the dasboard view OOOOOOOOOOOOOOHHHHHHHHHHH FFFFFFFAAAAAAAANNNNNNNNNNCCCCCCCCCCCCYYYYYYYYYYY
+                        ViewStub Stub = (ViewStub) findViewById(R.id.contentLoader);
+                        Stub.setLayoutResource(R.layout.dashboard);
+                        View infalted = Stub.inflate();
+                        HomeOpen = true;
+                        return true;
+                    } else {
+                        return true;
+                    }
                 case R.id.navigation_dashboard:
-                    mTextMessage.setText("Dashboard");
+                    mTextMessage.setText("Bulletin");
                     return true;
                 case R.id.navigation_notifications:
                     mTextMessage.setText("Notifications");
@@ -37,9 +48,7 @@ public class Home extends AppCompatActivity {
                      **/
                     return false;
                 case R.id.navigation_4u:
-                    /**
-                     * Todo: Create 4U layout
-                     */
+                    mTextMessage.setText("4U");
                     return true;
 
             }
