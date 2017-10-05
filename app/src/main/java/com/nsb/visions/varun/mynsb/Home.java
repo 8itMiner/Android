@@ -27,7 +27,7 @@ public class Home extends AppCompatActivity {
                 case R.id.navigation_home:
                     mTextMessage.setText("Home");
                     if (!HomeOpen) {
-                        // Load the dasboard view OOOOOOOOOOOOOOHHHHHHHHHHH FFFFFFFAAAAAAAANNNNNNNNNNCCCCCCCCCCCCYYYYYYYYYYY
+                        // Load the dashboard view
                         ViewStub Stub = (ViewStub) findViewById(R.id.contentLoader);
                         Stub.setLayoutResource(R.layout.dashboard);
                         View infalted = Stub.inflate();
