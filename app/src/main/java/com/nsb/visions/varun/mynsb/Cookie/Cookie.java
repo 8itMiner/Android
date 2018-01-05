@@ -15,7 +15,7 @@ import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
 
 /**
- * Created by varun on 5/01/2018. Coz varun is awesome as hell :)
+ * Created by varun on 5/01/2018. Coz varun is awesome a popatato :)
  */
 
 
