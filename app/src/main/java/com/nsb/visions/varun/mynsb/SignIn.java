@@ -2,32 +2,42 @@ package com.nsb.visions.varun.mynsb;
 
 
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewAnimationUtils;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Locale;
+import com.nsb.visions.varun.mynsb.Auth.Auth;
+import com.nsb.visions.varun.mynsb.User.User;
 
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Objects;
 
 
 public class SignIn extends AppCompatActivity {
 
     // UI updater handler
-    private Handler UIHandler      = new Handler();
-    private Handler UIHandlerClose = new Handler();
+    private Handler UIHandler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,131 +47,134 @@ public class SignIn extends AppCompatActivity {
         final SharedPreferences SharePref = getSharedPreferences("MyNSB", Context.MODE_PRIVATE);
         final SharedPreferences.Editor Editor = SharePref.edit();
 
-        // Check to see if they have logged in before before the layout loads
-        if (SharePref.contains("User_Details")) {
-            Intent Redirect = new Intent(getApplicationContext(), Home.class);
-            startActivity(Redirect);
-        // Check to see if this is the first time the app has been opened
-        } else if (SharePref.getBoolean("firstrun", true)) {
+        if (SharePref.getBoolean("firstrun", true)) {
+            Editor.putBoolean("logged-in", false);
             Editor.putBoolean("firstrun", false);
-            Editor.commit();
-            Toast.makeText(SignIn.this, "First Run", Toast.LENGTH_LONG).show();
+            Editor.apply();
+            // Show the tutorial
+        } else if (SharePref.getBoolean("logged-in", false)) {
+            //Intent redirect = new Intent(SignIn.this, Home.class);
+            //startActivity(redirect);
         }
+
 
         // Load in the layout after shared pref has been checked
         setContentView(R.layout.activity_sign_in);
 
+
+        // Loader container used in the rest of the code
+        final RelativeLayout loaderView = (RelativeLayout) findViewById(R.id.loaderContainer);
+        final RelativeLayout mainContent = (RelativeLayout) findViewById(R.id.activity_sign_in);
+
         // Change all the fonts
         AssetManager Am = getApplicationContext().getAssets();
-
         final Typeface Raleway = Typeface.createFromAsset(Am,
                 String.format(Locale.US, "fonts/%s", "raleway_regular.ttf"));
 
         ((TextView) findViewById(R.id.signInText)).setTypeface(Raleway);
 
+
+
+
         // This is the login button
-        final Button SignInButton = (Button) findViewById(R.id.signInButton);
-        // Declare the loadreveal
-        final View LoadReveal = (View) findViewById(R.id.circle);
+        Button signInButton = (Button) findViewById(R.id.signInButton);
 
 
-        /**
-            TODO: Remove this section once the API is complete
-         **/
-        ((ImageView) findViewById(R.id.mynsbLogo)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent Req = new Intent(getApplicationContext(), Home.class);
-                startActivity(Req);
-            }
-        });
+        // Set an onclick listener for the submit button
+        signInButton.setOnClickListener(new View.OnClickListener() {
 
 
 
-        /**   Create an event listener for the sign in button
-              Listener => OnClickListener
-        **/
-        SignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Get the values from the editext fields
                 final String StudentID = ((EditText) findViewById(R.id.studentID)).getText().toString();
-                String Password  = ((EditText) findViewById(R.id.studentPassword)).getText().toString();
+                final String Password = ((EditText) findViewById(R.id.studentPassword)).getText().toString();
+
+                // Determine if they are empty
+                if (StudentID.isEmpty() || Password.isEmpty()) {
+                    Toast.makeText(SignIn.this, "Student ID or Password is empty", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
                 // Split the main tasks into two threads
-                // One for http requests
-                final Thread SignIn = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Send Request
-                        int Status = 0;
 
-
-                        // Close the cool circle thing if there is an error
-                        if (Status != 200) {
-                            UIHandlerClose.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // Alert the person
-                                    Toast.makeText(SignIn.this, "Invalid Login Details", Toast.LENGTH_LONG).show();
-                                    // Get the center
-                                    int cx = (LoadReveal.getWidth() / 2);
-                                    int cy = (LoadReveal.getHeight() / 2);
-
-                                    // Get the radius for the clipping circle_button
-                                    float FinalRadius = (float) Math.hypot(cx, cy);
-
-                                    // Declare animator
-                                    Animator anim =
-                                            ViewAnimationUtils.createCircularReveal(LoadReveal, cx, cy, FinalRadius, 0);
-                                    // Add listener
-                                    anim.addListener(new AnimatorListenerAdapter() {
-                                        @Override
-                                        public void onAnimationEnd(Animator animation) {
-                                            super.onAnimationEnd(animation);
-                                            // Make the view visible
-                                            LoadReveal.setVisibility(View.INVISIBLE);
-                                        }
-                                    });
-                                    anim.start();
-                                }
-                            });
-                        } else {
-                            // Push all the values into out sharedprefrences
-                            String Push = String.format(Locale.US, "studentdID:%s token:%s fname:%s lname:%s", StudentID, "", "");
-                            Editor.putString("User_Details", Push);
-                            Editor.commit();
-                            // Redirect to the hompage
-                            Intent Redirect = new Intent(getApplicationContext(), Home.class);
-                            startActivity(Redirect);
-                        }
-                    }
-                });
-                SignIn.start();
-
-                // One for UI updates and super cool animations
+                // One for UI updates.....
+                // Start the loader animation
                 UIHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        // Get the center of the circle_button
-                        int cx = (LoadReveal.getWidth() / 2);
-                        int cy = (LoadReveal.getHeight() / 2);
+                        mainContent.setClickable(false);
 
-                        // Get the radius for the clipping circle_button
-                        float FinalRadius = (float) Math.hypot(cx, cy);
+                        // Set the visibility
+                        loaderView.setVisibility(View.VISIBLE);
+                        Animation fadeIn = new AlphaAnimation(0, 1);
+                        fadeIn.setInterpolator(new AccelerateInterpolator());
+                        fadeIn.setDuration(200);
 
-                        // Create animator
-                        Animator anim =
-                                ViewAnimationUtils.createCircularReveal(LoadReveal, cx, cy, 0, FinalRadius);
-                        // Make the view visible
-                        LoadReveal.setVisibility(View.VISIBLE);
-                        // Start the animation
-                        anim.start();
-
-                        // Change the font of the loading text
-                        ((TextView) findViewById(R.id.loaderText)).setTypeface(Raleway);
+                        // Set the status bar colour
+                        Window window = getWindow();
+                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                        window.setStatusBarColor(Color.BLACK);
+                        // Set it and start
+                        loaderView.startAnimation(fadeIn);
                     }
                 });
+
+
+
+
+                // Thread for authentication...
+                Thread auth = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Sleep the thread for that special effect ;)
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        // Parse the data into the auth function
+                        Auth authenticator = new Auth();
+                        try {
+                            User user = authenticator.auth(StudentID, Password, SharePref);
+                            // Serialize the user data
+                            Editor.putString("user-data", user.toString());
+                            Editor.putBoolean("logged-in", true);
+                            Editor.apply();
+
+                            // Redirect the user
+                            Intent moveUser = new Intent(SignIn.this, Home.class);
+                            startActivity(moveUser);
+                            finish();
+
+                        } catch (RuntimeException | IOException e) {
+                            e.printStackTrace();
+                            // Set the successful login flag to false
+                            Log.d("Error", e.toString());
+
+                            // Refresh the activity...
+                            // Close the Relative layout....
+                            UIHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Fade out the loader view
+                                    Animation fadeOut = new AlphaAnimation(1, 0);
+                                    fadeOut.setDuration(150);
+                                    fadeOut.setStartOffset(150);
+                                    fadeOut.setInterpolator(new AccelerateInterpolator());
+
+                                    loaderView.startAnimation(fadeOut);
+                                    loaderView.setVisibility(View.GONE);
+
+                                    Toast.makeText(SignIn.this, "Details are invalid", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    }
+                });
+                auth.start();
             }
         });
     }

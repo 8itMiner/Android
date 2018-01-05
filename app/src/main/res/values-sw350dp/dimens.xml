@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Dimensions for SIGN IN page -->
-    <dimen name="bannerHeight">270dp</dimen>
+    <dimen name="bannerHeight">290dp</dimen>
     <dimen name="marginBottomBox">52dp</dimen>
     <dimen name="loginBoxHeight">290dp</dimen>
     <dimen name="loginBoxWidth">290dp</dimen>
@@ -9,5 +9,6 @@
     <dimen name="textMargin">9dp</dimen>
     <dimen name="userNameInputMargin">40dp</dimen>
     <dimen name="passwordInputMargin">120dp</dimen>
+    <dimen name="loginCardMarginBottom">65dp</dimen>
     <!-- End of dimensions for sign-in page -->
 </resources>

@@ -3,16 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="300dp"
         android:layout_marginTop="16dp"
         android:id="@+id/four_u"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
         app:cardElevation="5dp"
         app:cardCornerRadius="3dp"
+        android:layout_marginBottom="10dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true">
 
@@ -20,38 +23,42 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:src="@mipmap/falc"
+                android:id="@+id/imageBanner"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:scaleType="centerCrop"
-                android:id="@+id/imageView" />
+                app:srcCompat="@mipmap/background"
+                android:layout_marginTop="21dp"
+                android:layout_marginRight="10dp"
+                android:layout_alignTop="@+id/editionName"
+                android:layout_alignParentEnd="true" />
+
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="30dp"
-                android:text="July Edition"
-                android:textStyle="bold"
-                android:textColor="#fff"
+                android:text="July"
+                android:textColor="#898989"
                 android:id="@+id/editionName"
-                android:layout_marginLeft="20dp"
-                android:layout_alignBottom="@+id/imageView"
-                android:layout_alignParentStart="true"
-                android:layout_marginBottom="35dp" />
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="28dp"
+                android:layout_alignParentTop="true" />
 
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="17dp"
-                android:layout_marginLeft="15dp"
+                android:layout_width="160dp"
+                android:layout_height="130dp"
+                android:textSize="14dp"
+                android:layout_marginLeft="11dp"
                 android:id="@+id/description"
                 android:text="In the July edition of the 4U paper we .... lorem ipsum.
                 \nLearn more about the 4U Paper and more cool stuff!!!!"
-                android:layout_marginTop="14dp"
-                android:layout_below="@+id/imageView"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignBottom="@+id/imageBanner"
+                android:layout_alignLeft="@+id/cardView"/>
 
 
             <RelativeLayout
@@ -72,6 +79,17 @@
                     android:id="@+id/readID"
                     android:background="@drawable/ripple_blank"
                     android:textColor="@color/colorPrimary"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Download"
+                    android:id="@+id/downloadID"
+                    android:background="@drawable/ripple_blank"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_toEndOf="@+id/readID" />
             </RelativeLayout>
         </RelativeLayout>
     </android.support.v7.widget.CardView>

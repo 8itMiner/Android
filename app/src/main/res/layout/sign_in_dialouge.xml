@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@drawable/linear_background_gradient"
+    android:layout_height="match_parent"
+    android:id="@+id/dialog"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/loadingLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="64dp"
+        app:srcCompat="@mipmap/mynsb_logo"/>
+
+    <ProgressBar
+        android:id="@+id/loader"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:indeterminateTint="#fff"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:maxWidth="10dp"
+        android:layout_marginBottom="87dp" />
+
+
+    <TextView
+        android:id="@+id/loaderText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/loadingLogo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="29dp"
+        android:text="Authenticating"
+        android:textColor="#fff"
+        android:textSize="38dp"/>
+
+</RelativeLayout>

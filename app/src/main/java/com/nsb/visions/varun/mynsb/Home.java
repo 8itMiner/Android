@@ -6,17 +6,24 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewStub;
 import android.widget.TextView;
+
+import com.nsb.visions.varun.mynsb.FourU.*;
 
 import java.util.Locale;
 
 public class Home extends AppCompatActivity {
 
     private TextView mTextMessage;
+    private RecyclerView container;
+    private TextView errorHolder;
     static boolean HomeOpen = false;
+
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -27,10 +34,6 @@ public class Home extends AppCompatActivity {
                 case R.id.navigation_home:
                     mTextMessage.setText("Home");
                     if (!HomeOpen) {
-                        // Load the dashboard view
-                        ViewStub Stub = (ViewStub) findViewById(R.id.contentLoader);
-                        Stub.setLayoutResource(R.layout.dashboard);
-                        View infalted = Stub.inflate();
                         HomeOpen = true;
                         return true;
                     } else {
@@ -43,14 +46,13 @@ public class Home extends AppCompatActivity {
                     mTextMessage.setText("Notifications");
                     return true;
                 case R.id.more_dashboard:
-                    /**
-                     * TODO: Handle the more tab
-                     **/
                     return false;
                 case R.id.navigation_4u:
+                    ArticleAdapter adapter = (ArticleAdapter)container.getAdapter();
+                    adapter.clearData();
                     mTextMessage.setText("4U");
+                    Four_U.LoadUI(container, errorHolder);
                     return true;
-
             }
             return false;
         }
@@ -68,7 +70,15 @@ public class Home extends AppCompatActivity {
         final Typeface Raleway = Typeface.createFromAsset(Am,
                 String.format(Locale.US, "fonts/%s", "raleway_regular.ttf"));
 
+        // Set the textview and the recyclerview
         mTextMessage = (TextView) findViewById(R.id.message);
+        container = (RecyclerView) findViewById(R.id.recycler);
+        errorHolder = (TextView) findViewById(R.id.errorText);
+
+        // Set the linearlayoutmanager
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        container.setLayoutManager(llm);
 
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
