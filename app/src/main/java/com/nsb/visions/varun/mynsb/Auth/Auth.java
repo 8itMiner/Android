@@ -1,9 +1,7 @@
 package com.nsb.visions.varun.mynsb.Auth;
 
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import eu.amirs.JSON;
 import okhttp3.Credentials;
@@ -11,19 +9,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.internal.JavaNetCookieJar;
-
-import com.franmontiel.persistentcookiejar.ClearableCookieJar;
-import com.franmontiel.persistentcookiejar.PersistentCookieJar;
-import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
-import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
+import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 import com.nsb.visions.varun.mynsb.User.User;
 
 import java.io.IOException;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.net.CookieStore;
 
 /**
  * Created by varun on 30/12/2017. Coz varun is awesome as hell :)
@@ -33,16 +22,17 @@ import java.net.CookieStore;
 // Auth class for attaining user details or logging in
 public class Auth {
 
+    SharedPreferences preferences;
+    HTTP httpClient;
 
-
+    public Auth(SharedPreferences preferences) {
+        this.preferences = preferences;
+        this.httpClient = new HTTP(preferences);
+    }
 
 
     // Auth function for quick authentication
-    public User auth(String studentID, String password, SharedPreferences preferences) throws RuntimeException, IOException {
-
-
-        // init OkHttpClient
-        OkHttpClient client = new OkHttpClient();
+    public User auth(String studentID, String password) throws Exception {
 
 
         // Set up the request
@@ -56,7 +46,7 @@ public class Auth {
 
 
         // Retrieve the response
-        Response loginResp = client.newCall(login).execute();
+        Response loginResp = httpClient.performRequest(login);
         // Get the set cookie header from the request
         
         if (loginResp.code() != 200) {
@@ -65,7 +55,7 @@ public class Auth {
         }
 
 
-        return this.getUserDetails(preferences);
+        return this.getUserDetails();
     }
 
 
@@ -73,23 +63,18 @@ public class Auth {
 
 
     // Function to get user details
-    public User getUserDetails(SharedPreferences preferences) throws RuntimeException, IOException {
+    public User getUserDetails() throws Exception {
 
-        // Create the cookie helper
-        // init cookie manager
-        ClearableCookieJar cookieJar =
-                new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(preferences));
 
-        // init OkHttpClient
-        OkHttpClient client = new OkHttpClient.Builder()
-                .cookieJar(cookieJar)
-                .build();
 
         // Get user data and return it
         Request getUserDetails = new Request.Builder()
                 .url("http://35.189.45.152:8080/api/v1/user/GetDetails")
                 .build();
-        Response userDataResp = client.newCall(getUserDetails).execute();
+
+
+        Response userDataResp = httpClient.performRequest(getUserDetails);
+
         // Read Body
         String body = userDataResp.body().string();
 
@@ -110,7 +95,7 @@ public class Auth {
             Integer Year = userData.key("Message").key("Body").index(0).key("Year").intValue();
             // Push into user container
             user = new User(StudentID, Fname, Lname, Year);
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Something went horribly wrong");
         }
 

@@ -81,101 +81,88 @@ public class SignIn extends AppCompatActivity {
 
 
         // Set an onclick listener for the submit button
-        signInButton.setOnClickListener(new View.OnClickListener() {
+        signInButton.setOnClickListener(v -> {
+
+
+            // Get the values from the editext fields
+            final String StudentID = ((EditText) findViewById(R.id.studentID)).getText().toString();
+            final String Password = ((EditText) findViewById(R.id.studentPassword)).getText().toString();
+
+            // Determine if they are empty
+            if (StudentID.isEmpty() || Password.isEmpty()) {
+                Toast.makeText(SignIn.this, "Student ID or Password is empty", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            // Split the main tasks into two threads
+
+            // One for UI updates.....
+            // Start the loader animation
+            UIHandler.post(() -> {
+                mainContent.setClickable(false);
+
+                // Set the visibility
+                loaderView.setVisibility(View.VISIBLE);
+                Animation fadeIn = new AlphaAnimation(0, 1);
+                fadeIn.setInterpolator(new AccelerateInterpolator());
+                fadeIn.setDuration(200);
+
+                // Set the status bar colour
+                Window window = getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(Color.BLACK);
+                // Set it and start
+                loaderView.startAnimation(fadeIn);
+            });
 
 
 
-            @Override
-            public void onClick(View v) {
-                // Get the values from the editext fields
-                final String StudentID = ((EditText) findViewById(R.id.studentID)).getText().toString();
-                final String Password = ((EditText) findViewById(R.id.studentPassword)).getText().toString();
 
-                // Determine if they are empty
-                if (StudentID.isEmpty() || Password.isEmpty()) {
-                    Toast.makeText(SignIn.this, "Student ID or Password is empty", Toast.LENGTH_LONG).show();
-                    return;
+            // Thread for authentication...
+            Thread auth = new Thread(() -> {
+                // Sleep the thread for that special effect ;)
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
 
-                // Split the main tasks into two threads
+                // Parse the data into the auth function
+                Auth authenticator = new Auth(SharePref);
+                try {
+                    User user = authenticator.auth(StudentID, Password);
+                    // Serialize the user data
+                    Editor.putString("user-data", user.toString());
+                    Editor.putBoolean("logged-in", true);
+                    Editor.apply();
 
-                // One for UI updates.....
-                // Start the loader animation
-                UIHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mainContent.setClickable(false);
+                    // Redirect the user
+                    Intent moveUser = new Intent(SignIn.this, Home.class);
+                    startActivity(moveUser);
+                    finish();
 
-                        // Set the visibility
-                        loaderView.setVisibility(View.VISIBLE);
-                        Animation fadeIn = new AlphaAnimation(0, 1);
-                        fadeIn.setInterpolator(new AccelerateInterpolator());
-                        fadeIn.setDuration(200);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // Set the successful login flag to false
+                    Log.d("Error", e.toString());
 
-                        // Set the status bar colour
-                        Window window = getWindow();
-                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                        window.setStatusBarColor(Color.BLACK);
-                        // Set it and start
-                        loaderView.startAnimation(fadeIn);
-                    }
-                });
+                    // Refresh the activity...
+                    // Close the Relative layout....
+                    UIHandler.post(() -> {
+                        // Fade out the loader view
+                        Animation fadeOut = new AlphaAnimation(1, 0);
+                        fadeOut.setDuration(150);
+                        fadeOut.setStartOffset(150);
+                        fadeOut.setInterpolator(new AccelerateInterpolator());
 
+                        loaderView.startAnimation(fadeOut);
+                        loaderView.setVisibility(View.GONE);
 
-
-
-                // Thread for authentication...
-                Thread auth = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Sleep the thread for that special effect ;)
-                        try {
-                            Thread.sleep(300);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        // Parse the data into the auth function
-                        Auth authenticator = new Auth();
-                        try {
-                            User user = authenticator.auth(StudentID, Password, SharePref);
-                            // Serialize the user data
-                            Editor.putString("user-data", user.toString());
-                            Editor.putBoolean("logged-in", true);
-                            Editor.apply();
-
-                            // Redirect the user
-                            Intent moveUser = new Intent(SignIn.this, Home.class);
-                            startActivity(moveUser);
-                            finish();
-
-                        } catch (RuntimeException | IOException e) {
-                            e.printStackTrace();
-                            // Set the successful login flag to false
-                            Log.d("Error", e.toString());
-
-                            // Refresh the activity...
-                            // Close the Relative layout....
-                            UIHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // Fade out the loader view
-                                    Animation fadeOut = new AlphaAnimation(1, 0);
-                                    fadeOut.setDuration(150);
-                                    fadeOut.setStartOffset(150);
-                                    fadeOut.setInterpolator(new AccelerateInterpolator());
-
-                                    loaderView.startAnimation(fadeOut);
-                                    loaderView.setVisibility(View.GONE);
-
-                                    Toast.makeText(SignIn.this, "Details are invalid", Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
-                    }
-                });
-                auth.start();
-            }
+                        Toast.makeText(SignIn.this, "Details are invalid", Toast.LENGTH_LONG).show();
+                    });
+                }
+            });
+            auth.start();
         });
     }
 }
