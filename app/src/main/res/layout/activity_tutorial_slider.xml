@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    tools:context=".TutorialSlider">
+
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/contentHolder">
+
+
+
+        <!-- First layout -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:id="@+id/LightIntro">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/mainTextHolder"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="40dp"
+                android:layout_above="@+id/logoHolder"
+                android:text="MyNSB"
+                android:textColor="#fff"
+                android:textSize="40dp"/>
+
+            <ImageView
+                android:id="@+id/logoHolder"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:drawingCacheQuality="high"
+                android:src="@mipmap/mynsb_logo"/>
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/logoHolder"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:textAlignment="center"
+                android:layout_marginTop="40dp"
+                android:text="MyNSB is a multipurpose app designed to make your life at NSB easier and more enjoyable."
+                android:textColor="#fff"
+                android:textSize="18dp"/>
+        </RelativeLayout>
+
+
+
+        <!-- Second layout -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary">
+
+            <ImageView
+                android:id="@+id/logoHolder2"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:drawingCacheQuality="high"
+                android:src="@drawable/ic_book_black_24dp"
+                android:tint="#fff"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@id/mainTextHolder"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="40dp"
+                android:layout_above="@+id/logoHolder2"
+                android:text="Timetables"
+                android:textColor="#fff"
+                android:textSize="40dp"/>
+
+            <TextView
+                android:id="@id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/logoHolder2"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:textAlignment="center"
+                android:layout_marginTop="40dp"
+                android:text="Skedular down? Don't worry about it, with MyNSB you can be automattically notified of your next period before your current one ends."
+                android:textColor="#fff"
+                android:textSize="18dp"/>
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary">
+
+            <ImageView
+                android:id="@+id/logoHolder3"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:drawingCacheQuality="high"
+                android:src="@drawable/reminders_vector"
+                android:tint="#fff"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@id/mainTextHolder"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="40dp"
+                android:layout_above="@+id/logoHolder3"
+                android:text="Reminders"
+                android:textColor="#fff"
+                android:textSize="40dp"/>
+
+            <TextView
+                android:id="@id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/logoHolder3"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:textAlignment="center"
+                android:layout_marginTop="40dp"
+                android:text="Set reminders for any event in your life and easily organise them with various tags."
+                android:textColor="#fff"
+                android:textSize="18dp"/>
+        </RelativeLayout>
+
+    </android.support.v4.view.ViewPager>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/logoHolder4"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:drawingCacheQuality="high"
+            android:src="@drawable/reminders_vector"
+            android:tint="#fff"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@id/mainTextHolder"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="40dp"
+            android:layout_above="@+id/logoHolder4"
+            android:text="And So much more"
+            android:textAlignment="center"
+            android:textColor="#fff"
+            android:textSize="40dp"/>
+
+        <TextView
+            android:id="@id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/logoHolder4"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:textAlignment="center"
+            android:layout_marginTop="40dp"
+            android:text="Set reminders for any event in your life and easily organise them with various tags."
+            android:textColor="#fff"
+            android:textSize="18dp"/>
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

@@ -3,6 +3,7 @@ package com.nsb.visions.varun.mynsb;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.nsb.visions.varun.mynsb.FourU.*;
 
@@ -21,6 +23,8 @@ public class Home extends AppCompatActivity {
     private TextView mTextMessage;
     private RecyclerView container;
     private TextView errorHolder;
+    private ViewFlipper flipper;
+    private Handler uiHandler = new Handler();
     static boolean HomeOpen = false;
 
 
@@ -48,10 +52,13 @@ public class Home extends AppCompatActivity {
                 case R.id.more_dashboard:
                     return false;
                 case R.id.navigation_4u:
-                    ArticleAdapter adapter = (ArticleAdapter)container.getAdapter();
-                    adapter.clearData();
+                    flipper.setDisplayedChild(0);
                     mTextMessage.setText("4U");
-                    Four_U.LoadUI(container, errorHolder);
+                    try {
+                        FourU.LoadUI(container, errorHolder, getApplicationContext(), uiHandler);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     return true;
             }
             return false;
@@ -74,6 +81,7 @@ public class Home extends AppCompatActivity {
         mTextMessage = (TextView) findViewById(R.id.message);
         container = (RecyclerView) findViewById(R.id.recycler);
         errorHolder = (TextView) findViewById(R.id.errorText);
+        flipper = (ViewFlipper) findViewById(R.id.flipper);
 
         // Set the linearlayoutmanager
         LinearLayoutManager llm = new LinearLayoutManager(this);

@@ -7,4 +7,7 @@
     <color name="colorSecondary">#218bbf</color>
     <color name="colorSecondaryDark">#377e9e</color>
     <color name="colorSecondaryAccent">#f75820</color>
+
+    <color name="tutorialCircleUnselected">#000</color>
+    <color name="selected">#fff</color>
 </resources>

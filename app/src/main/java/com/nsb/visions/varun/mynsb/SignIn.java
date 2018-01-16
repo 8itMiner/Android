@@ -1,7 +1,6 @@
 package com.nsb.visions.varun.mynsb;
 
 
-import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -28,9 +26,7 @@ import android.widget.Toast;
 import com.nsb.visions.varun.mynsb.Auth.Auth;
 import com.nsb.visions.varun.mynsb.User.User;
 
-import java.io.IOException;
 import java.util.Locale;
-import java.util.Objects;
 
 
 public class SignIn extends AppCompatActivity {
@@ -53,8 +49,8 @@ public class SignIn extends AppCompatActivity {
             Editor.apply();
             // Show the tutorial
         } else if (SharePref.getBoolean("logged-in", false)) {
-            //Intent redirect = new Intent(SignIn.this, Home.class);
-            //startActivity(redirect);
+            Intent redirect = new Intent(SignIn.this, Home.class);
+            startActivity(redirect);
         }
 
 
@@ -128,7 +124,7 @@ public class SignIn extends AppCompatActivity {
                 }
 
                 // Parse the data into the auth function
-                Auth authenticator = new Auth(SharePref);
+                Auth authenticator = new Auth(getApplicationContext());
                 try {
                     User user = authenticator.auth(StudentID, Password);
                     // Serialize the user data

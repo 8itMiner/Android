@@ -31,6 +31,7 @@ repositories {
     jcenter()
 }
 
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -46,11 +47,13 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
     compile 'com.github.amirdew:JSON:v1.0.0'
+    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
+    compile 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
 
 
 
 
-    compile ('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
+    compile('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
         transitive = true;
     }
 

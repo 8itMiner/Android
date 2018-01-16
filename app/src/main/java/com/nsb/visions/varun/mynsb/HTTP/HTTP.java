@@ -1,12 +1,11 @@
 package com.nsb.visions.varun.mynsb.HTTP;
 
-import android.content.SharedPreferences;
+import android.content.Context;
+import com.franmontiel.persistentcookiejar.ClearableCookieJar;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
-import java.io.IOException;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -19,16 +18,21 @@ import okhttp3.Response;
 public class HTTP {
 
     // Cookie manager
-    OkHttpClient client;
-    SharedPreferences preferences;
+    private OkHttpClient client;
+    private Context context;
 
 
 
-    public HTTP(SharedPreferences preferences) {
-        this.preferences = preferences;
+    public HTTP(Context context) {
+        this.context = context;
+
+        // Setup the cookie jar
+        ClearableCookieJar cookieJar =
+                new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(this.context));
 
         // Set up the okhttp client
         this.client = new OkHttpClient.Builder()
+                .cookieJar(cookieJar)
                 .build();
     }
 

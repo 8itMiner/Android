@@ -1,6 +1,7 @@
 package com.nsb.visions.varun.mynsb.Auth;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import eu.amirs.JSON;
@@ -22,12 +23,12 @@ import java.io.IOException;
 // Auth class for attaining user details or logging in
 public class Auth {
 
-    SharedPreferences preferences;
-    HTTP httpClient;
+    private Context context;
+    private HTTP httpClient;
 
-    public Auth(SharedPreferences preferences) {
-        this.preferences = preferences;
-        this.httpClient = new HTTP(preferences);
+    public Auth(Context context) {
+        this.context = context;
+        this.httpClient = new HTTP(this.context);
     }
 
 

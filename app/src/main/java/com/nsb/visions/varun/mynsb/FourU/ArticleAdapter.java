@@ -9,11 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.jakewharton.picasso.OkHttp3Downloader;
 import com.nsb.visions.varun.mynsb.R;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import okhttp3.OkHttpClient;
 
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleView> {
@@ -66,11 +73,22 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
             Uri uri = Uri.parse(article.ImageURL);
             // Attain context
             Context context = holder.backdrop.getContext();
+
+
+            // Setup okhttp client
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .build();
+
+            Picasso picasso = new Picasso.Builder(context)
+                    .downloader(new OkHttp3Downloader(client))
+                    .build();
+
             // Load the image with picasso
-            Picasso.with(context).load(uri)
+            picasso.with(context)
+                    .load(uri)
                     .into(holder.backdrop);
         } catch (Exception e) {
-            
+            e.printStackTrace();
         }
     }
 

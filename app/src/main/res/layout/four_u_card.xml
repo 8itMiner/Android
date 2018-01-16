@@ -11,8 +11,8 @@
         android:layout_height="300dp"
         android:layout_marginTop="16dp"
         android:id="@+id/four_u"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         app:cardElevation="5dp"
         app:cardCornerRadius="3dp"
         android:layout_marginBottom="10dp"
@@ -26,8 +26,8 @@
 
             <ImageView
                 android:id="@+id/imageBanner"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:scaleType="centerCrop"
                 app:srcCompat="@mipmap/background"
                 android:layout_marginTop="21dp"
@@ -43,7 +43,7 @@
                 android:text="July"
                 android:textColor="#898989"
                 android:id="@+id/editionName"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="28dp"
                 android:layout_alignParentTop="true" />
@@ -53,11 +53,14 @@
                 android:layout_width="160dp"
                 android:layout_height="130dp"
                 android:textSize="14dp"
-                android:layout_marginLeft="11dp"
                 android:id="@+id/description"
+                android:layout_marginTop="10dp"
                 android:text="In the July edition of the 4U paper we .... lorem ipsum.
-                \nLearn more about the 4U Paper and more cool stuff!!!!"
-                android:layout_alignBottom="@+id/imageBanner"
+                \nLearn more about the 4U Paper and more cool stuff!!!!ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+                android:layout_below="@+id/editionName"
+                android:layout_toLeftOf="@+id/imageBanner"
+                android:layout_marginRight="10dp"
+                android:layout_alignStart="@+id/editionName"
                 android:layout_alignLeft="@+id/cardView"/>
 
 
