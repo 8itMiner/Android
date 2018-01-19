@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.nsb.visions.varun.mynsb.FourU.*;
+import com.nsb.visions.varun.mynsb.Reminders.Reminder;
+import com.nsb.visions.varun.mynsb.Reminders.Reminders;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -44,11 +46,20 @@ public class Home extends AppCompatActivity {
                     return true;
                 case R.id.navigation_reminder:
                     mTextMessage.setText("Reminders");
+                    try {
+                        loadReminders();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     return true;
                 case R.id.more_dashboard:
                     return false;
                 case R.id.navigation_4u:
-                    load4U();
+                    try {
+                        load4U();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     return true;
             }
             return false;
@@ -67,13 +78,30 @@ public class Home extends AppCompatActivity {
             @params;
                 nil
      */
-     private void load4U() {
+     private void load4U() throws Exception {
         if (!loaded.get("4U")) {
             flipper.setDisplayedChild(0);
             mTextMessage.setText("4U");
-            // TODO: Fill in 4U object declaration once everything has been refactored
+            // Set up the four u client
+            FourU fourU = new FourU(getApplicationContext());
+            fourU.loadUI(container, errorHolder, uiHandler);
             // Set the loaded flag to true
             loaded.put("4U", true);
+        }
+    }
+    /* loadReminders attains all the user's reminders for the currrent day
+            @params;
+                nil
+     */
+    private void loadReminders() throws Exception {
+        if (!loaded.get("Reminders")) {
+            flipper.setDisplayedChild(1);
+            mTextMessage.setText("Reminders");
+            // Set up the reminder client
+            Reminders reminder = new Reminders(getApplicationContext());
+            reminder.loadUI(container, errorHolder, uiHandler);
+            // Set the loaded flag
+            loaded.put("Reminders", true);
         }
     }
     /*

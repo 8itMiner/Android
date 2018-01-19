@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jakewharton.picasso.OkHttp3Downloader;
+import com.nsb.visions.varun.mynsb.Common.LoaderAdapter;
 import com.nsb.visions.varun.mynsb.R;
 import com.squareup.picasso.Picasso;
 
@@ -21,35 +22,29 @@ import java.util.List;
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleView> {
 
     // Article list
-    private static List<Article> articles;
-    // Construct
-    ArticleAdapter(List<Article> articles) {
-        ArticleAdapter.articles = articles;
+    private List<Article> articles;
+
+
+    public ArticleAdapter(List<Article> articles) {
+        this.articles = articles;
     }
-
-
-
 
 
     /*
         @ MUST OVERRIDE FUNCTIONS =====================================
      */
     @Override
-    public ArticleView onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        View v = LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.four_u_card, parent, false);
-
-        return new ArticleView(v);
-    }
-
-
-    @Override
     public void onBindViewHolder(ArticleView holder, int position) {
         Article article = articles.get(position);
         holder.mainDesc.setText(article.LongDesc);
         holder.title.setText(article.name);
         setImage(article, holder.backdrop);
+    }
+
+
+    @Override
+    public ArticleView onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new ArticleView(parent);
     }
 
 
@@ -76,7 +71,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
 
         // Construct
         ArticleView(View itemView) {
-            // Call constructor for itemview
             super(itemView);
             // Associate our public variables with views in our layout holder
             title = (TextView) itemView.findViewById(R.id.editionName);

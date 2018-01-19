@@ -98,7 +98,8 @@ public abstract class Loader<Model> {
     // Send request function must be overridden because it points to the URL we want
     abstract public Response sendRequest() throws Exception;
     // parseJson function must be overridden because it tells us how to get the models
-    abstract public Model parseJson(JSON json);
+    abstract public Model parseJson(JSON json) throws Exception;
+    // TODO: Figure out a better method to load the adapter instead of having someone else manually set it
     // get adapterInstance returns an instance of your adapter get adapter instance must set the value of our recycler adapter by returning an instance
     abstract public void getAdapterInstance(List<Model> models);
 
