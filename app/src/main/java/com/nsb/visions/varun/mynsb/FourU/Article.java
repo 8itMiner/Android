@@ -1,7 +1,8 @@
 package com.nsb.visions.varun.mynsb.FourU;
 
 
-public class Article {
+// Article model class, this will of course be expanded later
+class Article {
     String name;
     String LongDesc;
     String ImageURL;

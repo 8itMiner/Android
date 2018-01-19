@@ -16,6 +16,7 @@ import android.widget.ViewFlipper;
 
 import com.nsb.visions.varun.mynsb.FourU.*;
 
+import java.util.HashMap;
 import java.util.Locale;
 
 public class Home extends AppCompatActivity {
@@ -25,7 +26,8 @@ public class Home extends AppCompatActivity {
     private TextView errorHolder;
     private ViewFlipper flipper;
     private Handler uiHandler = new Handler();
-    static boolean HomeOpen = false;
+    // Tells us which views have been loaded so we don't load them again
+    private HashMap<String, Boolean> loaded = new HashMap<>();
 
 
 
@@ -37,28 +39,16 @@ public class Home extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     mTextMessage.setText("Home");
-                    if (!HomeOpen) {
-                        HomeOpen = true;
-                        return true;
-                    } else {
-                        return true;
-                    }
                 case R.id.navigation_dashboard:
                     mTextMessage.setText("Bulletin");
                     return true;
-                case R.id.navigation_notifications:
-                    mTextMessage.setText("Notifications");
+                case R.id.navigation_reminder:
+                    mTextMessage.setText("Reminders");
                     return true;
                 case R.id.more_dashboard:
                     return false;
                 case R.id.navigation_4u:
-                    flipper.setDisplayedChild(0);
-                    mTextMessage.setText("4U");
-                    try {
-                        FourU.LoadUI(container, errorHolder, getApplicationContext(), uiHandler);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    load4U();
                     return true;
             }
             return false;
@@ -66,8 +56,41 @@ public class Home extends AppCompatActivity {
 
     };
 
+
+
+
+
+    /*
+        @ UTIL FUNCTIONS ==============================
+     */
+    /* load4U loads all the 4U articles when the navigation_4u button is clicked
+            @params;
+                nil
+     */
+     private void load4U() {
+        if (!loaded.get("4U")) {
+            flipper.setDisplayedChild(0);
+            mTextMessage.setText("4U");
+            // TODO: Fill in 4U object declaration once everything has been refactored
+            // Set the loaded flag to true
+            loaded.put("4U", true);
+        }
+    }
+    /*
+        @ END UTIL FUNCTIONS ==============================
+     */
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Push everything into loaded hashmap
+        loaded.put("4U", false);
+        loaded.put("Home", false);
+        loaded.put("Notifications", false);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 

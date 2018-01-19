@@ -9,45 +9,96 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.nsb.visions.varun.mynsb.R;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import okhttp3.OkHttpClient;
-
+// Article adapter class to make it easier to display articles given a list of them
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleView> {
 
+    // Article list
     private static List<Article> articles;
-
-
-    public ArticleAdapter(List<Article> articles) {
-        this.articles = articles;
+    // Construct
+    ArticleAdapter(List<Article> articles) {
+        ArticleAdapter.articles = articles;
     }
 
 
 
+
+
+    /*
+        @ MUST OVERRIDE FUNCTIONS =====================================
+     */
+    @Override
+    public ArticleView onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        View v = LayoutInflater.from(parent.getContext())
+            .inflate(R.layout.four_u_card, parent, false);
+
+        return new ArticleView(v);
+    }
+
+
+    @Override
+    public void onBindViewHolder(ArticleView holder, int position) {
+        Article article = articles.get(position);
+        holder.mainDesc.setText(article.LongDesc);
+        holder.title.setText(article.name);
+        setImage(article, holder.backdrop);
+    }
+
+
+    @Override
+    public int getItemCount() {
+        return articles.size();
+    }
+    /*
+        @ END MUST OVERRIDE FUNCTIONS =====================================
+     */
+
+
+
+
+
+    /*
+        @ UTILITY CLASSES =================================================
+     */
+    // Class articleView is a view holder, it contains all the required views for our article
     class ArticleView extends RecyclerView.ViewHolder {
-        public TextView title;
-        public TextView mainDesc;
-        public ImageView backdrop;
+        TextView title;
+        TextView mainDesc;
+        ImageView backdrop;
 
-
-        public ArticleView(View itemView) {
+        // Construct
+        ArticleView(View itemView) {
+            // Call constructor for itemview
             super(itemView);
+            // Associate our public variables with views in our layout holder
             title = (TextView) itemView.findViewById(R.id.editionName);
             mainDesc = (TextView) itemView.findViewById(R.id.description);
             backdrop = (ImageView) itemView.findViewById(R.id.imageBanner);
         }
     }
+    /*
+        @ END UTILITY CLASSES =================================================
+     */
 
+
+
+
+
+    /*
+        @ UTIL FUNCTIONS =====================================================
+     */
+    /* clearData clears all articles currently in our list it then notifies that adapter than stuff has been deleted
+        @params;
+            nil
+     */
     public void clearData() {
         int size = articles.size();
         articles.clear();
@@ -55,45 +106,28 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
     }
 
 
-    @Override
-    public ArticleView onCreateViewHolder(ViewGroup parent, int viewType) {
+    /* setImage takes an article and an imageView it then reads the image URL from the article and sets the image view to that image
+        @params;
+            Article article
+            ImageView imageView
+     */
+    private void setImage(Article article, ImageView imageView) {
+        Uri uri = Uri.parse(article.ImageURL);
+        // Attain context
+        Context context = imageView.getContext();
 
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.four_u_card, parent, false);
+        // Setup picasso
+        Picasso picasso =  new Picasso.Builder(context)
+            .downloader(new OkHttp3Downloader(context))
+            .build();
 
-        return new ArticleView(v);
+
+        // Load the image with picasso
+        picasso.with(context)
+            .load(uri)
+            .into(imageView);
     }
-
-    @Override
-    public void onBindViewHolder(ArticleView holder, int position) {
-        Article article = articles.get(position);
-        holder.mainDesc.setText(article.LongDesc);
-        holder.title.setText(article.name);
-        try {
-            Uri uri = Uri.parse(article.ImageURL);
-            // Attain context
-            Context context = holder.backdrop.getContext();
-
-
-            // Setup okhttp client
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .build();
-
-            Picasso picasso = new Picasso.Builder(context)
-                    .downloader(new OkHttp3Downloader(client))
-                    .build();
-
-            // Load the image with picasso
-            picasso.with(context)
-                    .load(uri)
-                    .into(holder.backdrop);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public int getItemCount() {
-        return articles.size();
-    }
+    /*
+        @ END UTIL FUNCTIONS =====================================================
+     */
 }
