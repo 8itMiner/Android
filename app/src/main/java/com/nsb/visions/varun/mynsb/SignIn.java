@@ -20,9 +20,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nsb.visions.varun.mynsb.Auth.Auth;
 import com.nsb.visions.varun.mynsb.User.User;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -224,10 +227,22 @@ public class SignIn extends AppCompatActivity {
             User user
      */
     private void updatePrefDetails(SharedPreferences.Editor editor, User user) {
+        // Setup gson
+        Gson gson = new Gson();
+
         // Serialize the user data and put the string in the editor
         editor.putString("user-data", user.toString());
         // Set the logged in data
         editor.putBoolean("logged-in", true);
+        // Create a hashmap to represent reminder tag colours
+        HashMap<String, String> reminderColours = new HashMap<>();
+        String hashMapString = gson.toJson(reminderColours);
+        // Push the minor stuff
+        reminderColours.put("hw", "#aaff00");
+        reminderColours.put("general", "#008cff");
+
+        // Push this into the shared prefs
+        editor.putString("tag-colours", hashMapString);
         // Apply our changes
         editor.apply();
     }

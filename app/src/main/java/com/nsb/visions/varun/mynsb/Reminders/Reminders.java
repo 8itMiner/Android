@@ -55,7 +55,6 @@ public class Reminders extends Loader<Reminder>{
     }
 
 
-    // TODO: FIll in this when the reminder adapter has been written
     @Override
     public void getAdapterInstance(List<Reminder> reminders) {
         this.adapter = new ReminderAdapter(reminders);

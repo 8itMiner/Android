@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jakewharton.picasso.OkHttp3Downloader;
-import com.nsb.visions.varun.mynsb.Common.LoaderAdapter;
 import com.nsb.visions.varun.mynsb.R;
 import com.squareup.picasso.Picasso;
 
@@ -44,7 +43,11 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
 
     @Override
     public ArticleView onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ArticleView(parent);
+        View v = LayoutInflater.from(parent.getContext())
+            .inflate(R.layout.four_u_card, parent, false);
+
+
+        return new ArticleView(v);
     }
 
 

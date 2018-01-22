@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        app:cardElevation="5dp"
+        app:cardCornerRadius="3dp"
+        android:id="@+id/cardView"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <TextView
+                android:id="@+id/subjectName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/room"
+                android:layout_alignParentStart="true"
+                android:layout_marginBottom="3dp"
+                android:layout_marginStart="16dp"
+                android:text="Maths A"
+                android:textColor="@color/colorPrimary"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/room"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignStart="@+id/subjectName"
+                android:layout_marginBottom="16dp"
+                android:text="A1" />
+
+            <TextView
+                android:id="@+id/teacher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/room"
+                android:layout_alignBottom="@+id/room"
+                android:layout_marginLeft="20dp"
+                android:layout_toEndOf="@+id/room"
+                android:text="BAI" />
+
+            <TextView
+                android:id="@+id/year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/teacher"
+                android:layout_alignBottom="@+id/teacher"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="9dp"
+                android:text="Year 9" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

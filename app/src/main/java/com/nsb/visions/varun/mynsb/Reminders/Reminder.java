@@ -7,6 +7,7 @@ import org.json.JSONArray;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
  * Created by varun on 17/01/2018. Coz varun is awesome as hell :)
@@ -15,13 +16,12 @@ import java.text.SimpleDateFormat;
 public class Reminder {
     String subject;
     String body;
-    JSONArray tags;
+    List<String> tags;
     Date time;
 
     public Reminder(String subject, String body, JSONArray tags, String time) throws Exception {
         this.subject = subject;
         this.body = body;
-        this.tags = tags;
         // Convert the time string into a calendar
         // Split up the time
         String[] dateTime = time.split("T");
@@ -33,6 +33,12 @@ public class Reminder {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 
         // Set up the time
+
+        // Convert the tags into a string array
+        for (int i = 0; i < tags.length(); i++) {
+            this.tags.add(tags.getString(i));
+        }
+
         this.time = simpleDateFormat.parse(date + " " + rawTime);
 
     }
