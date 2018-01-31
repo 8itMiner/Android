@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-        android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="Bulletin" />
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/navigation_reminder"
@@ -13,18 +8,28 @@
         android:title="Reminders" />
 
     <item
-        android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="Home" />
+        android:id="@+id/navigation_events"
+        android:icon="@drawable/events_logo"
+        android:title="Events" />
 
+    <item
+        android:id="@+id/navigation_timetable"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="Timetable" />
+
+    <item
+        android:id="@+id/navigation_calendar"
+        android:icon="@drawable/calendar_logo"
+        android:title="Calendar" />
 
     <item
         android:id="@+id/navigation_4u"
-        android:icon="@drawable/ic_book_24dp"
+        android:icon="@drawable/four_u_logo"
         android:title="4U Paper" />
 
     <item
-        android:id="@+id/more_dashboard"
-        android:icon="@drawable/ic_add_24dp"
-        android:title="More" />
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/settings_logo"
+        android:title="Settings"
+        app:showAsAction="always"/>
 </menu>

@@ -35,26 +35,34 @@ public class SignIn extends AppCompatActivity {
     // UI updater handler
     private final Handler uiHandler = new Handler();
     // Authenticator for authentication
-    private final Auth authenticator = new Auth(getApplicationContext());
+    private Auth authenticator;
     // Shared preferences
-    private final SharedPreferences sharePref = getSharedPreferences("MyNSB", Context.MODE_PRIVATE);
+    private SharedPreferences sharePref;
     // Shared preferences editor
-    private final SharedPreferences.Editor editor = sharePref.edit();
+    private SharedPreferences.Editor editor;
     // Asset manager for loading various assets
-    private final AssetManager am = getApplicationContext().getAssets();
+    private AssetManager am;
     // Raleway font used regularly throughout page
-    private final Typeface raleway = Typeface.createFromAsset(am,
-        String.format(Locale.US, "fonts/%s", "raleway_regular.ttf"));
+    private Typeface raleway;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Setup the things that require context
+        this.sharePref = getSharedPreferences("MyNSB", Context.MODE_PRIVATE);
+        this.editor = sharePref.edit();
+        this.am = getApplicationContext().getAssets();
+        this.raleway = Typeface.createFromAsset(am,
+            String.format(Locale.US, "fonts/%s", "raleway_regular.ttf"));
         // Determine what to do with the incoming user through the router user function
         routeUser(sharePref, editor);
         // Load in the layout after shared pref has been checked
         setContentView(R.layout.activity_sign_in);
+
+        // Setup authenticator
+        this.authenticator = new Auth(getApplicationContext());
 
 
 

@@ -1,6 +1,7 @@
 package com.nsb.visions.varun.mynsb.Reminders;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -24,9 +25,11 @@ import okhttp3.Response;
 //  Reminders loads all reminders for the specific user for *_today_*
 public class Reminders extends Loader<Reminder>{
 
+    private SharedPreferences preferences;
 
-    public Reminders(Context context) {
+    public Reminders(Context context, SharedPreferences preferences) {
         super(context);
+        this.preferences = preferences;
     }
 
 
@@ -57,10 +60,6 @@ public class Reminders extends Loader<Reminder>{
 
     @Override
     public void getAdapterInstance(List<Reminder> reminders) {
-        this.adapter = new ReminderAdapter(reminders);
+        this.adapter = new ReminderAdapter(reminders, this.preferences);
     }
-
-
-    // function load adapter
-
 }

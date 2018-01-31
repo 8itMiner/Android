@@ -2,9 +2,12 @@ package com.nsb.visions.varun.mynsb.Common;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +43,13 @@ public abstract class Loader<Model> {
         @throws;
             Exception
      */
-    public void loadUI(RecyclerView rv, TextView errorHolder, Handler uiHandler) throws Exception {
+    public void loadUI(RecyclerView rv, TextView errorHolder, Handler uiHandler) {
+        // Startup the basic stuff for the recyclerView
+        // Set the linearLayoutManager
+        LinearLayoutManager llm = new LinearLayoutManager(this.context);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        rv.setLayoutManager(llm);
+
         // Startup a thread to create our recyclerView
         Thread requestThread = new Thread(() -> {
             try {
@@ -121,6 +130,7 @@ public abstract class Loader<Model> {
 
         // Begin reading the json resp
         String jsonRaw = response.body().string();
+        Log.d("msgmodeltag", response.toString());
 
         // Begin parsing that json and push it into the models list
         JSON json = new JSON(jsonRaw);

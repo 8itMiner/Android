@@ -1,6 +1,9 @@
 package com.nsb.visions.varun.mynsb.Events;
 
-import java.sql.Date;
+import android.annotation.SuppressLint;
+
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by varun on 21/01/2018. Coz varun is awesome as hell :)
@@ -18,7 +21,7 @@ public class Event {
     public String eventPictureUrl;
 
     public Event(int eventId, String eventName, String eventStart, String eventEnd, String eventLocation,
-                 String eventOrganiser, String eventShortDesc, String eventPictureUrl) {
+                 String eventOrganiser, String eventShortDesc, String eventPictureUrl) throws Exception {
 
         this.eventID = eventId;
         this.eventName = eventName;
@@ -28,8 +31,12 @@ public class Event {
         this.eventPictureUrl = eventPictureUrl;
 
         // Convert the date strings to actual dates
-        // TODO: Later
 
+        // Setup a simple date format
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        this.eventStart = simpleDateFormat.parse(eventStart);
+        this.eventEnd = simpleDateFormat.parse(eventEnd);
 
     }
 }

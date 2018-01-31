@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.nsb.visions.varun.mynsb.Common.ReminderColours;
 import com.nsb.visions.varun.mynsb.R;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ReminderHolder> {
@@ -50,7 +50,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         // Start setting the information
         holder.colour.setBackgroundColor(Color.parseColor(colour));
         holder.reminderBody.setText(reminder.body);
-        holder.time.setText(convertToAMPM((Date) reminder.time));
+        holder.time.setText(convertToAMPM(reminder.time));
     }
 
     @Override
