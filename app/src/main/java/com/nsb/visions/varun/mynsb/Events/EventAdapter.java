@@ -90,14 +90,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         // Attain context
         Context context = imageView.getContext();
 
-        // Setup picasso
-        Picasso picasso =  new Picasso.Builder(context)
-            .downloader(new OkHttp3Downloader(context))
-            .build();
-
 
         // Load the image with picasso
-        picasso.with(context)
+        Picasso.with(context)
             .load(uri)
             .into(imageView);
     }

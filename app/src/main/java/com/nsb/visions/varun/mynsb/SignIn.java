@@ -110,8 +110,10 @@ public class SignIn extends AppCompatActivity {
                     animateLoader(loaderView, false);
                     // Set the background to be clickable
                     mainContent.setClickable(true);
-                    // Alert the user that the authentication attempt was unsuccessful
-                    Toast.makeText(SignIn.this, "Details are invalid", Toast.LENGTH_LONG).show();
+                    uiHandler.post(() -> {
+                        // Alert the user that the authentication attempt was unsuccessful
+                        Toast.makeText(SignIn.this, "Details are invalid", Toast.LENGTH_LONG).show();
+                    });
                 }
 
             });
@@ -244,10 +246,12 @@ public class SignIn extends AppCompatActivity {
         editor.putBoolean("logged-in", true);
         // Create a hashmap to represent reminder tag colours
         HashMap<String, String> reminderColours = new HashMap<>();
-        String hashMapString = gson.toJson(reminderColours);
         // Push the minor stuff
         reminderColours.put("hw", "#aaff00");
         reminderColours.put("general", "#008cff");
+        // Convert at the end once the data has been pushed
+        String hashMapString = gson.toJson(reminderColours);
+
 
         // Push this into the shared prefs
         editor.putString("tag-colours", hashMapString);

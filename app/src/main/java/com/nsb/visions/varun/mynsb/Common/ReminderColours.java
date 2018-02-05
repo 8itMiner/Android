@@ -1,6 +1,7 @@
 package com.nsb.visions.varun.mynsb.Common;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -21,6 +22,8 @@ public class ReminderColours {
         Gson gson = new Gson();
         // Tag colours
         String tagColourJson = preferences.getString("tag-colours", "{}");
+        Log.d("colours", tagColourJson);
+
         // Convert json to hashmap
         Type stringStringMap = new TypeToken<HashMap<String, String>>(){}.getType();
         this.tagColours = gson.fromJson(tagColourJson, stringStringMap);

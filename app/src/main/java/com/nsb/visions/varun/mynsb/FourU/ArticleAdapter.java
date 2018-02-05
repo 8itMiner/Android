@@ -2,18 +2,22 @@ package com.nsb.visions.varun.mynsb.FourU;
 
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.jakewharton.picasso.OkHttp3Downloader;
 import com.nsb.visions.varun.mynsb.R;
 import com.squareup.picasso.Picasso;
 
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 // Article adapter class to make it easier to display articles given a list of them
@@ -37,7 +41,11 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         Article article = articles.get(position);
         holder.mainDesc.setText(article.LongDesc);
         holder.title.setText(article.name);
-        setImage(article, holder.backdrop);
+        try {
+            setImage(article, holder.backdrop);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -108,20 +116,21 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
             Article article
             ImageView imageView
      */
-    private void setImage(Article article, ImageView imageView) {
-        Uri uri = Uri.parse(article.ImageURL);
+    private void setImage(Article article, ImageView imageView) throws URISyntaxException, MalformedURLException {
+        // Start encoding the URL
+        URL url = new URL(article.ImageURL);
+        URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+        url = uri.toURL();
+
+        Log.d("article-image", url.toString());
+
+
         // Attain context
         Context context = imageView.getContext();
 
-        // Setup picasso
-        Picasso picasso =  new Picasso.Builder(context)
-            .downloader(new OkHttp3Downloader(context))
-            .build();
-
-
         // Load the image with picasso
-        picasso.with(context)
-            .load(uri)
+        Picasso.with(context)
+            .load(url.toString())
             .into(imageView);
     }
     /*

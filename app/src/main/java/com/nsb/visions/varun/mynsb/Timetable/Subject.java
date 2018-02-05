@@ -6,8 +6,16 @@ package com.nsb.visions.varun.mynsb.Timetable;
 
 public class Subject {
 
-    public Subject(String className, String room, String teacher, String period) {
+    public String className;
+    public String room;
+    public String teacher;
+    public int period;
 
+    public Subject(String className, String room, String teacher, int period) {
+        this.className = className;
+        this.room = room;
+        this.teacher = teacher;
+        this.period = period;
     }
 
 }

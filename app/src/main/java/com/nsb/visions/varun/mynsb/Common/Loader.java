@@ -2,12 +2,17 @@ package com.nsb.visions.varun.mynsb.Common;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+
+import com.nsb.visions.varun.mynsb.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +48,7 @@ public abstract class Loader<Model> {
         @throws;
             Exception
      */
-    public void loadUI(RecyclerView rv, TextView errorHolder, Handler uiHandler) {
+    public void loadUI(RecyclerView rv, SwipeRefreshLayout swiper, TextView errorHolder, Handler uiHandler) {
         // Startup the basic stuff for the recyclerView
         // Set the linearLayoutManager
         LinearLayoutManager llm = new LinearLayoutManager(this.context);
@@ -54,9 +59,9 @@ public abstract class Loader<Model> {
         Thread requestThread = new Thread(() -> {
             try {
                 // Get the list of all articles that the API can serve
-                List<Model> articles = getModels();
+                List<Model> models = getModels();
                 // Load the adapter into the recyclerView
-                loadAdapter(rv, errorHolder, articles, uiHandler);
+                loadAdapter(rv, errorHolder, models, uiHandler);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -64,6 +69,7 @@ public abstract class Loader<Model> {
 
         // Start the request thread
         requestThread.start();
+        setupRefresher(swiper, rv);
     }
 
 
@@ -93,13 +99,50 @@ public abstract class Loader<Model> {
                 errorHolder.setVisibility(View.VISIBLE);
             }
 
-            getAdapterInstance(models);
-            ScaleInAnimationAdapter alphaAdapter = new ScaleInAnimationAdapter(this.adapter);
-            alphaAdapter.setDuration(100);
+            this.adapter = getAdapterInstance(models);
+            int resId = R.anim.layout_animation_fall_down;
+            LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this.context, resId);
+            recyclerView.setLayoutAnimation(animation);
+
 
             // Set the adapter
-            recyclerView.setAdapter(alphaAdapter);
+            recyclerView.setAdapter(this.adapter);
         });
+    }
+    /* setup refresher sets up the refresher layout and attaches a swipe listener to it
+        it adds a refresher which allows the user to load the models again
+            @params;
+                SwipeRefreshLayout refresher
+                RecyclerView recyclerView
+     */
+    private void setupRefresher(SwipeRefreshLayout refresher, RecyclerView recyclerView) {
+        refresher.setOnRefreshListener(
+            () -> {
+                // Reload the models into our adapter
+                // Get the models
+                List<Model> models = null;
+                try {
+                    models = getModels();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // Set the models
+                getAdapterInstance(models);
+                recyclerView.setAdapter(this.adapter);
+
+                // Start the animation again
+                final Context context = recyclerView.getContext();
+                final LayoutAnimationController controller =
+                    AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
+
+                recyclerView.setLayoutAnimation(controller);
+                recyclerView.getAdapter().notifyDataSetChanged();
+                recyclerView.scheduleLayoutAnimation();
+
+                refresher.setRefreshing(false);
+            }
+        );
     }
 
 
@@ -110,12 +153,15 @@ public abstract class Loader<Model> {
     abstract public Model parseJson(JSON json) throws Exception;
     // TODO: Figure out a better method to load the adapter instead of having someone else manually set it
     // get adapterInstance returns an instance of your adapter get adapter instance must set the value of our recycler adapter by returning an instance
-    abstract public void getAdapterInstance(List<Model> models);
+    abstract public RecyclerView.Adapter getAdapterInstance(List<Model> models);
 
 
 
 
 
+    /*
+           @ UTIL FUNCTIONS =======================================
+   */
     /* getModels retrieves all models from the API
         @params;
             Context context
@@ -130,7 +176,6 @@ public abstract class Loader<Model> {
 
         // Begin reading the json resp
         String jsonRaw = response.body().string();
-        Log.d("msgmodeltag", response.toString());
 
         // Begin parsing that json and push it into the models list
         JSON json = new JSON(jsonRaw);
@@ -138,12 +183,14 @@ public abstract class Loader<Model> {
         // Get our body array with all the information
         JSON bodyArray = json.key("Message").key("Body").index(0);
 
+
         // List of models
         List<Model> models = new ArrayList<>();
 
 
         // Iterate over json array and push it into the models list
         for(int i = 0; i < bodyArray.count(); i++) {
+            Log.d("Json-content", bodyArray.index(i).stringValue());
             models.add(parseJson(bodyArray.index(i)));
         }
 

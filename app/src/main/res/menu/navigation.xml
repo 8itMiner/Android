@@ -26,10 +26,4 @@
         android:id="@+id/navigation_4u"
         android:icon="@drawable/four_u_logo"
         android:title="4U Paper" />
-
-    <item
-        android:id="@+id/navigation_settings"
-        android:icon="@drawable/settings_logo"
-        android:title="Settings"
-        app:showAsAction="always"/>
 </menu>

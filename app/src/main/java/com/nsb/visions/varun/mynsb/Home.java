@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -43,14 +44,17 @@ public class Home extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_timetable:
-                    mTextMessage.setText("Home");
+                    mTextMessage.setText("Your Timetable");
                 case R.id.navigation_events:
+                    mTextMessage.setText("Events");
                     loadEvents();
                     return true;
                 case R.id.navigation_reminder:
+                    mTextMessage.setText("Reminders");
                     loadReminders();
                     return true;
                 case R.id.navigation_4u:
+                    mTextMessage.setText("The 4U Paper");
                     load4U();
                     return true;
                 case R.id.navigation_calendar:
@@ -73,15 +77,16 @@ public class Home extends AppCompatActivity {
                 nil
      */
      private void load4U() {
-        if (!loaded.get("4U")) {
-            flipper.setDisplayedChild(0);
-            mTextMessage.setText("4U");
+         flipper.setDisplayedChild(0);
+         if (!loaded.get("4U")) {
             // Set up the four u client
             FourU fourU = new FourU(getApplicationContext());
             // Get the content holder recyclerview
-            RecyclerView contentHolder = (RecyclerView) ((RelativeLayout) flipper.getChildAt(0)).getChildAt(0);
+             RelativeLayout holderOne = (RelativeLayout) flipper.getChildAt(0);
+             SwipeRefreshLayout holderTwo = (SwipeRefreshLayout) holderOne.getChildAt(0);
+             RecyclerView contentHolder = (RecyclerView) holderTwo.findViewById(R.id.recyclerLoader);
             // Load the UI
-            fourU.loadUI(contentHolder, errorHolder, uiHandler);
+            fourU.loadUI(contentHolder, holderTwo, errorHolder, uiHandler);
             // Set the loaded flag to true
             loaded.put("4U", true);
         }
@@ -91,15 +96,16 @@ public class Home extends AppCompatActivity {
                 nil
      */
     private void loadReminders() {
+        flipper.setDisplayedChild(1);
         if (!loaded.get("Reminders")) {
-            flipper.setDisplayedChild(1);
-            mTextMessage.setText("Reminders");
             // Set up the reminder client
             Reminders reminder = new Reminders(getApplicationContext(), this.sharePref);
             // Get the content holder recyclerview
-            RecyclerView contentHolder = (RecyclerView) ((RelativeLayout) flipper.getChildAt(1)).getChildAt(0);
+            RelativeLayout holderOne = (RelativeLayout) flipper.getChildAt(1);
+            SwipeRefreshLayout holderTwo = (SwipeRefreshLayout) holderOne.getChildAt(0);
+            RecyclerView contentHolder = (RecyclerView) holderTwo.findViewById(R.id.recyclerLoader);
             // Load the UI
-            reminder.loadUI(contentHolder, errorHolder, uiHandler);
+            reminder.loadUI(contentHolder, holderTwo, errorHolder, uiHandler);
             // Set the loaded flag to true
             loaded.put("Reminders", true);
         }
@@ -109,15 +115,16 @@ public class Home extends AppCompatActivity {
                 nil
      */
     private void loadEvents() {
+        flipper.setDisplayedChild(2);
         if (!loaded.get("Events")) {
-            flipper.setDisplayedChild(2);
-            mTextMessage.setText("Events");
             // Set up the events client
             Events events = new Events(getApplicationContext());
             // Get the content holder recyclerview
-            RecyclerView contentHolder = (RecyclerView) ((RelativeLayout) flipper.getChildAt(0)).getChildAt(0);
+            RelativeLayout holderOne = (RelativeLayout) flipper.getChildAt(2);
+            SwipeRefreshLayout holderTwo = (SwipeRefreshLayout) holderOne.getChildAt(0);
+            RecyclerView contentHolder = (RecyclerView) holderTwo.findViewById(R.id.recyclerLoader);
             // Load the UI
-            events.loadUI(contentHolder, errorHolder, uiHandler);
+            events.loadUI(contentHolder, holderTwo, errorHolder, uiHandler);
             // Set the loaded flag for events
             loaded.put("Events", true);
         }

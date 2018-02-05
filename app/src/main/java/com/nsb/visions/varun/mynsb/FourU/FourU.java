@@ -4,6 +4,7 @@ package com.nsb.visions.varun.mynsb.FourU;
 
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 
 import java.util.List;
 
@@ -29,34 +30,20 @@ public class FourU extends Loader<Article> {
     }
 
     @Override
-    public void getAdapterInstance(List<Article> articles) {
-        this.adapter = new ArticleAdapter(articles);
+    public RecyclerView.Adapter getAdapterInstance(List<Article> articles) {
+        return new ArticleAdapter(articles);
     }
 
     @Override
     public Response sendRequest() throws Exception {
-        final Response[] response = new Response[1];
-        // Thread for sending request
-        Thread perfReq = new Thread(() -> {
-            // Set up client
-            HTTP httpClient = new HTTP(context);
-            // Set up a request for the client to send
-            Request request = new Request.Builder()
-                .get()
-                .url("http://35.189.45.152:8080/api/v1/4U/Get")
-                .build();
+        HTTP httpClient = new HTTP(context);
+        // Set up a request for the client to send
+        Request request = new Request.Builder()
+            .get()
+            .url("http://35.189.45.152:8080/api/v1/4U/Get")
+            .build();
 
-            try {
-                // Set the variable
-                response[0] = httpClient.performRequest(request);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        // Start request
-        perfReq.start();
-        // Return it
-        return response[0];
+        return httpClient.performRequest(request);
     }
 }
 

@@ -1,8 +1,10 @@
 package com.nsb.visions.varun.mynsb.Reminders;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import com.nsb.visions.varun.mynsb.Common.ReminderColours;
 import com.nsb.visions.varun.mynsb.R;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -45,7 +48,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
     public void onBindViewHolder(ReminderHolder holder, int position) {
         Reminder reminder = reminders.get(position);
         // Determine what colour to show the user
-        String colour = getColour(reminder, this.preferences);
+        String colour = getColour(reminder);
 
         // Start setting the information
         holder.colour.setBackgroundColor(Color.parseColor(colour));
@@ -92,15 +95,22 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
             Date time
      */
     private String convertToAMPM(Date time) {
+        // Convert the date into the format we need
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+
+        // Format the date
+        String dateTime = simpleDateFormat.format(time);
+
         // Get the raw time
-        String rawTime = time.toString().split(" ")[1];
+        String rawTime = dateTime.split(" ")[1];
         // Get the hour as 24 time and minutes
         String hour24 = rawTime.split(":")[0];
         String minutes = rawTime.split(":")[1];
         // Convert the hour
         Integer hour = Integer.parseInt(hour24);
         // Determine the modifier
-        String modifier = hour < 12 ? "am" : "pm";
+        String modifier = hour > 12 ? "am" : "pm";
         // Round the modifier
         hour %= 12;
 
@@ -116,13 +126,14 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
             SharedPreferences preferences
 
      */
-    private String getColour(Reminder reminder, SharedPreferences preferences) {
+    private String getColour(Reminder reminder) {
         // Get the full hashmap of colours
         ReminderColours colours = new ReminderColours(this.preferences);
 
         String colour = colours.tagColours.get("general");
         // Iterate over reminder tags to determine first suitable candidate
-        for (String tag : reminder.tags) {
+        for (int i = 0; i < reminder.tags.size(); i++) {
+            String tag = reminder.tags.get(i);
             // The hashmap contains that colour
             if (colours.tagColours.containsKey(tag)) {
                 colour = colours.tagColours.get(tag);

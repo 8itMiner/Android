@@ -32,7 +32,9 @@ repositories {
 }
 
 
+
 dependencies {
+    implementation 'com.android.support:support-v4:25.4.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -50,7 +52,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
     compile 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
-
+    compile 'com.github.markushi:android-ui:1.2'
 
 
 

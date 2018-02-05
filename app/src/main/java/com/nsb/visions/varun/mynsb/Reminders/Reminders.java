@@ -54,12 +54,12 @@ public class Reminders extends Loader<Reminder>{
     public Reminder parseJson(JSON json) throws Exception {
         return new Reminder(
             json.key("Headers").key("Subject").stringValue(), json.key("Body").stringValue(),
-            json.key("tags").getJsonArray(), json.key("ReminderDateTime").stringValue());
+            json.key("Tags").getJsonArray(), json.key("ReminderDateTime").stringValue());
     }
 
 
     @Override
-    public void getAdapterInstance(List<Reminder> reminders) {
-        this.adapter = new ReminderAdapter(reminders, this.preferences);
+    public RecyclerView.Adapter getAdapterInstance(List<Reminder> reminders) {
+        return new ReminderAdapter(reminders, this.preferences);
     }
 }
