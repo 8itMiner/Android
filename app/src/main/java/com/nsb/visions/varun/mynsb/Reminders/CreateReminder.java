@@ -2,6 +2,7 @@ package com.nsb.visions.varun.mynsb.Reminders;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 
@@ -18,10 +19,11 @@ import okhttp3.Response;
  */
 
 // The create class allows users to create a reminder given a bunch of tags, reminder body and the reminder name
-public class Create {
+public class CreateReminder {
 
     // Http handler used to send http requests
     public static HTTP httpHandler;
+    public static Response response;
 
 
 
@@ -33,7 +35,7 @@ public class Create {
             Reminder reminder
 
      */
-    public static Response createReminder(Context context, Reminder reminder) {
+    public static Response createReminder(Context context, Reminder reminder) throws Exception {
         // This is very unnecessary but i feel as if i might beed to access
         // the http handler in the future
         httpHandler = new HTTP(context);
@@ -51,6 +53,7 @@ public class Create {
             .add("Body", reminder.body)
             .add("Subject", reminder.subject)
             .add("Reminder_Date_Time", date)
+            .add("Tags", tagsJson)
             .build();
 
         // Set up the request to be sent
@@ -59,19 +62,25 @@ public class Create {
             .post(requestBody)
             .build();
 
-        final Response[] response = new Response[1];
+        final Exception[] exception = {null};
+
         // Send the request and get the response
         Thread sendRequest = new Thread(() -> {
             try {
-                response[0] = httpHandler.performRequest(request);
+                response = httpHandler.performRequest(request);
             } catch (Exception e) {
                 e.printStackTrace();
+                exception[0] = e;
             }
         });
         sendRequest.start();
 
+        if (exception[0] != null) {
+            throw exception[0];
+        }
 
-        return response[0];
+
+        return response;
     }
 
 }

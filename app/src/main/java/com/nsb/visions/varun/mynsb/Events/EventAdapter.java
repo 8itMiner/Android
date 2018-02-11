@@ -13,6 +13,9 @@ import com.jakewharton.picasso.OkHttp3Downloader;
 import com.nsb.visions.varun.mynsb.R;
 import com.squareup.picasso.Picasso;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -52,7 +55,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.eventName.setText(event.eventName);
         holder.shortDesc.setText(event.eventShortDesc);
         // Set the image into the eventImage box
-        setImage(event, holder.eventImage);
+        try {
+            setImage(event, holder.eventImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -85,15 +92,19 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     /*
         UTILITY METHODS ===============================
      */
-    private void setImage(Event event, ImageView imageView) {
-        Uri uri = Uri.parse(event.eventPictureUrl);
+    private void setImage(Event event, ImageView imageView) throws Exception {
+        // Start encoding the URL
+        URL url = new URL(event.eventPictureUrl);
+        URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+        url = uri.toURL();
+
         // Attain context
         Context context = imageView.getContext();
 
 
         // Load the image with picasso
         Picasso.with(context)
-            .load(uri)
+            .load(url.toString())
             .into(imageView);
     }
     /*

@@ -9,9 +9,9 @@ public class Subject {
     public String className;
     public String room;
     public String teacher;
-    public int period;
+    public String period;
 
-    public Subject(String className, String room, String teacher, int period) {
+    public Subject(String className, String room, String teacher, String period) {
         this.className = className;
         this.room = room;
         this.teacher = teacher;

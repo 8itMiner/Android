@@ -34,7 +34,7 @@ public class Event {
 
         // Setup a simple date format
         @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
         this.eventStart = simpleDateFormat.parse(eventStart);
         this.eventEnd = simpleDateFormat.parse(eventEnd);
 

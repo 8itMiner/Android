@@ -3,9 +3,11 @@ package com.nsb.visions.varun.mynsb.Events;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.nsb.visions.varun.mynsb.Common.Loader;
 
+import com.nsb.visions.varun.mynsb.Common.Util;
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 
 import java.text.SimpleDateFormat;
@@ -31,17 +33,18 @@ public class Events extends Loader<Event> {
         super(context);
     }
 
+
+
     @Override
     public Response sendRequest() throws Exception {
         // Get the date range required for the api
-        String[] dateRange = getDateRange();
+        String[] dateRange = Util.getDateRange("dd-MM-yyyy");
 
         // Set up the http client
         HTTP httpClient = new HTTP(this.context);
 
-        // Setup the url
-        assert dateRange != null;
-        String requestURL = String.format(Locale.ENGLISH, "http://35.189.45.152:8080/api/v1/Events/Get?start=%s&end=%s",
+        // Build a request from the data we have
+        String requestURL = String.format(Locale.ENGLISH, "http://35.189.45.152:8080/api/v1/events/Get?start=%s&end=%s",
             dateRange[0], dateRange[1]);
 
         // Set up the request
@@ -50,7 +53,13 @@ public class Events extends Loader<Event> {
             .url(requestURL)
             .build();
 
-        return httpClient.performRequest(request);
+
+        try {
+            return httpClient.performRequest(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
@@ -66,38 +75,4 @@ public class Events extends Loader<Event> {
     public RecyclerView.Adapter getAdapterInstance(List<Event> events) {
         return new EventAdapter(events);
     }
-
-
-
-
-    /*
-        UTIL FUNCTIONS =================================
-     */
-    /* getEventRange returns the date for the current day along with the date for this week's saturday
-            @params;
-                nil
-     */
-    private String[] getDateRange() {
-        // Setup a sdf for formatting of the date
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-YYYY");
-
-        // Setup our calendars
-        Calendar sunday = getInstance(TimeZone.getTimeZone("GMT+10:00"));
-        Calendar saturday = getInstance(TimeZone.getTimeZone("GMT+10:00"));
-
-        // Get the respective minmaxes
-        sunday.add(DATE, -1 * (DAY_OF_WEEK - SUNDAY));
-        saturday.add(DATE, (SATURDAY - DAY_OF_WEEK));
-
-        // Convert these into dates and return it
-        String[] dates = new String[2];
-        dates[0] = simpleDateFormat.format(sunday.getTime());
-        dates[1] = simpleDateFormat.format(saturday.getTime());
-
-        return dates;
-    }
-    /*
-        END UTIL FUNCTIONS =================================
-     */
 }

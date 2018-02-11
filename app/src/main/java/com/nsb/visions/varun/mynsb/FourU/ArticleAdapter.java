@@ -122,7 +122,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
         url = uri.toURL();
 
-        Log.d("article-image", url.toString());
 
 
         // Attain context

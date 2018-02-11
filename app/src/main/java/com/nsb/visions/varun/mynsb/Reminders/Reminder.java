@@ -34,7 +34,6 @@ public class Reminder {
         String rawTime = dateTime[1].split(":00Z")[0];
         String date = dateTime[0];
 
-        Log.d("time-data", date + " " + rawTime);
 
         // Setup a simple date format
         @SuppressLint("SimpleDateFormat")
@@ -49,7 +48,6 @@ public class Reminder {
 
             this.time = simpleDateFormat.parse(date + " " + rawTime);
         } catch (Exception e) {
-            Log.d("Exception-error", e.toString());
             e.printStackTrace();
         }
 

@@ -70,8 +70,16 @@
                     <android.support.v7.widget.RecyclerView
                         android:layout_width="match_parent"
                         android:id="@+id/recyclerLoader"
+                        android:visibility="gone"
                         android:layoutAnimation="@anim/layout_animation_fall_down"
                         android:layout_height="match_parent" />
+                    <ProgressBar
+                        android:id="@+id/loader"
+                        style="?android:progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:layout_gravity="center" />
                 </android.support.v4.widget.SwipeRefreshLayout>
             </RelativeLayout>
 
@@ -87,11 +95,19 @@
                     <android.support.v7.widget.RecyclerView
                         android:layout_width="match_parent"
                         android:id="@id/recyclerLoader"
+                        android:visibility="gone"
                         android:layoutAnimation="@anim/layout_animation_fall_down"
                         android:layout_height="match_parent" />
+                    <ProgressBar
+                        android:id="@id/loader"
+                        style="?android:progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:layout_gravity="center" />
                 </android.support.v4.widget.SwipeRefreshLayout>
                 <android.support.design.widget.FloatingActionButton
-                    android:id="@id/createReminder"
+                    android:id="@+id/createReminder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
@@ -103,164 +119,6 @@
                     app:srcCompat="@drawable/ic_add_24dp"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true" />
-
-                <!-- Create reminder overlay -->
-                <!-- Black overlay -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    android:alpha="0.7"
-                    android:visibility="gone"
-                    android:translationZ="10dp"/>
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginBottom="40dp"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginEnd="40dp"
-                    android:translationZ="11dp"
-                    app:cardElevation="2dp"
-                    android:visibility="gone"
-                    app:cardCornerRadius="2dp"
-                    android:background="#fff">
-                    <!-- Content Holder -->
-                    <ScrollView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="900dp">
-                            <!-- Header for reminder creator -->
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:id="@+id/header"
-                                android:background="@color/colorSecondaryAccent"
-                                android:layout_height="80dp">
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentStart="true"
-                                    android:layout_centerVertical="true"
-                                    android:layout_marginStart="18dp"
-                                    android:text="Create Reminder"
-                                    android:textColor="#fff"
-                                    android:textSize="25dp" />
-                            </RelativeLayout>
-                            <!-- Reminder Title -->
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/reminderSubjectFloat"
-                                android:layout_width="match_parent"
-                                android:layout_below="@+id/header"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="20dp">
-
-                                <EditText
-                                    android:id="@+id/reminderSubject"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="30dp"
-                                    android:layout_marginRight="30dp"
-                                    android:fontFamily="sans-serif"
-                                    android:hint="Reminder Title"
-                                    android:inputType="text"
-                                    android:textSize="15dp" />
-
-                            </android.support.design.widget.TextInputLayout>
-                            <!-- Reminder Body -->
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/reminderBodyFloat"
-                                android:layout_width="match_parent"
-                                android:layout_below="@+id/reminderSubjectFloat"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="20dp">
-                                <EditText
-                                    android:id="@+id/reminderBody"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="30dp"
-                                    android:layout_marginRight="30dp"
-                                    android:fontFamily="sans-serif"
-                                    android:hint="Reminder Body"
-                                    android:inputType="text"
-                                    android:textSize="15dp" />
-
-                            </android.support.design.widget.TextInputLayout>
-                            <!-- Reminder Date -->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
-                                android:layout_below="@+id/reminderBodyFloat"
-                                android:layout_marginStart="35dp"
-                                android:layout_marginTop="40dp"
-                                android:id="@+id/setDate"
-                                android:text="01/09/2002" />
-                            <Button
-                                android:layout_width="wrap_content"
-                                android:layout_height="40dp"
-                                android:layout_alignBaseline="@+id/setDate"
-                                android:layout_alignBottom="@+id/setDate"
-                                android:layout_marginStart="25dp"
-                                android:layout_toEndOf="@+id/setDate"
-                                android:background="@color/colorPrimaryDark"
-                                android:textColor="#fff"
-                                android:text="Pick Date"
-                                android:id="@+id/button" />
-                            <!-- Reminder Time -->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
-                                android:layout_below="@+id/setDate"
-                                android:layout_marginStart="35dp"
-                                android:layout_marginTop="40dp"
-                                android:id="@+id/setTime"
-                                android:text="3:02 pm" />
-                            <Button
-                                android:layout_width="wrap_content"
-                                android:layout_height="40dp"
-                                android:layout_alignBaseline="@+id/setTime"
-                                android:layout_alignBottom="@+id/setTime"
-                                android:layout_alignStart="@+id/button"
-                                android:background="@color/colorPrimaryDark"
-                                android:text="Pick Time"
-                                android:textColor="#fff"
-                                android:id="@+id/setTimeButton" />
-                            <Button
-                                android:id="@+id/createReminderButton"
-                                android:layout_width="wrap_content"
-                                android:background="@color/colorSecondaryAccent"
-                                android:textColor="#fff"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/setTimeButton"
-                                android:layout_centerHorizontal="true"
-                                android:layout_marginTop="39dp"
-                                android:text="Create Reminder" />
-                        </RelativeLayout>
-                    </ScrollView>
-                    <!-- Date Picker -->
-                    <android.support.v7.widget.CardView
-                        android:layout_width="match_parent"
-                        android:visibility="gone"
-                        android:layout_height="match_parent">
-                        <DatePicker
-                            android:id="@+id/selectedDate"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-                    </android.support.v7.widget.CardView>
-                    <!-- Time Picker -->
-                    <android.support.v7.widget.CardView
-                        android:layout_width="match_parent"
-                        android:visibility="gone"
-                        android:layout_height="match_parent">
-                        <TimePicker
-                            android:id="@+id/selectedTime"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-                    </android.support.v7.widget.CardView>
-                </android.support.v7.widget.CardView>
             </RelativeLayout>
 
 
@@ -277,8 +135,41 @@
                     <android.support.v7.widget.RecyclerView
                         android:layout_width="match_parent"
                         android:id="@id/recyclerLoader"
+                        android:visibility="gone"
                         android:layoutAnimation="@anim/layout_animation_fall_down"
                         android:layout_height="match_parent" />
+                    <ProgressBar
+                        android:id="@id/loader"
+                        style="?android:progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:layout_gravity="center" />
+                </android.support.v4.widget.SwipeRefreshLayout>
+            </RelativeLayout>
+
+            <!-- Timetables -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <android.support.v4.widget.SwipeRefreshLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@id/swiperefresh"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <android.support.v7.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:id="@id/recyclerLoader"
+                        android:visibility="gone"
+                        android:layoutAnimation="@anim/layout_animation_fall_down"
+                        android:layout_height="match_parent" />
+                    <ProgressBar
+                        android:id="@id/loader"
+                        style="?android:progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:layout_gravity="center" />
                 </android.support.v4.widget.SwipeRefreshLayout>
             </RelativeLayout>
 
@@ -287,13 +178,14 @@
         </ViewFlipper>
     </RelativeLayout>
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
-        android:layout_width="match_parent"
+
+    <FrameLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="#fff"
-        app:menu="@menu/navigation" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+        <include layout="@layout/bottom_navigation" />
+    </FrameLayout>
 
 
 

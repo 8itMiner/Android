@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#536DFE</color>
-    <color name="colorPrimaryDark">#304FEE</color>
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
     <color name="colorAccent">#00e0d1</color>
     
     <color name="colorSecondary">#00a5d0</color>
     <color name="colorSecondaryDark">#1A8CB7</color>
-    <color name="colorSecondaryAccent">#f75820</color>
+    <color name="colorSecondaryAccent">#FF8F00</color>
 
     <color name="tutorialCircleUnselected">#000</color>
     <color name="selected">#fff</color>

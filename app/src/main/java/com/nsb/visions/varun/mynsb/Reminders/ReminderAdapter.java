@@ -54,6 +54,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         holder.colour.setBackgroundColor(Color.parseColor(colour));
         holder.reminderBody.setText(reminder.body);
         holder.time.setText(convertToAMPM(reminder.time));
+        holder.subject.setText(reminder.subject);
     }
 
     @Override
@@ -73,6 +74,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         TextView reminderBody;
         TextView time;
         RelativeLayout colour;
+        TextView subject;
 
         public ReminderHolder(View itemView) {
             super(itemView);
@@ -80,6 +82,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
             reminderBody = (TextView) itemView.findViewById(R.id.reminderBody);
             time = (TextView) itemView.findViewById(R.id.time);
             colour = (RelativeLayout) itemView.findViewById(R.id.colour);
+            subject = (TextView) itemView.findViewById(R.id.subject);
         }
     }
 

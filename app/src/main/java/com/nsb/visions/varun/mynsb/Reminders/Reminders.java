@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.amirs.JSON;
+import okhttp3.CacheControl;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -38,10 +39,13 @@ public class Reminders extends Loader<Reminder>{
         // Set up the http client
         HTTP httpclient = new HTTP(this.context);
 
+        CacheControl cacheControl = CacheControl.FORCE_NETWORK;
+
         // Start up a request to be sent to the api
         Request getReminders = new Request.Builder()
             .url("http://35.189.45.152:8080/api/v1/reminders/Get/Today")
             .get()
+            .cacheControl(cacheControl)
             .build();
 
         // Send the request

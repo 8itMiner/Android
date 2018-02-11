@@ -1,6 +1,7 @@
 package com.nsb.visions.varun.mynsb;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,7 +11,10 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -89,10 +93,18 @@ public class SignIn extends AppCompatActivity {
             }
 
             // Open the loading animation
-            // Set the background to not be clickable
-            mainContent.setClickable(false);
-            // Animate the loader into view
-            animateLoader(loaderView, true);
+            // Create a dialog from the loaderview content
+            // Setup a dialog
+            final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(SignIn.this)
+                .setCancelable(false);
+            // Get the views
+            LayoutInflater inflater = this.getLayoutInflater();
+            View createView = inflater.inflate(R.layout.sign_in_loader, null);
+            dialogBuilder.setView(createView);
+            AlertDialog alertDialog = dialogBuilder.create();
+
+            // Show the loader
+            showLoader(alertDialog, true);
 
             // Thread for authentication...
             Thread auth = new Thread(() -> {
@@ -107,7 +119,8 @@ public class SignIn extends AppCompatActivity {
                     finish();
                 } else { // Failure
                     // Fade out the loader view
-                    animateLoader(loaderView, false);
+                    showLoader(alertDialog, false);
+
                     // Set the background to be clickable
                     mainContent.setClickable(true);
                     uiHandler.post(() -> {
@@ -144,7 +157,7 @@ public class SignIn extends AppCompatActivity {
             // Update the shared preferences with the details we have been given
             toReturn.put("success", true);
             toReturn.put("user", user);
-        } catch (Exception _) {
+        } catch (Exception e) {
             toReturn.put("success", false);
         }
 
@@ -197,9 +210,6 @@ public class SignIn extends AppCompatActivity {
     }
 
 
-
-
-
     /* routeUser routes the current user based on the stored shared preferences, if this is the first one a tutorial is shown if they are logged in they are taken to the home screen
         @params;
             SharedPreferences preferences
@@ -228,9 +238,6 @@ public class SignIn extends AppCompatActivity {
     }
 
 
-
-
-
     /* updatePrefDetails updates the shared preferences given a specific user
         @params;
             SharedPreferences.Editor editor
@@ -244,10 +251,10 @@ public class SignIn extends AppCompatActivity {
         editor.putString("user-data", user.toString());
         // Set the logged in data
         editor.putBoolean("logged-in", true);
-        // Create a hashmap to represent reminder tag colours
+        // CreateReminder a hashmap to represent reminder tag colours
         HashMap<String, String> reminderColours = new HashMap<>();
         // Push the minor stuff
-        reminderColours.put("hw", "#aaff00");
+        reminderColours.put("hw", "#64dd17");
         reminderColours.put("general", "#008cff");
         // Convert at the end once the data has been pushed
         String hashMapString = gson.toJson(reminderColours);
@@ -260,41 +267,22 @@ public class SignIn extends AppCompatActivity {
     }
 
 
-
-
-
-
-    /* animateLoader takes the loader view and displays it to the user using a face in animation
-        @params;
-            RelativeLayout loadingScreen
-            Boolean openClose:
-                        True: open,
-                        False: close
-
+    /* showLoader displays the the user the loader box
+            @params;
+                boolean load
+                    If load = true then the loader will be loaded otherwise if it is faul then the loader will be hidden
+                AlertDialog dialog
      */
-    private void animateLoader(RelativeLayout loadingScreen, Boolean openClose) {
-        // Declare animations, one for fading in the other for fading out
-        // Fade out
-        Animation fadeOut = new AlphaAnimation(1, 0);
-        fadeOut.setDuration(150);
-        fadeOut.setStartOffset(150);
-        fadeOut.setInterpolator(new AccelerateInterpolator());
-
-        // Fade in
-        Animation fadeIn = new AlphaAnimation(0, 1);
-        fadeIn.setInterpolator(new AccelerateInterpolator());
-        fadeIn.setDuration(200);
-
-
-        // Post the fade animation to a runnable
-        uiHandler.post(() -> {
-            if (openClose) { // Open the loading screen
-                loadingScreen.setVisibility(View.VISIBLE);
-                loadingScreen.startAnimation(fadeIn);
-            } else { // Close the loading screen
-                loadingScreen.startAnimation(fadeOut);
-                loadingScreen.setVisibility(View.GONE);
-            }
-        });
+    private void showLoader(AlertDialog dialog, boolean load) {
+        if (load) {
+            // Load the window views into the layout
+            // Make the dialog fill the screen
+            Window window = dialog.getWindow();
+            window.setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT);
+            // Show the dialog
+            dialog.show();
+        } else {
+            dialog.cancel();
+        }
     }
 }
