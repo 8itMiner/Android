@@ -48,13 +48,14 @@ public class Calendars extends Loader<Calendar> {
 
     @Override
     public Calendar parseJson(JSON json) throws Exception {
-        return null;
+        return new Calendar(json.key("title").stringValue(), json.key("start_date").stringValue());
     }
 
     @Override
     public RecyclerView.Adapter getAdapterInstance(List<Calendar> calendars) {
-        return null;
+        return new CalendarAdapter(calendars);
     }
+
     /*
        END OVERRIDDEN METHODS ============================
      */

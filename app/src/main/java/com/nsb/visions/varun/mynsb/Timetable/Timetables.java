@@ -104,11 +104,12 @@ public class Timetables extends Loader<Subject> {
         return today;
     }
 
+
     /* weekAorB tells us if it is week a or b using the API
             @params;
                 Context context
      */
-    private static String weekAorB(Context context) throws Exception {
+    private String weekAorB(Context context) throws Exception {
         // Send a request to the API
         HTTP client = new HTTP(context);
 
@@ -126,6 +127,7 @@ public class Timetables extends Loader<Subject> {
         JSON json = new JSON(response.body().string());
 
 
+        // Convert the week in respect to the day
         return json.key("Message").key("Body").stringValue();
     }
 

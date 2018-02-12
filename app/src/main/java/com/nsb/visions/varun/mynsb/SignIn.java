@@ -214,8 +214,6 @@ public class SignIn extends AppCompatActivity {
         @params;
             SharedPreferences preferences
             SharedPreferences.Editor editor
-        ! WARNING
-            Incomplete method, please see TODO for more details
      */
     private void routeUser(SharedPreferences preferences, SharedPreferences.Editor editor) {
         // Determine if this is the first time they have run the app if so then take them to the tutorial

@@ -1,12 +1,12 @@
-package com.nsb.visions.varun.mynsb.Reminders;
+package com.nsb.visions.varun.mynsb.Reminders.Create;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
-
-import java.text.SimpleDateFormat;
 
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
+import com.nsb.visions.varun.mynsb.Reminders.Reminder;
+
+import java.text.SimpleDateFormat;
 
 import eu.amirs.JSON;
 import okhttp3.FormBody;
@@ -75,6 +75,7 @@ public class CreateReminder {
         });
         sendRequest.start();
 
+        // Throw and exception if there was an error
         if (exception[0] != null) {
             throw exception[0];
         }

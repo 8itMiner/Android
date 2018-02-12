@@ -69,7 +69,7 @@ public class Util {
          @params;
              String format
                 specifies the format the response dates should be in
-  */
+    */
     public static String[] getDateRange(String format) {
         // Setup a sdf for formatting of the date
         @SuppressLint("SimpleDateFormat")

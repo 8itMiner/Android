@@ -11,6 +11,8 @@
         android:layout_gravity="bottom"
         android:background="#fff"
         android:elevation="3dp"
+        app:elevation="3dp"
+        android:layout_marginTop="10dp"
         app:menu="@menu/navigation" />
 
 </RelativeLayout>

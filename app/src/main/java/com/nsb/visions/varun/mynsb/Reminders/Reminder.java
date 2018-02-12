@@ -20,10 +20,10 @@ import eu.amirs.JSON;
  */
 
 public class Reminder {
-    String subject;
-    String body;
-    List<String> tags = new ArrayList<>();
-    Date time;
+    public String subject;
+    public String body;
+    public List<String> tags = new ArrayList<>();
+    public Date time;
 
     public Reminder(String subject, String body, JSONArray tags, String time) {
         this.subject = subject;

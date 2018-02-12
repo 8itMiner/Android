@@ -2,6 +2,7 @@ package com.nsb.visions.varun.mynsb.Common;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,11 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.amirs.JSON;
-import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 import okhttp3.Response;
 
 /**
- * Created by varun on 18/01/2018. Coz varun is awesome as hell :)
+ * Created by varun on 18/01/2018. Coz varun is awesome  :)
  */
 
 // Loader class for loading data into a recyclerView
@@ -29,9 +29,9 @@ public abstract class Loader<Model> {
 
     protected RecyclerView.Adapter adapter;
     protected Context context;
-    public SwipeRefreshLayout swiper;
-    public TextView errorHolder;
-    public Handler uiHandler;
+    private SwipeRefreshLayout swiper;
+    private TextView errorHolder;
+    private Handler uiHandler;
 
     public Loader(Context context) {
         this.context = context;
@@ -74,16 +74,19 @@ public abstract class Loader<Model> {
             }
         });
         loader.start();
+        // Join the thread to prevent collision
         try {
             loader.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        // Set the visibility of the progress bar
         progressBar.setVisibility(View.GONE);
         rv.setVisibility(View.VISIBLE);
 
 
-        setupRefresher(swiper, rv);
+        setupRefresher(rv);
     }
 
 
@@ -107,14 +110,7 @@ public abstract class Loader<Model> {
     private void loadAdapter(RecyclerView recyclerView, TextView errorHolder, List<Model> models, Handler uiHandler) throws Exception {
         // Post ui update to handler
         uiHandler.post(() -> {
-            // Article are empty so show the error message
-            if (models.isEmpty()) {
-                recyclerView.setVisibility(View.GONE);
-                errorHolder.setVisibility(View.VISIBLE);
-            } else {
-                // Hide the error holder in case it was always it is shown
-                errorHolder.setVisibility(View.GONE);
-            }
+            showErrors(models, recyclerView, errorHolder);
 
             this.adapter = getAdapterInstance(models);
             int resId = R.anim.layout_animation_fall_down;
@@ -127,14 +123,34 @@ public abstract class Loader<Model> {
         });
     }
 
+
+
+    /* showErrors determine if error should be exposed to a user or not
+            @params;
+                List<Model> models
+                RecyclerView recyclerView
+                TextView errorHolder
+     */
+    private void showErrors(@NonNull List<Model> models, RecyclerView recyclerView, TextView errorHolder) {
+        // Article are empty so show the error message
+        if (models.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            errorHolder.setVisibility(View.VISIBLE);
+        } else {
+            // Hide the error holder in case it was always it is shown
+            errorHolder.setVisibility(View.GONE);
+        }
+    }
+
+
     /* setup refresher sets up the refresher layout and attaches a swipe listener to it
         it adds a refresher which allows the user to load the models again
             @params;
                 SwipeRefreshLayout refresher
                 RecyclerView recyclerView
      */
-    private void setupRefresher(SwipeRefreshLayout refresher, RecyclerView recyclerView) {
-        refresher.setOnRefreshListener(() -> {
+    private void setupRefresher(RecyclerView recyclerView) {
+        this.swiper.setOnRefreshListener(() -> {
             new Thread(() -> {
                 // Get the model data
                 List<Model> models = null;
@@ -143,6 +159,9 @@ public abstract class Loader<Model> {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                // Determine if errors need to be shown
+                assert models != null;
+                showErrors(models, recyclerView, this.errorHolder);
 
                 List<Model> finalModels = models;
                 this.uiHandler.post(() -> {
@@ -150,7 +169,7 @@ public abstract class Loader<Model> {
                     setUpAdapter(recyclerView, finalModels);
 
                     // Set the refresher
-                    refresher.setRefreshing(false);
+                    this.swiper.setRefreshing(false);
                     recyclerView.getAdapter().notifyDataSetChanged();
                 });
             }).start();
@@ -171,7 +190,7 @@ public abstract class Loader<Model> {
 
 
     /*
-           @ UTIL FUNCTIONS =======================================
+        @UTIL FUNCTIONS =======================================
    */
 
     /* setUpAdapter sets up a recyclerview adapter for a swipeRefresh

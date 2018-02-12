@@ -66,3 +66,7 @@ public class ReminderColours {
     }
 
 }
+/*
+    Usage: ReminderColours(Sharedprefs) x;
+    x.createTag("x", "#colour")
+ */
