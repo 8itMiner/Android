@@ -26,9 +26,9 @@ public class SettingsActivity extends AppCompatActivity {
         this.sharedPrefs = getSharedPreferences("MyNSB", Context.MODE_PRIVATE);
 
         // Various views for reminder creation
-        Button reminderButton = (Button) findViewById(R.id.create_reminder_tag);
-        EditText reminderName = (EditText) findViewById(R.id.reminder_name_edit);
-        EditText reminderColour = (EditText) findViewById(R.id.reminder_colour_edit);
+        Button reminderButton = findViewById(R.id.create_reminder_tag);
+        EditText reminderName = findViewById(R.id.reminder_name_edit);
+        EditText reminderColour = findViewById(R.id.reminder_colour_edit);
 
         reminderButton.setOnClickListener(view -> {
             createReminder(reminderName.getText().toString(), reminderColour.getText().toString());
