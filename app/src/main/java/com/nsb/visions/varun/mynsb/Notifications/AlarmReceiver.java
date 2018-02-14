@@ -23,17 +23,35 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     // Cancel an alarm
     public static void cancelAlarm(Context context) {
-        // Set up an intent
-        Intent intent = new Intent(context, NotificationsJobIntentService.class);
         // Get the alarm
         AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        // Attain the sender
-        PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
 
         /* cancel any pending alarm */
-        alarm.cancel(sender);
+        assert alarm != null;
+        alarm.cancel(getPendingIntent(context));
     }
 
+
+    public static void setAlarm(Context context, boolean force, long when) {
+        // Cancel any pending alarm
+        cancelAlarm(context);
+
+        // Setup an alarm manager
+        AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        // Execute in the next when hours and fire the broadcast
+        assert alarm != null;
+        alarm.set(AlarmManager.RTC_WAKEUP, when, getPendingIntent(context));
+    }
+
+
+    private static PendingIntent getPendingIntent(Context context) {
+        Context ctx;   /* get the application context */
+        Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+        alarmIntent.setAction(CUSTOM_INTENT);
+
+        return PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+    }
 }
 
 

@@ -179,13 +179,17 @@
     </RelativeLayout>
 
 
-    <FrameLayout
-        android:layout_width="wrap_content"
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true">
-        <include layout="@layout/bottom_navigation" />
-    </FrameLayout>
+        android:layout_gravity="bottom"
+        android:background="#fff"
+        android:layout_alignParentBottom="true"
+        android:elevation="20dp"
+        app:elevation="20dp"
+        app:menu="@menu/navigation" />
 
 
 

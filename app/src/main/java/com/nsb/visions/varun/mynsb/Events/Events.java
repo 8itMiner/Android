@@ -36,7 +36,7 @@ public class Events extends Loader<Event> {
 
 
     @Override
-    public Response sendRequest() throws Exception {
+    public Response sendRequest() {
         // Get the date range required for the api
         String[] dateRange = Util.getDateRange("dd-MM-yyyy");
 

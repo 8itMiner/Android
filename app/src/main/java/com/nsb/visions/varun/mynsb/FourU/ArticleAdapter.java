@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,11 +43,13 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         Article article = articles.get(position);
         holder.mainDesc.setText(article.LongDesc);
         holder.title.setText(article.name);
-        try {
-            setImage(article, holder.backdrop);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        setImage(article, holder.backdrop);
+        holder.readButton.setOnClickListener((v) -> {
+            String articleURL = article.issuuLink;
+
+            // Start a webview to redirect to the issuulink
+
+        });
     }
 
 
@@ -79,14 +83,17 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         TextView title;
         TextView mainDesc;
         ImageView backdrop;
+        Button readButton;
 
         // Construct
         ArticleView(View itemView) {
             super(itemView);
             // Associate our public variables with views in our layout holder
-            title = (TextView) itemView.findViewById(R.id.editionName);
-            mainDesc = (TextView) itemView.findViewById(R.id.description);
-            backdrop = (ImageView) itemView.findViewById(R.id.imageBanner);
+            title = itemView.findViewById(R.id.editionName);
+            mainDesc = itemView.findViewById(R.id.description);
+            backdrop = itemView.findViewById(R.id.imageBanner);
+            readButton = itemView.findViewById(R.id.readID);
+
         }
     }
     /*
@@ -116,21 +123,24 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
             Article article
             ImageView imageView
      */
-    private void setImage(Article article, ImageView imageView) throws URISyntaxException, MalformedURLException {
-        // Start encoding the URL
-        URL url = new URL(article.ImageURL);
-        URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
-        url = uri.toURL();
+    private void setImage(Article article, ImageView imageView) {
+        try {
+            // Start encoding the URL
+            URL url = new URL(article.ImageURL);
+            URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+            url = uri.toURL();
 
 
+            // Attain context
+            Context context = imageView.getContext();
 
-        // Attain context
-        Context context = imageView.getContext();
-
-        // Load the image with picasso
-        Picasso.with(context)
-            .load(url.toString())
-            .into(imageView);
+            // Load the image with picasso
+            Picasso.with(context)
+                .load(url.toString())
+                .into(imageView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     /*
         @ END UTIL FUNCTIONS =====================================================

@@ -9,5 +9,6 @@
     <color name="colorSecondaryAccent">#FF8F00</color>
 
     <color name="tutorialCircleUnselected">#000</color>
+    <color name="white">#fff</color>
     <color name="selected">#fff</color>
 </resources>

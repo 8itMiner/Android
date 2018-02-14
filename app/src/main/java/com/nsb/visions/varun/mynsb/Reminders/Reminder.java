@@ -28,16 +28,9 @@ public class Reminder {
     public Reminder(String subject, String body, JSONArray tags, String time) {
         this.subject = subject;
         this.body = body;
-        // Convert the time string into a calendar
-        // Split up the time
-        String[] dateTime = time.split("T");
-        String rawTime = dateTime[1].split(":00Z")[0];
-        String date = dateTime[0];
+        // Simpledateformat for parsing reminder dates
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
 
-
-        // Setup a simple date format
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 
         // Set up the time and add tags
         try {
@@ -46,7 +39,7 @@ public class Reminder {
                 this.tags.add(tags.getString(i));
             }
 
-            this.time = simpleDateFormat.parse(date + " " + rawTime);
+            this.time = simpleDateFormat.parse(time);
         } catch (Exception e) {
             e.printStackTrace();
         }

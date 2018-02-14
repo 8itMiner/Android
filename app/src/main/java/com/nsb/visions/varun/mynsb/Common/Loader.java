@@ -2,7 +2,6 @@ package com.nsb.visions.varun.mynsb.Common;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +20,6 @@ import eu.amirs.JSON;
 import okhttp3.Response;
 
 /**
- * Created by varun on 18/01/2018. Coz varun is awesome  :)
  */
 
 // Loader class for loading data into a recyclerView
@@ -31,6 +29,7 @@ public abstract class Loader<Model> {
     protected Context context;
     private SwipeRefreshLayout swiper;
     private TextView errorHolder;
+    private ProgressBar progressBar;
     private Handler uiHandler;
 
     public Loader(Context context) {
@@ -43,50 +42,44 @@ public abstract class Loader<Model> {
     /* loadUI takes a recyclerView and an errorHolder it then loads all the models into the recyclerView, if there are none it displays the error message
         @params;
           RecyclerView rv
+          SwipeRefreshLayout swiper
+          ProgressBar progressBar
           TextView errorHolder
-          Context context
           Handler uiHandler
-
-        @throws;
-            Exception
      */
     public void loadUI(RecyclerView rv, SwipeRefreshLayout swiper, ProgressBar progressBar, TextView errorHolder, Handler uiHandler) {
-        // Set the required values
-        this.swiper = swiper;
-        this.errorHolder = errorHolder;
-        this.uiHandler = uiHandler;
+        // Set the visibility of the progressbar
+        progressBar.setVisibility(View.VISIBLE);
+        this.progressBar = progressBar;
+        // Start a thread for http requests
+        new Thread(() -> {
+            // Set the required values
+            this.swiper = swiper;
+            this.errorHolder = errorHolder;
+            this.uiHandler = uiHandler;
 
-        // Startup the basic stuff for the recyclerView
-        // Set the linearLayoutManager
-        LinearLayoutManager llm = new LinearLayoutManager(this.context);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        rv.setLayoutManager(llm);
+            // Startup the basic stuff for the recyclerView
+            uiHandler.post(() -> {
+                // Set the linearLayoutManager
+                LinearLayoutManager llm = new LinearLayoutManager(this.context);
+                llm.setOrientation(LinearLayoutManager.VERTICAL);
+                rv.setLayoutManager(llm);
+            });
 
-        // Startup a thread to create our recyclerView
-        // Get the list of all articles that the API can serve
-        Thread loader = new Thread(() -> {
-            try {
-                List<Model> models = getModels();
-                // Load the adapter into the recyclerView
-                loadAdapter(rv, errorHolder, models, uiHandler);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        loader.start();
-        // Join the thread to prevent collision
-        try {
-            loader.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+            // Get all the models
+            List<Model> models = getModels();
+            // Load the adapter into the recyclerView
+            loadAdapter(rv, errorHolder, models, uiHandler);
 
-        // Set the visibility of the progress bar
-        progressBar.setVisibility(View.GONE);
-        rv.setVisibility(View.VISIBLE);
-
-
-        setupRefresher(rv);
+            // Post it into the UI
+            uiHandler.post(() -> {
+                // Set the visibility of the progress bar
+                progressBar.setVisibility(View.GONE);
+                rv.setVisibility(View.VISIBLE);
+                // Setup the refresher
+                setupRefresher(rv);
+            });
+        }).start();
     }
 
 
@@ -101,16 +94,13 @@ public abstract class Loader<Model> {
             @params;
                 RecyclerView recyclerView
                 TextView errorHolder
-                List<Article> articles
+                List<Model> models
                 Handler uiHandler
-
-            @throws;
-                Exception
      */
-    private void loadAdapter(RecyclerView recyclerView, TextView errorHolder, List<Model> models, Handler uiHandler) throws Exception {
+    private void loadAdapter(RecyclerView recyclerView, TextView errorHolder, List<Model> models, Handler uiHandler) {
         // Post ui update to handler
         uiHandler.post(() -> {
-            showErrors(models, recyclerView, errorHolder);
+            showErrors(recyclerView, errorHolder, models == null || models.isEmpty());
 
             this.adapter = getAdapterInstance(models);
             int resId = R.anim.layout_animation_fall_down;
@@ -131,9 +121,9 @@ public abstract class Loader<Model> {
                 RecyclerView recyclerView
                 TextView errorHolder
      */
-    private void showErrors(@NonNull List<Model> models, RecyclerView recyclerView, TextView errorHolder) {
+    public static void showErrors(RecyclerView recyclerView, TextView errorHolder, boolean errorOrNot) {
         // Article are empty so show the error message
-        if (models.isEmpty()) {
+        if (errorOrNot) {
             recyclerView.setVisibility(View.GONE);
             errorHolder.setVisibility(View.VISIBLE);
         } else {
@@ -146,32 +136,25 @@ public abstract class Loader<Model> {
     /* setup refresher sets up the refresher layout and attaches a swipe listener to it
         it adds a refresher which allows the user to load the models again
             @params;
-                SwipeRefreshLayout refresher
                 RecyclerView recyclerView
      */
     private void setupRefresher(RecyclerView recyclerView) {
         this.swiper.setOnRefreshListener(() -> {
+            this.progressBar.setVisibility(View.VISIBLE);
+            // Start a thread for loading data
             new Thread(() -> {
-                // Get the model data
-                List<Model> models = null;
-                try {
-                    models = getModels();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                List<Model> models = getModels();
+
                 // Determine if errors need to be shown
-                assert models != null;
-                showErrors(models, recyclerView, this.errorHolder);
-
-                List<Model> finalModels = models;
                 this.uiHandler.post(() -> {
+                    showErrors(recyclerView, this.errorHolder, models == null || models.isEmpty());
                     // Setup the adapter
-                    setUpAdapter(recyclerView, finalModels);
-
+                    setUpAdapter(recyclerView, models);
                     // Set the refresher
                     this.swiper.setRefreshing(false);
                     recyclerView.getAdapter().notifyDataSetChanged();
                 });
+
             }).start();
         });
     }
@@ -179,7 +162,7 @@ public abstract class Loader<Model> {
 
 
     // Send request function must be overridden because it points to the URL we want
-    abstract public Response sendRequest() throws Exception;
+    abstract public Response sendRequest();
     // parseJson function must be overridden because it tells us how to get the models
     abstract public Model parseJson(JSON json) throws Exception;
     // get adapterInstance returns an instance of your adapter get adapter instance must set the value of our recycler adapter by returning an instance
@@ -193,7 +176,7 @@ public abstract class Loader<Model> {
         @UTIL FUNCTIONS =======================================
    */
 
-    /* setUpAdapter sets up a recyclerview adapter for a swipeRefresh
+    /* setUpAdapter sets up a recyclerView adapter for a swipeRefresh
             @params;
                 RecyclerView recycler,
                 List<Model> models
@@ -216,31 +199,35 @@ public abstract class Loader<Model> {
 
     /* getModels retrieves all models from the API
         @params;
-            Context context
-
-        @throws;
-            Exception
+            nil
 
     */
-    private List<Model> getModels() throws Exception {
+    private List<Model> getModels() {
         // List of models
         List<Model> models = new ArrayList<>();
 
         // Get the response from the httpClient
-        Response response = sendRequest();
-        // Begin reading the json resp
-        String jsonRaw = response.body().string();
-        // Begin parsing that json and push it into the models list
-        JSON json = new JSON(jsonRaw);
-        // Get our body array with all the information
-        JSON bodyArray = json.key("Message").key("Body").index(0);
-        // Iterate over json array and push it into the models list
-        for(int i = 0; i < bodyArray.count(); i++) {
-            models.add(parseJson(bodyArray.index(i)));
+        try {
+            Response response = sendRequest();
+            // Begin reading the json resp
+            assert response != null;
+            String jsonRaw = response.body().string();
+
+            // Begin parsing that json and push it into the models list
+            JSON json = new JSON(jsonRaw);
+            // Get our body array with all the information
+            JSON bodyArray = json.key("Message").key("Body").index(0);
+            // Iterate over json array and push it into the models list
+            for (int i = 0; i < bodyArray.count(); i++) {
+                models.add(parseJson(bodyArray.index(i)));
+            }
+            return models;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         // Return the models
-        return models;
+        return null;
     }
     /*
         @ UTIL FUNCTIONS END =======================================
