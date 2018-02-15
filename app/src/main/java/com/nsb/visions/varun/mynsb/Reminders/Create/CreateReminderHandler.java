@@ -52,7 +52,7 @@ public class CreateReminderHandler {
                 Context context,
                 Application application
      */
-    public void handleCreateReminderButton(FloatingActionButton fab, LayoutInflater inflater, Context context, Application application) {
+    public static void handleCreateReminderButton(FloatingActionButton fab, LayoutInflater inflater, Context context, Application application) {
         // Setup a dialog
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
         // Get the views

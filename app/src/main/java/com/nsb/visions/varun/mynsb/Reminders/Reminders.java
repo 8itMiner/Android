@@ -35,7 +35,7 @@ public class Reminders extends Loader<Reminder>{
 
 
     @Override
-    public Response sendRequest() throws Exception {
+    public Response sendRequest() {
         // Set up the http client
         HTTP httpclient = new HTTP(this.context);
 
@@ -49,7 +49,12 @@ public class Reminders extends Loader<Reminder>{
             .build();
 
         // Send the request
-        return httpclient.performRequest(getReminders);
+        try {
+            return httpclient.performRequest(getReminders);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

@@ -1,10 +1,19 @@
 package com.nsb.visions.varun.mynsb.Common;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.AsyncTask;
+
+import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
+
+import eu.amirs.JSON;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static java.util.Calendar.DATE;
 import static java.util.Calendar.SATURDAY;
@@ -23,6 +32,7 @@ public class Util {
     */
     public static int dayAsInt() {
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getDefault());
         int day = calendar.get(Calendar.DAY_OF_WEEK);
 
         switch (day) {
@@ -31,7 +41,7 @@ public class Util {
             case Calendar.MONDAY:
                 return 2;
             case Calendar.TUESDAY:
-                return 2;
+                return 3;
             case Calendar.WEDNESDAY:
                 return 4;
             case Calendar.THURSDAY:
@@ -48,15 +58,15 @@ public class Util {
 
         // Switch statement for conversion
         switch (day) {
-            case 1:
-                return "Monday";
             case 2:
-                return "Tuesday";
+                return "Monday";
             case 3:
-                return "Wednesday";
+                return "Tuesday";
             case 4:
-                return "Thursday";
+                return "Wednesday";
             case 5:
+                return "Thursday";
+            case 6:
                 return "Friday";
         }
 
@@ -90,4 +100,87 @@ public class Util {
         return new String[]{sundayTxt, saturdayTxt};
     }
 
+
+
+    /* calculateDate returns the day of the week suitable for the api e.g.. 10, 4, 5,
+        it sends to the API's week/get feature which returns the week through a calculation made from data on the school's calendar
+            @params;
+                nil
+
+     */
+    public static int calculateDay(Context context) {
+        // Get today as an integer
+        int today = dayAsInt() - 1;
+        String week = weekAorB(context);
+
+        // If today is a saturday or a sunday set it to a monday because there are no timetables for sunday and monday
+        if (today == 6 || today == 0) {
+            today = 1;
+            week = week.equals("A") ? "B" : "A";
+        }
+
+        // Determine if we need to +5 or if we just leave it as is
+        if (week.equals("B")) {
+            today += 5;
+        }
+
+
+        // Return the day
+        return today;
+    }
+
+
+    /* weekAorB tells us if it is week a or b using the API
+            @params;
+                Context context
+     */
+    public static String weekAorB(Context context) {
+       GetWeek getter = new GetWeek(context);
+        try {
+            return getter.execute("http://35.189.45.152:8080/api/v1/week/Get").get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
+
+
+    // Async class for determining if it is week a or b
+    private static class GetWeek extends AsyncTask<String, Integer, String> {
+
+        private Context context;
+
+        public GetWeek(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String url = strings[0];
+
+            // Setup a http handler
+            HTTP client = new HTTP(context);
+
+            // Set up a request
+            Request request = new Request.Builder()
+                .get()
+                .url(url)
+                .build();
+
+            try {
+                // Get the response
+                Response response = client.performRequest(request);
+
+                // Get the data from the response and begin parsing it
+                JSON json = new JSON(response.body().string());
+                return json.key("Message").key("Body").stringValue();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
 }

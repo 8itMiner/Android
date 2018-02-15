@@ -2,6 +2,7 @@ package com.nsb.visions.varun.mynsb.Reminders.Create;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 import com.nsb.visions.varun.mynsb.Reminders.Reminder;
@@ -62,12 +63,14 @@ public class CreateReminder {
             .post(requestBody)
             .build();
 
+
         final Exception[] exception = {null};
 
         // Send the request and get the response
         Thread sendRequest = new Thread(() -> {
             try {
                 response = httpHandler.performRequest(request);
+                Log.d("data-resp", response.toString());
             } catch (Exception e) {
                 e.printStackTrace();
                 exception[0] = e;

@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.TimingLogger;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -54,16 +55,20 @@ public class SignIn extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sign_in);
+
+        // We need to time this
+        TimingLogger logger = new TimingLogger("timer timer", "method A");
+        logger.addSplit("Start route");
         // Setup the things that require context
         this.sharePref = getSharedPreferences("MyNSB", Context.MODE_PRIVATE);
         this.editor = sharePref.edit();
+
         this.am = getApplicationContext().getAssets();
         this.raleway = Typeface.createFromAsset(am,
             String.format(Locale.US, "fonts/%s", "raleway_regular.ttf"));
         // Determine what to do with the incoming user through the router user function
-        routeUser(sharePref, editor);
         // Load in the layout after shared pref has been checked
-        setContentView(R.layout.activity_sign_in);
 
         // Setup authenticator
         this.authenticator = new Auth(getApplicationContext());
@@ -71,11 +76,11 @@ public class SignIn extends AppCompatActivity {
 
 
         // Attain all the required ui components
-        final RelativeLayout loaderView = (RelativeLayout) findViewById(R.id.loaderContainer);
-        final RelativeLayout mainContent = (RelativeLayout) findViewById(R.id.activity_sign_in);
+        final RelativeLayout loaderView = findViewById(R.id.loaderContainer);
+        final RelativeLayout mainContent = findViewById(R.id.activity_sign_in);
         // Title text displays: "Sign In"
-        final TextView titleText = ((TextView) findViewById(R.id.signInText));
-        Button signInButton = (Button) findViewById(R.id.signInButton);
+        final TextView titleText = findViewById(R.id.signInText);
+        Button signInButton = findViewById(R.id.signInButton);
         // Initialize the UI
         initUI(titleText);
 
@@ -208,33 +213,6 @@ public class SignIn extends AppCompatActivity {
     private void initUI(TextView signInText) {
         signInText.setTypeface(raleway);
     }
-
-
-    /* routeUser routes the current user based on the stored shared preferences, if this is the first one a tutorial is shown if they are logged in they are taken to the home screen
-        @params;
-            SharedPreferences preferences
-            SharedPreferences.Editor editor
-     */
-    private void routeUser(SharedPreferences preferences, SharedPreferences.Editor editor) {
-        // Determine if this is the first time they have run the app if so then take them to the tutorial
-        if (preferences.getBoolean("firstrun", true)) {
-            // Set the logged-in flag to false
-            editor.putBoolean("logged-in", false);
-            // Set the firstrun flag to false
-            editor.putBoolean("firstrun", false);
-            // Apply changes
-            editor.apply();
-            // Show the tutorial
-            // TODO: Once the tutorial is completed implement this redirect
-
-        // Determine if the user is logged-in through the flag
-        } else if (preferences.getBoolean("logged-in", false)) {
-            // Redirect the user to the home page
-            Intent redirect = new Intent(SignIn.this, Home.class);
-            startActivity(redirect);
-        }
-    }
-
 
     /* updatePrefDetails updates the shared preferences given a specific user
         @params;

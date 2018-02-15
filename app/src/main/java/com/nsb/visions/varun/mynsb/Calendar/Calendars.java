@@ -30,7 +30,7 @@ public class Calendars extends Loader<Calendar> {
         OVERRIDDEN METHODS ============================
      */
     @Override
-    public Response sendRequest() throws Exception {
+    public Response sendRequest() {
         // Get the dates we should use for the request, the start and the end of the week
         String[] dates = Util.getDateRange("dd-MM-yyyy");
 
@@ -43,7 +43,12 @@ public class Calendars extends Loader<Calendar> {
             .build();
 
         // Perform request and return the response
-        return httpClient.performRequest(request);
+        try {
+            return httpClient.performRequest(request);
+        } catch (Exception e) {
+            e.printStackTrace();;
+        }
+        return null;
     }
 
     @Override

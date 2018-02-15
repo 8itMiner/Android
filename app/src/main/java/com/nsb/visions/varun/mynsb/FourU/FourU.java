@@ -26,7 +26,7 @@ public class FourU extends Loader<Article> {
     public Article parseJson(JSON json) {
         return new Article(json.key("ArticleName").stringValue(),
             json.key("ArticleDesc").stringValue(),
-            json.key("ArticleImageUrl").stringValue());
+            json.key("ArticleImageUrl").stringValue(), "");
     }
 
     @Override
@@ -35,7 +35,7 @@ public class FourU extends Loader<Article> {
     }
 
     @Override
-    public Response sendRequest() throws Exception {
+    public Response sendRequest() {
         HTTP httpClient = new HTTP(context);
         // Set up a request for the client to send
         Request request = new Request.Builder()
@@ -43,7 +43,12 @@ public class FourU extends Loader<Article> {
             .url("http://35.189.45.152:8080/api/v1/4U/Get")
             .build();
 
-        return httpClient.performRequest(request);
+        try {
+            return httpClient.performRequest(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
 
