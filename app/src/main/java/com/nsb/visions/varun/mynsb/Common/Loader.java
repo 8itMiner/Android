@@ -48,9 +48,18 @@ public abstract class Loader<Model> {
           Handler uiHandler
      */
     public void loadUI(RecyclerView rv, SwipeRefreshLayout swiper, ProgressBar progressBar, TextView errorHolder, Handler uiHandler) {
+
+        // Determine if there is an internet connection
+        if (!Util.isNetworkAvailable(this.context)) {
+            showErrors(rv, errorHolder, true);
+            progressBar.setVisibility(View.GONE);
+            return;
+        }
+
         // Set the visibility of the progressbar
         progressBar.setVisibility(View.VISIBLE);
         this.progressBar = progressBar;
+
         // Start a thread for http requests
         new Thread(() -> {
             // Set the required values
@@ -102,14 +111,16 @@ public abstract class Loader<Model> {
         uiHandler.post(() -> {
             showErrors(recyclerView, errorHolder, models == null || models.isEmpty());
 
-            this.adapter = getAdapterInstance(models);
-            int resId = R.anim.layout_animation_fall_down;
-            LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this.context, resId);
-            recyclerView.setLayoutAnimation(animation);
+            if (models != null && !models.isEmpty()) {
+                this.adapter = getAdapterInstance(models);
+                int resId = R.anim.layout_animation_fall_down;
+                LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this.context, resId);
+                recyclerView.setLayoutAnimation(animation);
 
 
-            // Set the adapter
-            recyclerView.setAdapter(this.adapter);
+                // Set the adapter
+                recyclerView.setAdapter(this.adapter);
+            }
         });
     }
 
@@ -140,7 +151,6 @@ public abstract class Loader<Model> {
      */
     private void setupRefresher(RecyclerView recyclerView) {
         this.swiper.setOnRefreshListener(() -> {
-            this.progressBar.setVisibility(View.VISIBLE);
             // Start a thread for loading data
             new Thread(() -> {
                 List<Model> models = getModels();
@@ -183,8 +193,8 @@ public abstract class Loader<Model> {
      */
     private void setUpAdapter(RecyclerView recycler, List<Model> models) {
         // Set the models
-        getAdapterInstance(models);
-        recycler.setAdapter(this.adapter);
+        RecyclerView.Adapter adapter = getAdapterInstance(models);
+        recycler.swapAdapter(adapter, true);
 
         // Start the animation again
         final Context context = recycler.getContext();

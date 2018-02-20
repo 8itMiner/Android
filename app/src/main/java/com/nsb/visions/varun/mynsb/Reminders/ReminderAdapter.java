@@ -15,12 +15,13 @@ import com.nsb.visions.varun.mynsb.Common.ReminderColours;
 import com.nsb.visions.varun.mynsb.R;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ReminderHolder> {
 
-    private List<Reminder> reminders;
+    private List<Reminder> reminders = new ArrayList<>();
     private SharedPreferences preferences;
 
     // Constructor

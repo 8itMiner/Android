@@ -26,12 +26,12 @@ public class FourU extends Loader<Article> {
     public Article parseJson(JSON json) {
         return new Article(json.key("ArticleName").stringValue(),
             json.key("ArticleDesc").stringValue(),
-            json.key("ArticleImageUrl").stringValue(), "");
+            json.key("ArticleImageUrl").stringValue(), json.key("Link").stringValue());
     }
 
     @Override
     public RecyclerView.Adapter getAdapterInstance(List<Article> articles) {
-        return new ArticleAdapter(articles);
+        return new ArticleAdapter(articles, this.context);
     }
 
     @Override

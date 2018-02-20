@@ -39,8 +39,8 @@ public class CreateReminderHandler {
     private static FloatingActionButton fab;
     private static Button closeButton;
     private static Button createReminder;
-    private static Button pickDate;
-    private static Button pickTime;
+    private static EditText pickDate;
+    private static EditText pickTime;
 
     /*
     UTIL FUNCTIONS ======================
@@ -70,10 +70,10 @@ public class CreateReminderHandler {
         fab.setClickable(false);
 
         // Set up the sub buttons in the modal
-        Button closeButton = (Button) createView.findViewById(R.id.cancelButton);
-        Button createReminder = (Button) createView.findViewById(R.id.createReminderButton);
-        Button pickDate = (Button) createView.findViewById(R.id.setDateButton);
-        Button pickTime = (Button) createView.findViewById(R.id.setTimeButton);
+        Button closeButton = createView.findViewById(R.id.cancelButton);
+        Button createReminder = createView.findViewById(R.id.createReminderButton);
+        EditText pickDate = createView.findViewById(R.id.reminderDate);
+        EditText pickTime = createView.findViewById(R.id.reminderTime);
 
         // Set up the variables that we need
         CreateReminderHandler.fab = fab;
@@ -105,7 +105,7 @@ public class CreateReminderHandler {
         pickDate.setOnClickListener((v) -> {
             // Init a datePicker dialog
             DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
-                handledDateEntry(alertDialog, calendar, year, monthOfYear, dayOfMonth);
+                handledDateEntry(calendar, year, monthOfYear, dayOfMonth);
             };
 
             DatePickerDialog picker = new DatePickerDialog(context, date, calendar
@@ -117,10 +117,10 @@ public class CreateReminderHandler {
         pickTime.setOnClickListener((v) -> {
             // Initiate a timePicker dialog
             TimePickerDialog.OnTimeSetListener time = (view, hourOfDay, minuteOfHour) -> {
-                handleTimeEntry(alertDialog, calendar, hourOfDay, minuteOfHour);
+                handleTimeEntry(calendar, hourOfDay, minuteOfHour);
             };
 
-            TimePickerDialog picker = new TimePickerDialog(context, time, calendar.HOUR_OF_DAY, calendar.MINUTE, true);
+            TimePickerDialog picker = new TimePickerDialog(context, time, Calendar.HOUR_OF_DAY, Calendar.MINUTE, true);
             picker.setTitle("");
             picker.show();
         });
@@ -180,7 +180,7 @@ public class CreateReminderHandler {
                int monthOfYear
                int dayOfMonth
      */
-    private static void handledDateEntry(AlertDialog alertDialog, Calendar calendar, int year, int monthOfYear, int dayOfMonth) {
+    private static void handledDateEntry(Calendar calendar, int year, int monthOfYear, int dayOfMonth) {
         // Create a calendar instance
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, monthOfYear);
@@ -190,9 +190,7 @@ public class CreateReminderHandler {
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-        // Attain the selected date display
-        TextView dateDisplay = (TextView) alertDialog.findViewById(R.id.setDate);
-        dateDisplay.setText(dateFormat.format(calendar.getTime()));
+        pickDate.setText(dateFormat.format(calendar.getTime()));
     }
 
 
@@ -203,7 +201,7 @@ public class CreateReminderHandler {
                int hourOfDay
                int minuteOfHour
      */
-    private static void handleTimeEntry(AlertDialog alertDialog, Calendar calendar, int hourOfDay, int minuteOfHour) {
+    private static void handleTimeEntry(Calendar calendar, int hourOfDay, int minuteOfHour) {
         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
         calendar.set(Calendar.MINUTE, minuteOfHour);
 
@@ -212,8 +210,7 @@ public class CreateReminderHandler {
         SimpleDateFormat dateFormat = new SimpleDateFormat("kk:mm");
 
         // Set the selected time
-        TextView timeDisplay = (TextView) alertDialog.findViewById(R.id.setTime);
-        timeDisplay.setText(dateFormat.format(calendar.getTime()));
+        pickTime.setText(dateFormat.format(calendar.getTime()));
     }
 
 
@@ -223,21 +220,18 @@ public class CreateReminderHandler {
                 Application application
      */
     private static void handleReminderSubmission(Context context, Application application) {
-        @SuppressLint("CutPasteId")
-        String subject = ((EditText) alertDialog.findViewById(R.id.reminderSubject)).getText().toString();
-        String body = ((EditText) alertDialog.findViewById(R.id.reminderBody)).getText().toString();
-        @SuppressLint("CutPasteId")
-        String date = (String) ((TextView) alertDialog.findViewById(R.id.setDate)).getText();
-        String time = (String) ((TextView) alertDialog.findViewById(R.id.setTime)).getText();
-        String tag = ((EditText) alertDialog.findViewById(R.id.setTag)).getText().toString();
+        String body =  ((EditText)  alertDialog.findViewById(R.id.reminderBody)).getText().toString();
+        String date =  ((EditText)  alertDialog.findViewById(R.id.reminderDate)).getText().toString();
+        String time =  ((EditText)  alertDialog.findViewById(R.id.reminderTime)).getText().toString();
+        String tag  =  ((EditText)  alertDialog.findViewById(R.id.setTag)).getText().toString();
 
-        if (date.equals("01/09/2002") || time.equals("27:02") || subject.isEmpty() || body.isEmpty()) {
+        if (date.isEmpty() || time.isEmpty() || tag.isEmpty() || body.isEmpty()) {
             Toast.makeText(context, "Some fields have not been filled out", Toast.LENGTH_LONG).show();
             return;
         }
 
         // Attain the text fields we want
-        boolean success = handleReminderCreation(subject, body, date, time, tag, application);
+        boolean success = handleReminderCreation(tag, body, date, time, tag, application);
         if (!success) {
             // Throw a toast
             Toast.makeText(context, "Could not create reminder", Toast.LENGTH_LONG).show();

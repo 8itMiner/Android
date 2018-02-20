@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.nsb.visions.varun.mynsb.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarView> {
 
-    public List<Calendar> calendars;
+    public List<Calendar> calendars = new ArrayList<>();
 
     public CalendarAdapter(List<Calendar> calendars) {
         this.calendars = calendars;

@@ -63,6 +63,12 @@ public class Timetables extends Loader<Subject> {
         // Determine what day of the week it is as a string
         int day = Util.calculateDay(context) + 1;
         int dayOfWeek = day > 5 ? day - 5 : day;
-        return new TimetableAdapter(subjects, Util.intToDaystr(dayOfWeek) + " " + Util.weekAorB(this.context));
+        String week = Util.weekAorB(this.context);
+
+        if (day > 5) {
+            week = "B";
+        }
+
+        return new TimetableAdapter(subjects, Util.intToDaystr(dayOfWeek) + " " + week);
     }
 }

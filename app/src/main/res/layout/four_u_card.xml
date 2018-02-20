@@ -36,7 +36,7 @@
                     android:layout_height="160dp"
                     android:layout_alignParentEnd="true"
                     android:scaleType="centerCrop"
-                    android:background="@drawable/gradient_background_blue"
+                    android:background="@color/colorPrimaryDark"
                     app:srcCompat="@mipmap/background" />
 
                 <TextView

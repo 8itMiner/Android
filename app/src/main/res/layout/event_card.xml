@@ -30,7 +30,8 @@
 
                 <ImageView
                     android:id="@+id/eventImage"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
+                    android:background="@color/colorPrimaryDark"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
                     app:srcCompat="@mipmap/background" />
@@ -90,6 +91,7 @@
                     android:layout_height="37dp"
                     android:textColor="@color/colorPrimary"
                     android:textSize="12dp"
+                    android:id="@+id/readMore"
                     android:background="@drawable/ripple_blank"
                     android:text="Learn More" />
 

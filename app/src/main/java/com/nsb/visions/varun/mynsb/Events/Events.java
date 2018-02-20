@@ -73,6 +73,6 @@ public class Events extends Loader<Event> {
 
     @Override
     public RecyclerView.Adapter getAdapterInstance(List<Event> events) {
-        return new EventAdapter(events);
+        return new EventAdapter(events, this.context);
     }
 }

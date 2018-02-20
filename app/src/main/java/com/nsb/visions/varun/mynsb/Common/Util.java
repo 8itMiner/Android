@@ -2,12 +2,16 @@ package com.nsb.visions.varun.mynsb.Common;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
@@ -112,11 +116,17 @@ public class Util {
         // Get today as an integer
         int today = dayAsInt() - 1;
         String week = weekAorB(context);
+        Log.d("Week-context", week);
 
         // If today is a saturday or a sunday set it to a monday because there are no timetables for sunday and monday
         if (today == 6 || today == 0) {
+            Log.d("week-context", String.valueOf(today));
             today = 1;
-            week = week.equals("A") ? "B" : "A";
+            if (Objects.equals(week.trim(), "A")) {
+                week = "B";
+            } else {
+                week = "A";
+            }
         }
 
         // Determine if we need to +5 or if we just leave it as is
@@ -135,52 +145,44 @@ public class Util {
                 Context context
      */
     public static String weekAorB(Context context) {
-       GetWeek getter = new GetWeek(context);
-        try {
-            return getter.execute("http://35.189.45.152:8080/api/v1/week/Get").get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
+        // Setup a http client
+        HTTP httpclient = new HTTP(context);
+        final String[] responseStr = {null};
 
 
-
-
-    // Async class for determining if it is week a or b
-    private static class GetWeek extends AsyncTask<String, Integer, String> {
-
-        private Context context;
-
-        public GetWeek(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String url = strings[0];
-
-            // Setup a http handler
-            HTTP client = new HTTP(context);
-
-            // Set up a request
+        Thread requester = new Thread(() -> {
+            // Setup a request
             Request request = new Request.Builder()
                 .get()
-                .url(url)
+                .url("http://35.189.45.152:8080/api/v1/week/Get")
                 .build();
 
-            try {
-                // Get the response
-                Response response = client.performRequest(request);
 
-                // Get the data from the response and begin parsing it
+            try {
+                Response response = httpclient.performRequest(request);
+                // Parse the response into JSON
                 JSON json = new JSON(response.body().string());
-                return json.key("Message").key("Body").stringValue();
+                responseStr[0] = json.key("Message").key("Body").stringValue();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            return null;
+        });
+        requester.start();
+        try {
+            requester.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
+
+        return responseStr[0];
+    }
+
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+            = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

@@ -1,25 +1,27 @@
 package com.nsb.visions.varun.mynsb.FourU;
 
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nsb.visions.varun.mynsb.R;
+import com.nsb.visions.varun.mynsb.Webview;
 import com.squareup.picasso.Picasso;
 
-
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 // Article adapter class to make it easier to display articles given a list of them
@@ -27,11 +29,15 @@ import java.util.List;
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleView> {
 
     // Article list
-    private List<Article> articles;
+    private List<Article> articles = new ArrayList<>();
+    private Context context;
 
-
-    public ArticleAdapter(List<Article> articles) {
+    /*
+        CONTEXT IS REQUIRED SO WE CAN REDIRECT THE USER ON A CLICK
+     */
+    public ArticleAdapter(List<Article> articles, Context context) {
         this.articles = articles;
+        this.context = context;
     }
 
 
@@ -44,11 +50,19 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         holder.mainDesc.setText(article.LongDesc);
         holder.title.setText(article.name);
         setImage(article, holder.backdrop);
+        // Set a click listener
         holder.readButton.setOnClickListener((v) -> {
             String articleURL = article.issuuLink;
 
-            // Start a webview to redirect to the issuulink
-
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(articleURL));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setPackage("com.android.chrome");
+            try {
+                context.startActivity(intent);
+            } catch (ActivityNotFoundException ex) {
+                // Chrome browser presumably not installed so allow user to choose instead
+                Toast.makeText(context, "Chrome is not installed, to read this article please visit: " + articleURL, Toast.LENGTH_LONG).show();
+            }
         });
     }
 

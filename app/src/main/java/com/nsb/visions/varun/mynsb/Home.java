@@ -19,8 +19,10 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.nsb.visions.varun.mynsb.Calendar.Calendars;
 import com.nsb.visions.varun.mynsb.Common.Loader;
 import com.nsb.visions.varun.mynsb.Events.Events;
 import com.nsb.visions.varun.mynsb.FourU.FourU;
@@ -28,6 +30,7 @@ import com.nsb.visions.varun.mynsb.Reminders.Create.CreateReminderHandler;
 import com.nsb.visions.varun.mynsb.Reminders.Reminders;
 import com.nsb.visions.varun.mynsb.Timetable.Timetables;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -75,6 +78,9 @@ public class Home extends AppCompatActivity {
                     return true;
                 case R.id.navigation_calendar:
                     mTextMessage.setText("School Calendar");
+                    Calendars calendars = new Calendars(getApplicationContext());
+                    Toast.makeText(Home.this, "Feature still in development", Toast.LENGTH_LONG).show();
+                    //pushUI(calendars, 4, "Calendar");
                     return true;
             }
             return false;
@@ -94,18 +100,17 @@ public class Home extends AppCompatActivity {
     private void pushUI(Loader loader, int childIndex, String entryName) {
         flipper.setDisplayedChild(childIndex);
         RelativeLayout mainHolder = (RelativeLayout) flipper.getChildAt(childIndex);
-        SwipeRefreshLayout swiperLayout = (SwipeRefreshLayout) mainHolder.getChildAt(0);
+        SwipeRefreshLayout swiperLayout = (SwipeRefreshLayout) mainHolder.getChildAt(1);
         RecyclerView contentHolder = swiperLayout.findViewById(R.id.recyclerLoader);
         // Hide any current errors so we dont get weird views
         Loader.showErrors(contentHolder, errorHolder, false);
         // Main if
         if (!loaded.get(entryName)) {
-            ProgressBar progressBar = (ProgressBar) swiperLayout.findViewById(R.id.loader);
+            ProgressBar progressBar = mainHolder.findViewById(R.id.loader);
             // Load the UI
             loader.loadUI(contentHolder, swiperLayout, progressBar, errorHolder, uiHandler);
             loaded.put(entryName, true);
         }
-
     }
     /*
         @ END UTIL FUNCTIONS ==============================
@@ -117,13 +122,11 @@ public class Home extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-        // Setup the shared preferences
         this.sharePref = getSharedPreferences("MyNSB", Context.MODE_PRIVATE);
         routeUser(this.sharePref, this.sharePref.edit());
 
+        super.onCreate(savedInstanceState);
+        // Setup the shared preferences
         setContentView(R.layout.activity_home);
 
         // Push everything into loaded hashmap check line 34 for regarding what the loaded map does
@@ -190,12 +193,12 @@ public class Home extends AppCompatActivity {
             editor.apply();
             // Show the tutorial
             // TODO: Once the tutorial is completed implement this redirect
-
             // Determine if the user is logged-in through the flag
         } else if (!(preferences.getBoolean("logged-in", false))) {
             // Redirect the user to the home page
             Intent redirect = new Intent(Home.this, SignIn.class);
             startActivity(redirect);
+            finish();
         }
     }
 

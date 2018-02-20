@@ -8,12 +8,13 @@ import android.widget.TextView;
 
 import com.nsb.visions.varun.mynsb.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Subject> subjects;
+    private List<Subject> subjects = new ArrayList<>();
 
     public TimetableAdapter(List<Subject> subjects, String title) {
         // Reverse the subjects so that roll call is first

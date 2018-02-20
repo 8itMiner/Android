@@ -2,6 +2,7 @@ package com.nsb.visions.varun.mynsb.Calendar;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.nsb.visions.varun.mynsb.Common.Loader;
 import com.nsb.visions.varun.mynsb.Common.Util;
@@ -41,6 +42,8 @@ public class Calendars extends Loader<Calendar> {
             .get()
             .url(String.format(Locale.ENGLISH, "http://35.189.45.152:8080/api/v1/events/Calendar/Get?Start=%s&End=%s", dates[0], dates[1]))
             .build();
+
+        Log.d("content-response", String.format(Locale.ENGLISH, "http://35.189.45.152:8080/api/v1/events/Calendar/Get?Start=%s&End=%s", dates[0], dates[1]));
 
         // Perform request and return the response
         try {
