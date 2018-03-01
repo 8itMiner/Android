@@ -1,6 +1,7 @@
 package com.nsb.visions.varun.mynsb.Timetable;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
@@ -24,8 +25,14 @@ import okhttp3.Response;
 
 public class Timetables extends Loader<Subject> {
 
-    public Timetables(Context context) {
+    private SharedPreferences preferences;
+    private String url = null;
+    private boolean expandOrNot;
+
+    public Timetables(Context context, SharedPreferences preferences, Boolean expandOrNot) {
         super(context);
+        this.preferences = preferences;
+        this.expandOrNot = expandOrNot;
     }
 
     @Override
@@ -34,12 +41,17 @@ public class Timetables extends Loader<Subject> {
         HTTP httpClient = new HTTP(context);
 
         // Get the day
-        int day = Util.calculateDay(context);
+        int day = Util.getDay(this.preferences, context);
+
+        // TODO: Kind of a hack, needs to be removed later
+        if (this.url == null) {
+            this.url = "http://35.189.45.152:8080/api/v1/timetable/Get?Day=" + String.valueOf(day);
+        }
 
         // Set up the request
         Request request = new Request.Builder()
             .get()
-            .url("http://35.189.45.152:8080/api/v1/timetable/Get?Day=" + String.valueOf(day))
+            .url(url)
             .build();
 
         try {
@@ -69,6 +81,20 @@ public class Timetables extends Loader<Subject> {
             week = "B";
         }
 
-        return new TimetableAdapter(subjects, Util.intToDaystr(dayOfWeek) + " " + week);
+        String combined = Util.intToDaystr(dayOfWeek) + " " + week;
+
+        if (expandOrNot) {
+            combined = null;
+        }
+
+        return new TimetableAdapter(subjects, combined, Util.intToDaystr(dayOfWeek), preferences, context);
+    }
+
+
+
+    // Little helper function that will allow us to set a different url to retrieve our timetables from
+    // TODO: Kind of a hacky solution so it should down the track be removed
+    public void setURL(String url) {
+        this.url = url;
     }
 }

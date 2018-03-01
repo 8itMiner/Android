@@ -52,7 +52,7 @@ public class Auth {
         
         if (loginResp.code() != 200) {
             // Throw the error meaning that the request was unsuccessful
-            throw new RuntimeException("User details are invalid");
+            throw new IllegalAccessError("User details are invalid");
         }
 
 
@@ -90,6 +90,7 @@ public class Auth {
                 throw new RuntimeException("Something went horrible wrong");
             }
 
+            // Get the user data
             Integer StudentID = userData.key("Message").key("Body").index(0).key("StudentID").intValue();
             String Fname = userData.key("Message").key("Body").index(0).key("Fname").stringValue();
             String Lname = userData.key("Message").key("Body").index(0).key("Lname").stringValue();

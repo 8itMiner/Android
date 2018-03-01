@@ -28,6 +28,6 @@ public class Webview extends AppCompatActivity {
         Log.d("url-data", "d" + url);
 
         // Load the article
-        webView.loadUrl("https://www.google.com");
+        webView.loadUrl(url);
     }
 }

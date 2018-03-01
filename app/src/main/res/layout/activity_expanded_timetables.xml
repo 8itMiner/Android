@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    tools:context="com.nsb.visions.varun.mynsb.ExpandedTimetables">
+
+
+
+
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme">
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Timetables"
+                android:textSize="20dp"
+                android:textColor="#fff"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:layout_below="@+id/toolbar2"
+
+        android:id="@+id/selectionHolder">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/selectorContent"
+            android:layout_height="wrap_content">
+
+            <Spinner
+                android:id="@+id/week"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:entries="@array/week_arrays"
+                android:prompt="@string/week_prompt"
+                android:tag="Day of the Week" />
+
+            <Spinner
+                android:id="@+id/day"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/week"
+                android:prompt="@string/day_prompt"
+                android:entries="@array/day_arrays"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/week"
+                android:tag="Week A or B" />
+        </RelativeLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/selectorContent"
+            android:layout_centerHorizontal="true"
+            android:text="Retrieve"
+            android:id="@+id/submissionButton"
+            android:layout_marginBottom="10dp"
+            android:textColor="#fff"
+            android:background="@drawable/ripple_blank"/>
+
+    </RelativeLayout>
+
+
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/recycler"
+        android:visibility="gone"
+        android:layout_below="@+id/selectionHolder"/>
+
+
+    <ProgressBar
+        android:id="@+id/loader"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:elevation="5dp"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="visible" />
+
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        android:text="Oops! It looks like there is nothing to see!"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/errorText"
+        android:visibility="gone"/>
+
+
+
+
+
+
+
+</RelativeLayout>

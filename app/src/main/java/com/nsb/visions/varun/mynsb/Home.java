@@ -54,7 +54,7 @@ public class Home extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_timetable:
                     mTextMessage.setText("Your Timetable");
-                    Timetables timetables = new Timetables(getApplicationContext());
+                    Timetables timetables = new Timetables(getApplicationContext(), sharePref, false);
                     pushUI(timetables, 3, "Timetables");
                     return true;
                 case R.id.navigation_events:
@@ -183,6 +183,7 @@ public class Home extends AppCompatActivity {
             SharedPreferences.Editor editor
     */
     private void routeUser(SharedPreferences preferences, SharedPreferences.Editor editor) {
+        Intent redirect = new Intent(Home.this, SignIn.class);
         // Determine if this is the first time they have run the app if so then take them to the tutorial
         if (preferences.getBoolean("firstrun", true)) {
             // Set the logged-in flag to false
@@ -193,10 +194,14 @@ public class Home extends AppCompatActivity {
             editor.apply();
             // Show the tutorial
             // TODO: Once the tutorial is completed implement this redirect
+
+            // In the mean time take them to the home page
+            startActivity(redirect);
+            finish();
+
             // Determine if the user is logged-in through the flag
         } else if (!(preferences.getBoolean("logged-in", false))) {
             // Redirect the user to the home page
-            Intent redirect = new Intent(Home.this, SignIn.class);
             startActivity(redirect);
             finish();
         }

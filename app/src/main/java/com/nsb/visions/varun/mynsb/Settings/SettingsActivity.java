@@ -9,20 +9,18 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.nsb.visions.varun.mynsb.Common.ReminderColours;
-import com.nsb.visions.varun.mynsb.Exception.MyNSBException;
-import com.nsb.visions.varun.mynsb.Exception.MyNSBExceptionType;
 import com.nsb.visions.varun.mynsb.R;
 
 public class SettingsActivity extends AppCompatActivity {
     private SharedPreferences sharedPrefs;
 
-    private void createToast(MyNSBException exception) {
+    private void createToast(Exception exception) {
         Toast.makeText(SettingsActivity.this, exception.toString(), Toast.LENGTH_LONG).show();
     }
 
-    private void createReminder(String name, String colour) throws MyNSBException {
+    private void createReminder(String name, String colour) throws Exception {
         if (name.isEmpty() || colour.isEmpty()) {
-            throw new MyNSBException(MyNSBExceptionType.SETTINGS_MISSING_FIELDS);
+            throw new Exception("Fields where empty");
         }
 
         ReminderColours rc = new ReminderColours(this.sharedPrefs);
@@ -44,7 +42,8 @@ public class SettingsActivity extends AppCompatActivity {
         reminderButton.setOnClickListener(view -> {
             try {
                 createReminder(reminderName.getText().toString(), reminderColour.getText().toString());
-            } catch (MyNSBException exception) {
+            } catch (Exception exception) {
+                exception.printStackTrace();
                 createToast(exception);
             }
 

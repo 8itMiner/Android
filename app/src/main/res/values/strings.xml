@@ -77,4 +77,23 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    
+    
+    
+    <string name="day_prompt">Day</string>
+    <string-array name="day_arrays">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+    </string-array>
+
+    <string name="week_prompt">Week</string>
+    <string-array name="week_arrays">
+        <item>Week A</item>
+        <item>Week B</item>
+    </string-array>
+
+
 </resources>

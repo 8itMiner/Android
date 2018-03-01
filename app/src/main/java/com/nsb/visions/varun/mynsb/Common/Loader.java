@@ -150,6 +150,7 @@ public abstract class Loader<Model> {
                 RecyclerView recyclerView
      */
     private void setupRefresher(RecyclerView recyclerView) {
+        assert this.swiper != null;
         this.swiper.setOnRefreshListener(() -> {
             // Start a thread for loading data
             new Thread(() -> {

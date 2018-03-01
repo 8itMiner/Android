@@ -39,6 +39,7 @@
         </receiver>
 
         <activity android:name=".Webview" />
+        <activity android:name=".ExpandedTimetables"></activity>
     </application>
 
 </manifest>
