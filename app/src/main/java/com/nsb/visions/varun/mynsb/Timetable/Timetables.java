@@ -9,6 +9,7 @@ import com.nsb.visions.varun.mynsb.Common.Loader;
 import com.nsb.visions.varun.mynsb.Common.Util;
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 
+import java.util.Collections;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class Timetables extends Loader<Subject> {
     private boolean expandOrNot;
 
     public Timetables(Context context, SharedPreferences preferences, Boolean expandOrNot) {
-        super(context);
+        super(context, Timetables.class);
         this.preferences = preferences;
         this.expandOrNot = expandOrNot;
     }
@@ -91,9 +92,35 @@ public class Timetables extends Loader<Subject> {
     }
 
 
+    // Override the loop function
+    @Override
+    public void loopResults(List<Subject> dest, JSON dataArray) {
+        int prev = 0;
+
+        for (int i = 0; i < dataArray.count(); i++) {
+            int period = dataArray.index(i).key("Period").intValue();
+
+            // First add in the frees
+            int numberOfFrees = period - prev - 1;
+
+            // Add the free periods
+            for (int j = 0; j < numberOfFrees; j++) {
+                dest.add(prev + j, new Subject("10FREE", "", "", String.valueOf(prev + j)));
+            }
+
+            // Add the period
+            dest.add(period, new Subject(dataArray.index(i).key("Subject").stringValue(), dataArray.index(i).key("ClassRoom").stringValue(),
+                dataArray.index(i).key("Teacher").stringValue(), String.valueOf(period)));
+
+            // Determine its period position in the timetable
+            prev = period;
+        }
+        // Trim our list
+        dest.removeAll(Collections.singleton(null) );
+    }
+
 
     // Little helper function that will allow us to set a different url to retrieve our timetables from
-    // TODO: Kind of a hacky solution so it should down the track be removed
     public void setURL(String url) {
         this.url = url;
     }

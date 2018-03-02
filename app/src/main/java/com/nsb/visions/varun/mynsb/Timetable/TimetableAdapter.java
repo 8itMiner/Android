@@ -14,6 +14,7 @@ import com.nsb.visions.varun.mynsb.R;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private List<Subject> subjects = new ArrayList<>();
     private JSON json;
     private String title;
+    private Context context;
 
     public TimetableAdapter(List<Subject> subjects, String title, String dayStr, SharedPreferences preferences, Context context) {
         // Reverse the subjects so that roll call is first
@@ -50,6 +52,7 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         // Parse the json
         this.json = new JSON(belltimes).key("body").index(0).key(dayStr);
         this.subjects = subjects;
+        this.context = context;
     }
 
     @Override
@@ -89,7 +92,12 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             SubjectView subjectView = (SubjectView) holder;
 
             // Start setting the respective data
-            subjectView.subject.setText(subject.className);
+            try {
+                // Attain the subject name
+                subjectView.subject.setText(com.nsb.visions.varun.mynsb.Timetable.Util.getClassName(subject.className, this.context));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             subjectView.room.setText(subject.room);
             subjectView.teacher.setText(subject.teacher);
             subjectView.period.setText(subject.period);

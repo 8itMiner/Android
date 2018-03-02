@@ -31,11 +31,20 @@ public abstract class Loader<Model> {
     private TextView errorHolder;
     private ProgressBar progressBar;
     private Handler uiHandler;
+    private Class extendedClass;
 
-    public Loader(Context context) {
+
+
+    /* constructor is just a constructor lmao
+           @params;
+               Context context
+               Class extendedClass
+
+    */
+    public Loader(Context context, Class extendedClass) {
         this.context = context;
+        this.extendedClass = extendedClass;
     }
-
 
 
 
@@ -144,6 +153,7 @@ public abstract class Loader<Model> {
     }
 
 
+
     /* setup refresher sets up the refresher layout and attaches a swipe listener to it
         it adds a refresher which allows the user to load the models again
             @params;
@@ -178,7 +188,8 @@ public abstract class Loader<Model> {
     abstract public Model parseJson(JSON json) throws Exception;
     // get adapterInstance returns an instance of your adapter get adapter instance must set the value of our recycler adapter by returning an instance
     abstract public RecyclerView.Adapter getAdapterInstance(List<Model> models);
-
+    // Optional overloadable loop function (only really used in timetables)
+    public void loopResults(List<Model> dest, JSON dataArray) {}
 
 
 
@@ -186,7 +197,6 @@ public abstract class Loader<Model> {
     /*
         @UTIL FUNCTIONS =======================================
    */
-
     /* setUpAdapter sets up a recyclerView adapter for a swipeRefresh
             @params;
                 RecyclerView recycler,
@@ -206,6 +216,7 @@ public abstract class Loader<Model> {
         recycler.getAdapter().notifyDataSetChanged();
         recycler.scheduleLayoutAnimation();
     }
+
 
 
     /* getModels retrieves all models from the API
@@ -229,8 +240,14 @@ public abstract class Loader<Model> {
             // Get our body array with all the information
             JSON bodyArray = json.key("Message").key("Body").index(0);
             // Iterate over json array and push it into the models list
-            for (int i = 0; i < bodyArray.count(); i++) {
-                models.add(parseJson(bodyArray.index(i)));
+            // Determine if a method has been overridden for the base class
+            if (!(extendedClass.getMethod("loopResults").getDeclaringClass() != Loader.class)) {
+                for (int i = 0; i < bodyArray.count(); i++) {
+                    models.add(parseJson(bodyArray.index(i)));
+                }
+            } else {
+                // Otherwise use the little method we have defined
+                loopResults(models, bodyArray);
             }
             return models;
         } catch (Exception e) {

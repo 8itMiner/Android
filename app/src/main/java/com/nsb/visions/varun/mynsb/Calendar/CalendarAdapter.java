@@ -12,16 +12,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by varun on 11/02/2018. Coz varun is awesome as hell :)
  */
 
+
+// ADAPTERS NEED 0 DOCUMENTATION, YOU SHOULD KNOW ALL THIS ALREADY
+
+// Calendar adapter is an adapter class used to generate the appropriate recyclerViews
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarView> {
 
-    public List<Calendar> calendars = new ArrayList<>();
+    // Calendar list of all calendar instances
+    private List<Calendar> calendars = new ArrayList<>();
 
-    public CalendarAdapter(List<Calendar> calendars) {
+
+    /* constructor is just a constructor lmao
+           @params;
+               Context context
+
+    */
+    CalendarAdapter(List<Calendar> calendars) {
         this.calendars = calendars;
     }
+
 
 
     // Create a calendarview from the given viewgroup parent and viewtype
@@ -34,6 +45,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         return new CalendarView(v);
     }
 
+
+
     @Override
     public void onBindViewHolder(CalendarView holder, int position) {
         Calendar calendar = calendars.get(position);
@@ -41,6 +54,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         holder.entryTime.setText(calendar.time);
         holder.entryName.setText(calendar.name);
     }
+
+
+
 
     @Override
     public int getItemCount() {
@@ -51,14 +67,14 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     // View class
     class CalendarView extends RecyclerView.ViewHolder {
 
-        public TextView entryName;
-        public TextView entryTime;
+        TextView entryName;
+        TextView entryTime;
 
-        public CalendarView(View itemView) {
+        CalendarView(View itemView) {
             super(itemView);
 
-            this.entryName = (TextView) itemView.findViewById(R.id.calendarEntryName);
-            this.entryTime = (TextView) itemView.findViewById(R.id.date);
+            this.entryName = itemView.findViewById(R.id.calendarEntryName);
+            this.entryTime = itemView.findViewById(R.id.date);
         }
     }
 

@@ -18,17 +18,26 @@ import okhttp3.Response;
 /**
  */
 
+// The calendars class is the loader for all the current calendars in the API
 public class Calendars extends Loader<Calendar> {
 
-    // Construct
+    /* constructor is just a constructor lmao
+            @params;
+                Context context
+
+     */
     public Calendars(Context context) {
-        super(context);
+        super(context, Calendars.class);
     }
 
 
 
     /*
         OVERRIDDEN METHODS ============================
+     */
+    /* sendRequest is a function in the loader class, it uses the API to get the desired response
+            @params;
+                nil
      */
     @Override
     public Response sendRequest() {
@@ -49,16 +58,28 @@ public class Calendars extends Loader<Calendar> {
         try {
             return httpClient.performRequest(request);
         } catch (Exception e) {
-            e.printStackTrace();;
+            e.printStackTrace();
         }
         return null;
     }
 
+
+
+    /* parseJson is a function in the loader class, it parses the JSON for an individual element
+            @params;
+                nil
+     */
     @Override
     public Calendar parseJson(JSON json) throws Exception {
         return new Calendar(json.key("title").stringValue(), json.key("start_date").stringValue());
     }
 
+
+
+    /* getAdapterInstance returns an instance of our associated adapter
+            @params;
+                List<Model> models
+     */
     @Override
     public RecyclerView.Adapter getAdapterInstance(List<Calendar> calendars) {
         return new CalendarAdapter(calendars);
