@@ -19,11 +19,13 @@ public class FourU extends Loader<Article> {
 
 
     public FourU(Context context) {
-        super(context);
+        super(context, FourU.class);
     }
 
     @Override
-    public Article parseJson(JSON json) {
+    public Article parseJson(JSON jsonD, int position) {
+        JSON json = jsonD.index(position);
+
         return new Article(json.key("ArticleName").stringValue(),
             json.key("ArticleDesc").stringValue(),
             json.key("ArticleImageUrl").stringValue(), json.key("Link").stringValue());

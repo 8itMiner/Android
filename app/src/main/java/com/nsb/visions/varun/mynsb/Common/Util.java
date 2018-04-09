@@ -9,7 +9,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
+import com.nsb.visions.varun.mynsb.Jobs.Dispatchers.JobDispatcher;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -79,7 +81,6 @@ public class Util {
         return "";
     }
 
-
     public static int stringToDayInt(String day) {
         switch (day) {
             case "Monday":
@@ -99,14 +100,21 @@ public class Util {
 
 
 
-    /* getEventRange returns the date for the current day along with the date for this week's saturday
+
+
+
+
+
+
+
+    /* getDateRange returns the date for the current day along with the date for this week's saturday
          @params;
              String format
                 specifies the format the response dates should be in
     */
+    @SuppressLint("all")
     public static String[] getDateRange(String format) {
         // Setup a sdf for formatting of the date
-        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
 
         // Setup our calendars
@@ -124,6 +132,32 @@ public class Util {
         return new String[]{sundayTxt, saturdayTxt};
     }
 
+
+
+    /* getDateRangeStart returns the date range for a specific date, it adds a week to the current date and returns the range
+            @params;
+               String format
+                    Specifies the format of the date
+     */
+    @SuppressLint("all")
+    public static String[] getDateRangeStart(String format) {
+        // Setup a sdf for formatting the date
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+
+        // Setup our calendars
+        Calendar future = Calendar.getInstance(TimeZone.getDefault());
+        Calendar today = Calendar.getInstance(TimeZone.getDefault());
+
+        // Add seven days to today to get when the week ends
+        future.add(DATE,7);
+
+        // Parse our dates
+        String futureTxt = simpleDateFormat.format(future);
+        String todayTxt = simpleDateFormat.format(today);
+
+        // Return our dates
+        return new String[]{todayTxt, futureTxt};
+    }
 
 
     /* calculateDate returns the day of the week suitable for the api e.g.. 10, 4, 5,
@@ -158,6 +192,8 @@ public class Util {
         // Return the day
         return today;
     }
+
+
 
 
     /* weekAorB tells us if it is week a or b using the API
@@ -197,6 +233,8 @@ public class Util {
 
         return responseStr[0];
     }
+
+
 
 
     public static boolean isNetworkAvailable(Context context) {
@@ -259,6 +297,8 @@ public class Util {
 
         // Extract the day
         return dataStore.getInt("timetables{day{current-day}}", 1);
-
     }
+
+
+
 }

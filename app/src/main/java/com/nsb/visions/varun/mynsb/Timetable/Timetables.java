@@ -1,5 +1,6 @@
 package com.nsb.visions.varun.mynsb.Timetable;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
@@ -9,19 +10,18 @@ import com.nsb.visions.varun.mynsb.Common.Loader;
 import com.nsb.visions.varun.mynsb.Common.Util;
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 
-import java.util.Collections;
-import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import eu.amirs.JSON;
+import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
- * Created by varun on 31/01/2018. Coz varun is awesome as hell :)
  */
 
 public class Timetables extends Loader<Subject> {
@@ -29,50 +29,17 @@ public class Timetables extends Loader<Subject> {
     private SharedPreferences preferences;
     private String url = null;
     private boolean expandOrNot;
+    private String adapterTitle;
+    private String dayStr;
+    private JSON belltimes;
 
+
+
+
+    // NOTE: expandOrNot tells us if this is being used in the expandedTimetables view or the regular timetable view
     public Timetables(Context context, SharedPreferences preferences, Boolean expandOrNot) {
         super(context, Timetables.class);
-        this.preferences = preferences;
-        this.expandOrNot = expandOrNot;
-    }
 
-    @Override
-    public Response sendRequest() {
-        // CreateReminder a http client from the parsed context
-        HTTP httpClient = new HTTP(context);
-
-        // Get the day
-        int day = Util.getDay(this.preferences, context);
-
-        // TODO: Kind of a hack, needs to be removed later
-        if (this.url == null) {
-            this.url = "http://35.189.45.152:8080/api/v1/timetable/Get?Day=" + String.valueOf(day);
-        }
-
-        // Set up the request
-        Request request = new Request.Builder()
-            .get()
-            .url(url)
-            .build();
-
-        try {
-            return httpClient.performRequest(request);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    // Parse the json data
-    @Override
-    public Subject parseJson(JSON json) throws Exception {
-        return new Subject(json.key("Subject").stringValue(), json.key("ClassRoom").stringValue(),
-            json.key("Teacher").stringValue(), json.key("Period").stringValue());
-    }
-
-    // Return an instance of our adapter
-    @Override
-    public RecyclerView.Adapter getAdapterInstance(List<Subject> subjects) {
         // Determine what day of the week it is as a string
         int day = Util.calculateDay(context) + 1;
         int dayOfWeek = day > 5 ? day - 5 : day;
@@ -81,47 +48,172 @@ public class Timetables extends Loader<Subject> {
         if (day > 5) {
             week = "B";
         }
-
+        // This is our title for the adapter
         String combined = Util.intToDaystr(dayOfWeek) + " " + week;
+        this.adapterTitle = combined;
+        // Determine the day as an str
+        this.dayStr = Util.intToDaystr(day);
 
-        if (expandOrNot) {
-            combined = null;
-        }
-
-        return new TimetableAdapter(subjects, combined, Util.intToDaystr(dayOfWeek), preferences, context);
+        this.preferences = preferences;
+        this.expandOrNot = expandOrNot;
+        this.belltimes = new JSON(getBelltimes(context, preferences)).key("Body").index(0).key(dayStr);
     }
 
 
-    // Override the loop function
+
+
+
+
     @Override
-    public void loopResults(List<Subject> dest, JSON dataArray) {
-        int prev = 0;
+    @SuppressLint("all")
+    public Response sendRequest() {
+        try {
+            // CreateReminder a http client from the parsed context
+            HTTP httpClient = new HTTP(this.context);
 
-        for (int i = 0; i < dataArray.count(); i++) {
-            int period = dataArray.index(i).key("Period").intValue();
-
-            // First add in the frees
-            int numberOfFrees = period - prev - 1;
-
-            // Add the free periods
-            for (int j = 0; j < numberOfFrees; j++) {
-                dest.add(prev + j, new Subject("10FREE", "", "", String.valueOf(prev + j)));
+            Response syncedTimetables = getSyncedTimetables(httpClient);
+            // Return synced timetables if it is not null
+            if (syncedTimetables != null) {
+                return syncedTimetables;
             }
 
-            // Add the period
-            dest.add(period, new Subject(dataArray.index(i).key("Subject").stringValue(), dataArray.index(i).key("ClassRoom").stringValue(),
-                dataArray.index(i).key("Teacher").stringValue(), String.valueOf(period)));
+            // Get the day
+            int day = Util.getDay(this.preferences, this.context);
+            Log.d("exception-request", "D" + String.valueOf(day));
+            // Build the url
+            this.url = "http://35.189.45.152:8080/api/v1/timetable/Get?Day=" + String.valueOf(day);
 
-            // Determine its period position in the timetable
-            prev = period;
+
+            // Set up the request
+            Request request = new Request.Builder()
+                .get()
+                .url(url)
+                .build();
+
+            return httpClient.performRequest(request);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        // Trim our list
-        dest.removeAll(Collections.singleton(null) );
+        return null;
     }
+
+
+
+    private Response getSyncedTimetables(HTTP httpHandler) throws Exception {
+        // Make a fake request coz that seems to be the only way we can get a response object
+        Request request = new Request.Builder().build();
+        Response response = httpHandler.performRequest(request);
+        // Simple date format for parsing dates
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        // First lets check the shared preferences to determine if there already is a synced timetable
+        String lastUpdateStr = preferences.getString("timetables{tables{last-update}}", "");
+        String timetable = preferences.getString("timetables{tables}", "{\"Body\": []}");
+        Date lastUpdate = dateFormat.parse(lastUpdateStr);
+        Date today = Calendar.getInstance().getTime();
+        // Make sure we only have the day month year format
+        today = dateFormat.parse(dateFormat.format(today));
+
+        // Determine if can return the synced result or not
+        if (!(today.after(lastUpdate))) {
+            MediaType contentType = MediaType.parse("text/json");
+            ResponseBody body = ResponseBody.create(contentType, timetable);
+
+            return response.newBuilder().body(body).build();
+        }
+
+        return null;
+    }
+
+
+
+
+
+
+
+    // Parse the json data
+    @Override
+    public Subject parseJson(JSON json, int position) throws Exception {
+        // Determine what belltime to display to the user
+        // Start getting the belltimes for each individual person
+        int period = json.key("Period").intValue();
+        Log.d("exception", String.valueOf(period));
+
+        return new Subject(json.key("Subject").stringValue(), json.key("ClassRoom").stringValue(),
+            json.key("Teacher").stringValue(), String.valueOf(period), this.belltimes.key(String.valueOf(period)).stringValue());
+    }
+
+
+
+
+
+
+    // Return an instance of our adapter
+    @Override
+    public RecyclerView.Adapter getAdapterInstance(List<Subject> subjects) {
+        // This tells us if we should expand the timetables or not
+        if (expandOrNot) {
+            this.adapterTitle = null;
+        }
+        // Return an adapter instance
+        // TODO: ADD BELLTIMES AS PART OF THE SUBJECT CLASS
+        return new TimetableAdapter(subjects, this.adapterTitle, this.dayStr, preferences, context);
+    }
+
+
+
+
+
+
 
 
     // Little helper function that will allow us to set a different url to retrieve our timetables from
     public void setURL(String url) {
         this.url = url;
+    }
+
+
+
+
+
+
+
+
+    // get belltimes data
+    public static String getBelltimes(Context context, SharedPreferences preferences) {
+        // Determine if there is anythin in the shared prefs that we can use
+        String belltimes = preferences.getString("belltimes{data}", "");
+        // Determine if there really is any data in the belltimes shared prefs if not then pull the data from the api
+        if (!belltimes.isEmpty()) {
+            return belltimes;
+        }
+
+        // Otherwise perform the request from scratch
+        final String[] times = {""};
+        // Start up a thread
+        Thread requestThread = new Thread(() -> {
+            HTTP http = new HTTP(context);
+
+            // Setup a request
+            Request request = new Request.Builder()
+                .get()
+                .url("http://35.189.45.152:8080/api/v1/belltimes/Get")
+                .build();
+
+            try {
+                times[0] = http.performRequest(request).body().string();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        });
+        requestThread.start();
+        try {
+            requestThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        return times[0];
     }
 }

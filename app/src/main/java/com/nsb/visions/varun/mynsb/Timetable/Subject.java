@@ -1,7 +1,6 @@
 package com.nsb.visions.varun.mynsb.Timetable;
 
 /**
- * Created by varun on 31/01/2018. Coz varun is awesome as hell :)
  */
 
 public class Subject {
@@ -10,12 +9,14 @@ public class Subject {
     public String room;
     public String teacher;
     public String period;
+    public String time;
 
-    public Subject(String className, String room, String teacher, String period) {
+    public Subject(String className, String room, String teacher, String period, String time) {
         this.className = className;
         this.room = room;
         this.teacher = teacher;
         this.period = period;
+        this.time = time;
     }
 
 }

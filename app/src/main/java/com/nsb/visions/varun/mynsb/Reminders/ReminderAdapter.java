@@ -13,19 +13,42 @@ import android.widget.TextView;
 
 import com.nsb.visions.varun.mynsb.Common.ReminderColours;
 import com.nsb.visions.varun.mynsb.R;
+import com.nsb.visions.varun.mynsb.Timetable.Subject;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ReminderHolder> {
+public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Reminder> reminders = new ArrayList<>();
     private SharedPreferences preferences;
 
     // Constructor
-    public ReminderAdapter(List<Reminder> reminders, SharedPreferences prefs) {
+    ReminderAdapter(List<Reminder> reminders, SharedPreferences prefs) {
+        // We need to break apart the reminder list into date categories
+        for (int i = 1; i < reminders.size(); i++) {
+            // The way we determine if a reminder is on a different day is that we look at the dates, if they are the same there are the same day else
+            // different days, this only works because the reminders are in ascending order in terms of the reminder_date_time, make sense?
+            // great!
+            // Attain the current reminder
+            Reminder curr = reminders.get(i);
+            Reminder past = reminders.get(i-1);
+
+            // Determine if this is a new day
+            if (!(past.date.equals(curr.date))) {
+                // Insert a reminder and this just contains
+                // Convert date into an actual day
+                String day = curr.date;
+                reminders.add(i, new Reminder(day, "", null, null));
+            }
+        }
+        // End of appending times to the list
+
+
         this.reminders = reminders;
         this.preferences = prefs;
     }
@@ -38,25 +61,63 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         OVERRIDDEN FUNCTIONS =========================
      */
     @Override
-    public ReminderHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.reminder_card, parent, false);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        switch (viewType) {
+            case 1:
+                View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.reycycler_text_header, parent, false);
 
-        return new ReminderHolder(v);
+                return new DayHolder(v);
+            case 2:
+                 v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.reminder_card, parent, false);
+                return new ReminderHolder(v);
+
+        }
+        // Btw this will never happen
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(ReminderHolder holder, int position) {
-        Reminder reminder = reminders.get(position);
-        // Determine what colour to show the user
-        String colour = getColour(reminder);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        // Determine the view type of the current item and perform actions accordingly
+        switch (getItemViewType(position)) {
+            case 1:
+                // TextHolder label
+                DayHolder dayHolder = (DayHolder) holder;
+                dayHolder.dayTitle.setText(reminders.get(position).subject);
+                break;
+            case 2:
+                // Reminder Holder label
+                ReminderHolder reminderHolder = (ReminderHolder) holder;
 
-        // Start setting the information
-        holder.colour.setBackgroundColor(Color.parseColor(colour));
-        holder.reminderBody.setText(reminder.body);
-        holder.time.setText(convertToAMPM(reminder.time));
-        holder.subject.setText(reminder.subject);
+                Reminder reminder = reminders.get(position);
+                // Determine what colour to show the user
+                String colour = getColour(reminder);
+
+                // Start setting the information
+                reminderHolder.colour.setBackgroundColor(Color.parseColor(colour));
+                reminderHolder.reminderBody.setText(reminder.body);
+                reminderHolder.time.setText(convertToAMPM(reminder.time));
+                reminderHolder.subject.setText(reminder.subject);
+                break;
+        }
     }
+
+
+    // Determine the item's view type
+    @Override
+    public int getItemViewType(int position) {
+        // Get the current item with our position
+        Reminder currReminder = this.reminders.get(position);
+        if (currReminder.time == null) {
+            // Item type is 1 or a text label view
+            return 1;
+        }
+        // Default item type
+        return 2;
+    }
+
 
     @Override
     public int getItemCount() {
@@ -70,22 +131,40 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
 
 
 
+    /*
+        HOLDER CLASSES =========================
+     */
     // Reminder holder class
-    public class ReminderHolder extends RecyclerView.ViewHolder {
+    class ReminderHolder extends RecyclerView.ViewHolder {
         TextView reminderBody;
         TextView time;
         RelativeLayout colour;
         TextView subject;
 
-        public ReminderHolder(View itemView) {
+        ReminderHolder(View itemView) {
             super(itemView);
 
-            reminderBody = (TextView) itemView.findViewById(R.id.reminderBody);
-            time = (TextView) itemView.findViewById(R.id.time);
-            colour = (RelativeLayout) itemView.findViewById(R.id.colour);
-            subject = (TextView) itemView.findViewById(R.id.subject);
+            reminderBody = itemView.findViewById(R.id.reminderBody);
+            time = itemView.findViewById(R.id.time);
+            colour = itemView.findViewById(R.id.colour);
+            subject = itemView.findViewById(R.id.subject);
         }
     }
+
+
+    // Holds the text for a reminder for a specific day
+    class DayHolder extends RecyclerView.ViewHolder {
+
+        private TextView dayTitle;
+
+        public DayHolder(View itemView) {
+            super(itemView);
+            this.dayTitle = itemView.findViewById(R.id.dayTextTitle);
+        }
+    }
+    /*
+        END HOLDER CLASSES =========================
+     */
 
 
 

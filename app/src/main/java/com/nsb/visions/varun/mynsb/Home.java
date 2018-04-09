@@ -22,10 +22,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.evernote.android.job.JobManager;
 import com.nsb.visions.varun.mynsb.Calendar.Calendars;
 import com.nsb.visions.varun.mynsb.Common.Loader;
 import com.nsb.visions.varun.mynsb.Events.Events;
 import com.nsb.visions.varun.mynsb.FourU.FourU;
+import com.nsb.visions.varun.mynsb.Jobs.Dispatchers.JobDispatcher;
+import com.nsb.visions.varun.mynsb.Jobs.TimetableSync;
 import com.nsb.visions.varun.mynsb.Reminders.Create.CreateReminderHandler;
 import com.nsb.visions.varun.mynsb.Reminders.Reminders;
 import com.nsb.visions.varun.mynsb.Timetable.Timetables;
@@ -80,7 +83,7 @@ public class Home extends AppCompatActivity {
                     mTextMessage.setText("School Calendar");
                     Calendars calendars = new Calendars(getApplicationContext());
                     Toast.makeText(Home.this, "Feature still in development", Toast.LENGTH_LONG).show();
-                    //pushUI(calendars, 4, "Calendar");
+                    pushUI(calendars, 4, "Calendar");
                     return true;
             }
             return false;
@@ -102,6 +105,13 @@ public class Home extends AppCompatActivity {
         RelativeLayout mainHolder = (RelativeLayout) flipper.getChildAt(childIndex);
         SwipeRefreshLayout swiperLayout = (SwipeRefreshLayout) mainHolder.getChildAt(1);
         RecyclerView contentHolder = swiperLayout.findViewById(R.id.recyclerLoader);
+
+        // Determine if the current view parsed into this is a reminder view
+        if (loader.getClass() == Reminders.class) {
+            // Add the scroller, check function documentation for more details
+            initScroller(swiperLayout, contentHolder);
+        }
+
         // Hide any current errors so we dont get weird views
         Loader.showErrors(contentHolder, errorHolder, false);
         // Main if
@@ -111,6 +121,33 @@ public class Home extends AppCompatActivity {
             loader.loadUI(contentHolder, swiperLayout, progressBar, errorHolder, uiHandler);
             loaded.put(entryName, true);
         }
+    }
+
+
+
+    /* initScroller initialises the scroller so that when we scroll down on the reminders view the fab is hidden so that we can read our reminders
+            @params;
+                View parentView
+                RecyclerView contentHolder
+
+     */
+    private void initScroller(View parentView, RecyclerView contentHolder) {
+        // Add a scroll listener to the recycler so that it hides our FAB when the page is scrolled
+        contentHolder.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                // Get our fab var
+                FloatingActionButton createReminder = parentView.findViewById(R.id.createReminder);
+
+                // Calculate what to do
+                if (dy > 0) {
+                    createReminder.hide();
+                } else if (dy < 0) {
+                    createReminder.show();
+                }
+
+            }
+        });
     }
     /*
         @ END UTIL FUNCTIONS ==============================
@@ -124,12 +161,16 @@ public class Home extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         this.sharePref = getSharedPreferences("MyNSB", Context.MODE_PRIVATE);
         routeUser(this.sharePref, this.sharePref.edit());
-
         super.onCreate(savedInstanceState);
+
+        // Start the sync timetable activity
+        TimetableSync.scheduleTask();
+
         // Setup the shared preferences
         setContentView(R.layout.activity_home);
 
-        // Push everything into loaded hashmap check line 34 for regarding what the loaded map does
+
+        // Push everything into loaded hashmap check line 47 for info regarding what the loaded map does
         loaded.put("4U", false);
         loaded.put("Timetables", false);
         loaded.put("Reminders", false);

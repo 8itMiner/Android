@@ -25,39 +25,38 @@ import okhttp3.Request;
 public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Subject> subjects = new ArrayList<>();
-    private JSON json;
-    private String title;
+    private String recyclerTitle;
     private Context context;
 
-    public TimetableAdapter(List<Subject> subjects, String title, String dayStr, SharedPreferences preferences, Context context) {
+
+
+
+
+
+    TimetableAdapter(List<Subject> subjects, String title, String dayStr, SharedPreferences preferences, Context context) {
         // Reverse the subjects so that roll call is first
         subjects.add(0, subjects.get(subjects.size()-1));
         subjects.remove(subjects.size()-1);
 
         // Add a text holder to the top of our subjects list, onBindViewHolder will know to display this differently through getItemViewType
+        // Looks like we are requesting this in the expanded view so we need to hide the title
         if (title != null) {
-            subjects.add(0, new Subject(title, "", "", ""));
-            this.title = title;
+            subjects.add(0, new Subject(title, "", "", "", ""));
+            this.recyclerTitle = title;
         }
 
-        // Attain the bellTimes from the sharedPreferences
-        String belltimes = preferences.getString("belltimes{data}", "");
-        // Determine if there really is any data in the belltimes shared prefs if not then pull the data from the api
-        if (belltimes.isEmpty()) {
-            belltimes = getBelltimes(context);
-            // push data into the shared preferences
-            preferences.edit().putString("belltimes{data}", belltimes).apply();
-        }
-
-        // Parse the json
-        this.json = new JSON(belltimes).key("body").index(0).key(dayStr);
         this.subjects = subjects;
         this.context = context;
     }
 
+
+
+
+
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == 0 && this.title != null) {
+        if (viewType == 0 && this.recyclerTitle != null) {
             View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.reycycler_text_header, parent, false);
             return new WeekTitle(v);
@@ -74,10 +73,15 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return position;
     }
 
+
+
+
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        if (getItemViewType(position) == 0 && title != null) {
+        // It looks like a week title
+        if (getItemViewType(position) == 0 && recyclerTitle != null) {
             // Title View
             Subject subject = subjects.get(position);
             WeekTitle weekTitle = (WeekTitle) holder;
@@ -85,7 +89,6 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             // Set the value
             weekTitle.weekTitle.setText(subject.className);
         } else {
-            String time = getTime(position);
             // Regular subject view
             // Get the timetable that we are talking about first
             Subject subject = subjects.get(position);
@@ -101,22 +104,37 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             subjectView.room.setText(subject.room);
             subjectView.teacher.setText(subject.teacher);
             subjectView.period.setText(subject.period);
-            subjectView.time.setText(time);
+            subjectView.time.setText(subject.time);
         }
     }
+
+
+
 
 
     @Override
     public int getItemCount() {
         return subjects.size();
     }
+
+
+
+
+
+
+
+
+
+    /*
+        HOLDER CLASSES ===================================================
+     */
     // Holder class for holding our view and the general details regarding our ui
     public class SubjectView extends RecyclerView.ViewHolder {
 
         public TextView subject;
-        public TextView room;
-        public TextView teacher;
-        public TextView period;
+        TextView room;
+        TextView teacher;
+        TextView period;
         public TextView time;
 
         SubjectView(View itemView) {
@@ -130,63 +148,19 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             this.time = itemView.findViewById(R.id.time);
         }
     }
+    // Weektitle class
     public class WeekTitle extends RecyclerView.ViewHolder {
 
-        public TextView weekTitle;
+        TextView weekTitle;
 
-        public WeekTitle(View itemView) {
+        WeekTitle(View itemView) {
             super(itemView);
 
             // Get the respective elements
             this.weekTitle = itemView.findViewById(R.id.dayTextTitle);
         }
     }
-    // get belltimes data
-    private String getBelltimes(Context context) {
-        final String[] times = {""};
-        // Start up a thread
-        Thread requestThread = new Thread(() -> {
-            HTTP http = new HTTP(context);
-
-            // Setup a request
-            Request request = new Request.Builder()
-                .get()
-                .url("35.189.45.152:8080/api/v1/belltimes/Get")
-                .build();
-
-            try {
-                times[0] = http.performRequest(request).body().string();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        });
-        requestThread.start();
-        try {
-            requestThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-        return times[0];
-    }
-    private String getTime(int position) {
-        int incrementAmt = 2;
-        // Determine the time
-        String time = "8:50 - 8:58";
-        // Get the time data from the json
-        // Determine if the student has a period 0 or not
-        if (subjects.size() == 9) {
-            // They have a period 0
-            incrementAmt = 3;
-        }
-        // Determine the amount to incrment
-        // Figure out if the current period is roll call or not
-        if (position != 2) {
-            // Get the time for that period
-            time = this.json.key(String.valueOf(position - incrementAmt)).stringValue();
-        }
-        return time;
-    }
+    /*
+        HOLDER CLASSES ===================================================
+     */
 }

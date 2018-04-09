@@ -14,13 +14,10 @@ import com.nsb.visions.varun.mynsb.R;
 public class SettingsActivity extends AppCompatActivity {
     private SharedPreferences sharedPrefs;
 
-    private void createToast(Exception exception) {
-        Toast.makeText(SettingsActivity.this, exception.toString(), Toast.LENGTH_LONG).show();
-    }
-
-    private void createReminder(String name, String colour) throws Exception {
+    private void createReminder(String name, String colour) {
         if (name.isEmpty() || colour.isEmpty()) {
-            throw new Exception("Fields where empty");
+            Toast.makeText(SettingsActivity.this, "Fields were empty", Toast.LENGTH_LONG).show();
+            return;
         }
 
         ReminderColours rc = new ReminderColours(this.sharedPrefs);
@@ -40,14 +37,9 @@ public class SettingsActivity extends AppCompatActivity {
         EditText reminderColour = findViewById(R.id.reminder_colour_edit);
 
         reminderButton.setOnClickListener(view -> {
-            try {
                 createReminder(reminderName.getText().toString(), reminderColour.getText().toString());
-            } catch (Exception exception) {
-                exception.printStackTrace();
-                createToast(exception);
-            }
 
-            reminderName.setText("");
+                reminderName.setText("");
             reminderColour.setText("");
         });
     }

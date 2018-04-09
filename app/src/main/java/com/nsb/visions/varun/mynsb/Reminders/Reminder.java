@@ -23,13 +23,16 @@ public class Reminder {
     public String subject;
     public String body;
     public List<String> tags = new ArrayList<>();
+    public String date;
     public Date time;
 
+    @SuppressLint("all")
     public Reminder(String subject, String body, JSONArray tags, String time) {
         this.subject = subject;
         this.body = body;
         // Simpledateformat for parsing reminder dates
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 
         // Set up the time and add tags
@@ -40,6 +43,8 @@ public class Reminder {
             }
 
             this.time = simpleDateFormat.parse(time);
+            // Set the current date
+            this.date = dateFormat.format(this.time);
         } catch (Exception e) {
             e.printStackTrace();
         }

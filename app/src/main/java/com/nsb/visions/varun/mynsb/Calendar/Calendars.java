@@ -64,13 +64,13 @@ public class Calendars extends Loader<Calendar> {
     }
 
 
-
     /* parseJson is a function in the loader class, it parses the JSON for an individual element
             @params;
                 nil
      */
     @Override
-    public Calendar parseJson(JSON json) throws Exception {
+    public Calendar parseJson(JSON jsonD, int position) throws Exception {
+        JSON json = jsonD.index(position);
         return new Calendar(json.key("title").stringValue(), json.key("start_date").stringValue());
     }
 

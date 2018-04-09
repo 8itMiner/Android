@@ -7,18 +7,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TimingLogger;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -26,11 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.nsb.visions.varun.mynsb.Auth.Auth;
 import com.nsb.visions.varun.mynsb.User.User;
 
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -113,22 +109,23 @@ public class SignIn extends AppCompatActivity {
 
             // Thread for authentication...
             Thread auth = new Thread(() -> {
-                HashMap<String, Object> authDetails = performAuth(enteredDetails);
+                try {
+                    // Get user details
+                    HashMap<String, Object> authDetails = performAuth(enteredDetails);
 
-                if ((Boolean) authDetails.get("success")) { // One line heros :p, pre much it just gets the valid flag from the validUser function {Success}
                     // Update the shared preferences
                     updatePrefDetails(editor, (User) authDetails.get("user"));
                     // Redirect the user to the home page
                     Intent moveUser = new Intent(SignIn.this, Home.class);
                     startActivity(moveUser);
                     finish();
-                } else { // Failure
+                } catch (Exception e) {
                     // Fade out the loader view
                     showLoader(alertDialog, false);
 
-                    // Set the background to be clickable
-                    mainContent.setClickable(true);
                     uiHandler.post(() -> {
+                        // Set the background to be clickable
+                        mainContent.setClickable(true);
                         // Alert the user that the authentication attempt was unsuccessful
                         Toast.makeText(SignIn.this, "Details are invalid", Toast.LENGTH_LONG).show();
                     });
@@ -154,7 +151,7 @@ public class SignIn extends AppCompatActivity {
         @params;
             HashMap<String, String> enteredDetails
      */
-    private HashMap<String, Object> performAuth(HashMap<String, String> enteredDetails) {
+    private HashMap<String, Object> performAuth(HashMap<String, String> enteredDetails) throws Exception{
         // Init the hashmap to return
         HashMap<String, Object> toReturn = new HashMap<>();
         try {
@@ -163,7 +160,8 @@ public class SignIn extends AppCompatActivity {
             toReturn.put("success", true);
             toReturn.put("user", user);
         } catch (Exception e) {
-            toReturn.put("success", false);
+            Log.d("Error", "Looks like the details were invalid");
+            throw new Exception("User details were invalid");
         }
 
         return toReturn;

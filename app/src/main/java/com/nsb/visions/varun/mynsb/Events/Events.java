@@ -30,7 +30,7 @@ import static java.util.Calendar.*;
 public class Events extends Loader<Event> {
 
     public Events(Context context) {
-        super(context);
+        super(context, Events.class);
     }
 
 
@@ -62,12 +62,14 @@ public class Events extends Loader<Event> {
         return null;
     }
 
-
     @Override
-    public Event parseJson(JSON json) throws Exception {
+    public Event parseJson(JSON bodyBlock, int position) throws Exception {
+        JSON json = bodyBlock.index(position);
+
         return new Event(json.key("EventID").intValue(), json.key("EventName").stringValue(), json.key("EventStart").stringValue(),
-                            json.key("EventEnd").stringValue(), json.key("EventLocation").stringValue(),
-                            json.key("EventOrganiser").stringValue(), json.key("EventShortDesc").stringValue(), json.key("EventPictureURL").stringValue());
+            json.key("EventEnd").stringValue(), json.key("EventLocation").stringValue(),
+            json.key("EventOrganiser").stringValue(), json.key("EventShortDesc").stringValue(), json.key("EventPictureURL").stringValue());
+
     }
 
 

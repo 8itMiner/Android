@@ -1,5 +1,6 @@
 package com.nsb.visions.varun.mynsb.Common;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,6 +13,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.nsb.visions.varun.mynsb.R;
+import com.nsb.visions.varun.mynsb.Reminders.Reminders;
+import com.nsb.visions.varun.mynsb.Timetable.Timetables;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +34,6 @@ public abstract class Loader<Model> {
     protected Context context;
     private SwipeRefreshLayout swiper;
     private TextView errorHolder;
-    private ProgressBar progressBar;
     private Handler uiHandler;
     private Class extendedClass;
 
@@ -59,7 +63,7 @@ public abstract class Loader<Model> {
     public void loadUI(RecyclerView rv, SwipeRefreshLayout swiper, ProgressBar progressBar, TextView errorHolder, Handler uiHandler) {
 
         // Determine if there is an internet connection
-        if (!Util.isNetworkAvailable(this.context)) {
+        if (!Util.isNetworkAvailable(this.context) && extendedClass != Reminders.class && extendedClass != Timetables.class) {
             showErrors(rv, errorHolder, true);
             progressBar.setVisibility(View.GONE);
             return;
@@ -67,7 +71,7 @@ public abstract class Loader<Model> {
 
         // Set the visibility of the progressbar
         progressBar.setVisibility(View.VISIBLE);
-        this.progressBar = progressBar;
+        ProgressBar progressBar1 = progressBar;
 
         // Start a thread for http requests
         new Thread(() -> {
@@ -185,11 +189,9 @@ public abstract class Loader<Model> {
     // Send request function must be overridden because it points to the URL we want
     abstract public Response sendRequest();
     // parseJson function must be overridden because it tells us how to get the models
-    abstract public Model parseJson(JSON json) throws Exception;
+    abstract public Model parseJson(JSON bodyBlock, int position) throws Exception;
     // get adapterInstance returns an instance of your adapter get adapter instance must set the value of our recycler adapter by returning an instance
     abstract public RecyclerView.Adapter getAdapterInstance(List<Model> models);
-    // Optional overloadable loop function (only really used in timetables)
-    public void loopResults(List<Model> dest, JSON dataArray) {}
 
 
 
@@ -219,12 +221,13 @@ public abstract class Loader<Model> {
 
 
 
-    /* getModels retrieves all models from the API
+    /* getModels retrieves all models from the API using the sendRequest function
         @params;
             nil
 
     */
-    private List<Model> getModels() {
+    @SuppressLint("all")
+    public List<Model> getModels() {
         // List of models
         List<Model> models = new ArrayList<>();
 
@@ -239,16 +242,23 @@ public abstract class Loader<Model> {
             JSON json = new JSON(jsonRaw);
             // Get our body array with all the information
             JSON bodyArray = json.key("Message").key("Body").index(0);
-            // Iterate over json array and push it into the models list
+
+            // Calculate the number of periods in the day based on the first period, if the first period is 0 that means that they have a period 0
+            // And that there is 7 periods in the day
+
+            int noPeriods = bodyArray.index(0).key("Period").intValue() == 0 ? 7 : 6;
+
+            // FREE PERIOD CREATION
+            addFreePeriods(bodyArray);
+            // Add the free periods to our JSON object, this just reduces complexity down the line
+
+
+
             // Determine if a method has been overridden for the base class
-            if (!(extendedClass.getMethod("loopResults").getDeclaringClass() != Loader.class)) {
-                for (int i = 0; i < bodyArray.count(); i++) {
-                    models.add(parseJson(bodyArray.index(i)));
-                }
-            } else {
-                // Otherwise use the little method we have defined
-                loopResults(models, bodyArray);
+            for (int i = 0; i < bodyArray.count(); i++) {
+                models.add(parseJson(bodyArray, i));
             }
+
             return models;
         } catch (Exception e) {
             e.printStackTrace();
@@ -256,6 +266,35 @@ public abstract class Loader<Model> {
 
         // Return the models
         return null;
+    }
+
+
+
+
+
+    private void addFreePeriods(JSON bodyArray) {
+        // Iterate over json array and push it into the models list
+        for (int i = 1; i > bodyArray.count(); i++) {
+            // Number of frees
+            int period = bodyArray.index(i).key("Period").intValue();
+            int numFrees = period - bodyArray.index(i-1).key("Period").intValue();
+
+            for (int j = 0; j < numFrees; j++) {
+                // Create a JSON object to indert into our data holder
+                JSON freePeriod = JSON.create(
+                    JSON.dic(
+                        "class", "10FREE A",
+                        "day", 1,
+                        "period", String.valueOf(period + j),
+                        "room", "",
+                        "teacher", "BAI"
+                    )
+                );
+
+                // Insert this into our current JSON holder
+                bodyArray.addWithIndex(freePeriod, i + j);
+            }
+        }
     }
     /*
         @ UTIL FUNCTIONS END =======================================

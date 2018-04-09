@@ -56,10 +56,13 @@ public class Auth {
                 .build();
         // Retrieve the response
         Response loginResp = httpClient.performRequest(login);
+
+
+
         // Get the set cookie header from the request
         if (loginResp.code() != 200) {
             // Throw the error meaning that the request was unsuccessful
-            throw new IllegalAccessError("User details are invalid");
+            throw new Exception("User details are invalid");
         }
         // Return the details for the currently logged in user
         return this.getUserDetails();
