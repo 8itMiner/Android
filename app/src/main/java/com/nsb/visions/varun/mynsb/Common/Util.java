@@ -170,7 +170,7 @@ public class Util {
         // Get today as an integer
         int today = dayAsInt() - 1;
         String week = weekAorB(context);
-        Log.d("Week-context", week);
+        Log.d("Week-context", String.valueOf(week));
 
         // If today is a saturday or a sunday set it to a monday because there are no timetables for sunday and monday
         if (today == 6 || today == 0) {
@@ -229,6 +229,7 @@ public class Util {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        Log.d("json-response-temp", responseStr[0]);
 
 
         return responseStr[0];
@@ -274,9 +275,9 @@ public class Util {
             Date lastInsert = parser.parse(creation);
             // Get the current date from a calendar singleton
             Calendar calendar = Calendar.getInstance();
-            calendar.setTimeZone(TimeZone.getDefault());
 
-            // Get the current day
+            // Get the current day            calendar.setTimeZone(TimeZone.getDefault());
+
             Date currentDate = calendar.getTime();
             // Format and parse our dates
             Date formattedCurrentDate = parser.parse(parser.format(currentDate));
@@ -291,7 +292,7 @@ public class Util {
                 return day;
             }
         } catch (Exception e) {
-            return Util.calculateDay(context);
+            return 1;
 
         }
 

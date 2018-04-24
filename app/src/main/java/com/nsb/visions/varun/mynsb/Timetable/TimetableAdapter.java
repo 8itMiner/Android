@@ -3,6 +3,7 @@ package com.nsb.visions.varun.mynsb.Timetable;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +95,6 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             Subject subject = subjects.get(position);
             SubjectView subjectView = (SubjectView) holder;
 
-            // Start setting the respective data
             try {
                 // Attain the subject name
                 subjectView.subject.setText(com.nsb.visions.varun.mynsb.Timetable.Util.getClassName(subject.className, this.context));

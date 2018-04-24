@@ -1,5 +1,7 @@
 package com.nsb.visions.varun.mynsb.Timetable;
 
+import android.util.Log;
+
 /**
  */
 
@@ -12,6 +14,7 @@ public class Subject {
     public String time;
 
     public Subject(String className, String room, String teacher, String period, String time) {
+        Log.d("subject-data", "D" + className);
         this.className = className;
         this.room = room;
         this.teacher = teacher;

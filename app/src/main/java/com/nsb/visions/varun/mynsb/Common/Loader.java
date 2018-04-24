@@ -71,7 +71,6 @@ public abstract class Loader<Model> {
 
         // Set the visibility of the progressbar
         progressBar.setVisibility(View.VISIBLE);
-        ProgressBar progressBar1 = progressBar;
 
         // Start a thread for http requests
         new Thread(() -> {
@@ -242,17 +241,12 @@ public abstract class Loader<Model> {
             JSON json = new JSON(jsonRaw);
             // Get our body array with all the information
             JSON bodyArray = json.key("Message").key("Body").index(0);
-
             // Calculate the number of periods in the day based on the first period, if the first period is 0 that means that they have a period 0
             // And that there is 7 periods in the day
 
-            int noPeriods = bodyArray.index(0).key("Period").intValue() == 0 ? 7 : 6;
-
             // FREE PERIOD CREATION
-            addFreePeriods(bodyArray);
+            // addFreePeriods(bodyArray);
             // Add the free periods to our JSON object, this just reduces complexity down the line
-
-
 
             // Determine if a method has been overridden for the base class
             for (int i = 0; i < bodyArray.count(); i++) {

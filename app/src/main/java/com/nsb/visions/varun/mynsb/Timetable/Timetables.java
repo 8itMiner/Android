@@ -27,7 +27,7 @@ import okhttp3.ResponseBody;
 public class Timetables extends Loader<Subject> {
 
     private SharedPreferences preferences;
-    private String url = null;
+    private String url = "";
     private boolean expandOrNot;
     private String adapterTitle;
     private String dayStr;
@@ -71,24 +71,26 @@ public class Timetables extends Loader<Subject> {
             // CreateReminder a http client from the parsed context
             HTTP httpClient = new HTTP(this.context);
 
-            Response syncedTimetables = getSyncedTimetables(httpClient);
-            // Return synced timetables if it is not null
-            if (syncedTimetables != null) {
-                return syncedTimetables;
-            }
+            //Response syncedTimetables = getSyncedTimetables(httpClient);
+            //// Return synced timetables if it is not null
+            //if (syncedTimetables != null) {
+            //    return syncedTimetables;
+            //}
 
             // Get the day
             int day = Util.getDay(this.preferences, this.context);
-            Log.d("exception-request", "D" + String.valueOf(day));
+            Log.d("exception-request", String.valueOf(day));
             // Build the url
             this.url = "http://35.189.45.152:8080/api/v1/timetable/Get?Day=" + String.valueOf(day);
-
+            Log.d("expception-request", "http://35.189.45.152:8080/api/v1/timetable/Get?Day=" + String.valueOf(day));
 
             // Set up the request
             Request request = new Request.Builder()
                 .get()
-                .url(url)
+                .url(this.url)
                 .build();
+
+            Log.d("exception-timetables", httpClient.performRequest(request).body().string());
 
             return httpClient.performRequest(request);
         } catch (Exception e) {
@@ -96,6 +98,7 @@ public class Timetables extends Loader<Subject> {
         }
         return null;
     }
+
 
 
 
@@ -132,11 +135,13 @@ public class Timetables extends Loader<Subject> {
 
     // Parse the json data
     @Override
-    public Subject parseJson(JSON json, int position) throws Exception {
+    public Subject parseJson(JSON jsonRaw, int position) throws Exception {
+        // Get the right subject
+        JSON json = jsonRaw.index(position);
+
         // Determine what belltime to display to the user
         // Start getting the belltimes for each individual person
         int period = json.key("Period").intValue();
-        Log.d("exception", String.valueOf(period));
 
         return new Subject(json.key("Subject").stringValue(), json.key("ClassRoom").stringValue(),
             json.key("Teacher").stringValue(), String.valueOf(period), this.belltimes.key(String.valueOf(period)).stringValue());
