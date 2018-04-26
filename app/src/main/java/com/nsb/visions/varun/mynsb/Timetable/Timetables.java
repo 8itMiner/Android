@@ -45,6 +45,12 @@ public class Timetables extends Loader<Subject> {
         int dayOfWeek = day > 5 ? day - 5 : day;
         String week = Util.weekAorB(this.context);
 
+
+        // Build the url
+        this.url = "http://35.189.45.152:8080/api/v1/timetable/Get?Day=" + String.valueOf(day);
+
+
+
         if (day > 5) {
             week = "B";
         }
@@ -76,13 +82,6 @@ public class Timetables extends Loader<Subject> {
             //if (syncedTimetables != null) {
             //    return syncedTimetables;
             //}
-
-            // Get the day
-            int day = Util.getDay(this.preferences, this.context);
-            Log.d("exception-request", String.valueOf(day));
-            // Build the url
-            this.url = "http://35.189.45.152:8080/api/v1/timetable/Get?Day=" + String.valueOf(day);
-            Log.d("expception-request", "http://35.189.45.152:8080/api/v1/timetable/Get?Day=" + String.valueOf(day));
 
             // Set up the request
             Request request = new Request.Builder()

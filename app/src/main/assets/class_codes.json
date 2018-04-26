@@ -23,7 +23,7 @@
   "HIS": "History",
   "IND": "Indonesian",
   "INX": "Indonesian Ext",
-  "IPT": "Information Processes and Technology",
+  "IPT": "IPT",
   "JAP": "Japanese",
   "JAX": "Japanese Ext",
   "LAT": "Latin",
@@ -41,7 +41,7 @@
   "PHY": "Physics",
   "RC" : "Roll Call",
   "SCI": "Science",
-  "SDD": "Software Design",
+  "SDD": "How To Hack 101",
   "VAR": "Visual Arts",
   "FREE": "Free"
 }

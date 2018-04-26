@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -32,6 +33,7 @@ public class Reminders extends Loader<Reminder>{
 
     public Reminders(Context context, SharedPreferences preferences) {
         super(context, Reminders.class);
+        Log.d("exception", "reminder class has been loaded");
         this.preferences = preferences;
     }
 
@@ -40,22 +42,19 @@ public class Reminders extends Loader<Reminder>{
     public Response sendRequest() {
         // Set up the http client
         HTTP httpclient = new HTTP(this.context);
-
+        // Prevent caching
         CacheControl cacheControl = CacheControl.FORCE_NETWORK;
-
-
-        // Get the date range for all reminders this week
-        String[] dateRange = Util.getDateRangeStart("dd-MM-yyyy");
 
 
         // Start up a request to be sent to the api
         Request getReminders = new Request.Builder()
-            .url(String.format(Locale.ENGLISH, "http://35.189.45.152:8080/api/v1/reminders/Get/Today?Start_Time=%s&End_Time=%s", dateRange[0], dateRange[1]))
+            .url("http://35.189.45.152:8080/api/v1/reminders/Get/Today")
             .get()
             .cacheControl(cacheControl)
             .build();
         // Send the request
-        try {   
+
+        try {
             return httpclient.performRequest(getReminders);
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,6 +66,8 @@ public class Reminders extends Loader<Reminder>{
 
     @Override
     public Reminder parseJson(JSON jsonD, int position) throws Exception {
+        Log.d("exception-data", jsonD.toString());
+
         JSON json = jsonD.index(position);
         return new Reminder(
             json.key("Headers").key("Subject").stringValue(), json.key("Body").stringValue(),

@@ -13,10 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.nsb.visions.varun.mynsb.R;
-import com.nsb.visions.varun.mynsb.Reminders.Reminders;
 import com.nsb.visions.varun.mynsb.Timetable.Timetables;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +60,8 @@ public abstract class Loader<Model> {
     public void loadUI(RecyclerView rv, SwipeRefreshLayout swiper, ProgressBar progressBar, TextView errorHolder, Handler uiHandler) {
 
         // Determine if there is an internet connection
-        if (!Util.isNetworkAvailable(this.context) && extendedClass != Reminders.class && extendedClass != Timetables.class) {
+        // Dont do this if they are requesting their timetables because that is chached for them
+        if (!Util.isNetworkAvailable(this.context) && extendedClass != Timetables.class) {
             showErrors(rv, errorHolder, true);
             progressBar.setVisibility(View.GONE);
             return;
@@ -244,9 +242,12 @@ public abstract class Loader<Model> {
             // Calculate the number of periods in the day based on the first period, if the first period is 0 that means that they have a period 0
             // And that there is 7 periods in the day
 
-            // FREE PERIOD CREATION
-            // addFreePeriods(bodyArray);
-            // Add the free periods to our JSON object, this just reduces complexity down the line
+            // Only add it if the calling class is the timetables class
+            if (extendedClass == Timetables.class) {
+                // FREE PERIOD CREATION
+                addFreePeriods(bodyArray);
+                // Add the free periods to our JSON object, this just reduces complexity down the line
+            }
 
             // Determine if a method has been overridden for the base class
             for (int i = 0; i < bodyArray.count(); i++) {

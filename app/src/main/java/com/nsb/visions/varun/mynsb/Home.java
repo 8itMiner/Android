@@ -22,18 +22,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import com.evernote.android.job.JobManager;
 import com.nsb.visions.varun.mynsb.Calendar.Calendars;
+import com.nsb.visions.varun.mynsb.Common.HandleFABClicks;
 import com.nsb.visions.varun.mynsb.Common.Loader;
+import com.nsb.visions.varun.mynsb.Common.Util;
 import com.nsb.visions.varun.mynsb.Events.Events;
 import com.nsb.visions.varun.mynsb.FourU.FourU;
-import com.nsb.visions.varun.mynsb.Jobs.Dispatchers.JobDispatcher;
 import com.nsb.visions.varun.mynsb.Jobs.TimetableSync;
-import com.nsb.visions.varun.mynsb.Reminders.Create.CreateReminderHandler;
 import com.nsb.visions.varun.mynsb.Reminders.Reminders;
 import com.nsb.visions.varun.mynsb.Timetable.Timetables;
 
-import java.util.Calendar;
+import java.sql.Time;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -82,7 +81,6 @@ public class Home extends AppCompatActivity {
                 case R.id.navigation_calendar:
                     mTextMessage.setText("School Calendar");
                     Calendars calendars = new Calendars(getApplicationContext());
-                    Toast.makeText(Home.this, "Feature still in development", Toast.LENGTH_LONG).show();
                     pushUI(calendars, 4, "Calendar");
                     return true;
             }
@@ -106,10 +104,10 @@ public class Home extends AppCompatActivity {
         SwipeRefreshLayout swiperLayout = (SwipeRefreshLayout) mainHolder.getChildAt(1);
         RecyclerView contentHolder = swiperLayout.findViewById(R.id.recyclerLoader);
 
-        // Determine if the current view parsed into this is a reminder view
-        if (loader.getClass() == Reminders.class) {
+        // Determine if the current view parsed into this is a reminder view, allow the timetable view as well coz it has a special expand feature
+        if (loader.getClass() == Reminders.class || loader.getClass() == Timetables.class) {
             // Add the scroller, check function documentation for more details
-            initScroller(swiperLayout, contentHolder);
+            initFAB(loader, mainHolder, contentHolder);
         }
 
         // Hide any current errors so we dont get weird views
@@ -125,25 +123,32 @@ public class Home extends AppCompatActivity {
 
 
 
-    /* initScroller initialises the scroller so that when we scroll down on the reminders view the fab is hidden so that we can read our reminders
+    /* initFAB initialises the scroller so that when we scroll down on the reminders view the fab is hidden so that we can read our reminders, it also inits the FAB to be clicked ;)
             @params;
                 View parentView
                 RecyclerView contentHolder
 
      */
-    private void initScroller(View parentView, RecyclerView contentHolder) {
+    private void initFAB(Loader loader, View parentView, RecyclerView contentHolder) {
+        // Get our fab var
+        FloatingActionButton FAB = parentView.findViewById(R.id.floaterButton);
+
+        // Setup the FAB to be clicked
+        // Attach an onclick listener to the floaterButton used by the reminder view and the timetable view
+        FAB.setOnClickListener(v -> {
+            LayoutInflater inflater = this.getLayoutInflater();
+            HandleFABClicks.switchHandler(loader, FAB, inflater, this, getApplication());
+        });
+
         // Add a scroll listener to the recycler so that it hides our FAB when the page is scrolled
         contentHolder.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                // Get our fab var
-                FloatingActionButton createReminder = parentView.findViewById(R.id.createReminder);
-
                 // Calculate what to do
                 if (dy > 0) {
-                    createReminder.hide();
+                    FAB.hide();
                 } else if (dy < 0) {
-                    createReminder.show();
+                    FAB.show();
                 }
 
             }
@@ -196,26 +201,29 @@ public class Home extends AppCompatActivity {
                 nil
      */
     private void setUpActivity() {
+        // Declare our stuff
         // Set the textview and the recyclerview
         this.mTextMessage = findViewById(R.id.message);
         this.errorHolder = findViewById(R.id.errorText);
         this.flipper = findViewById(R.id.flipper);
-        FloatingActionButton createReminder = findViewById(R.id.createReminder);
-
-        // Attach an onclick listener to the create reminder button
-        createReminder.setOnClickListener(v -> {
-            LayoutInflater inflater = this.getLayoutInflater();
-            CreateReminderHandler.handleCreateReminderButton(createReminder, inflater, this, getApplication());
-        });
-
-
+        FloatingActionButton FAB = findViewById(R.id.floaterButton);
         BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        // Set the default selected tab
-        // TBH: This is a super hacky solution but i guess it works
         View DefaultTab = navigation.findViewById(R.id.navigation_timetable);
-        DefaultTab.performClick();
+
+
+        // Only run if there is an active internet connection
+        if (Util.isNetworkAvailable(Home.this)) {
+            navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+            // Set the default selected tab
+            // TBH: This is a super hacky solution but i guess it works
+            DefaultTab.performClick();
+        } else {
+            // Otherwise error
+            Toast.makeText(Home.this, "Looks like you aren't connected to the internet. Try again later.", Toast.LENGTH_LONG).show();
+            DefaultTab.performClick();
+        }
     }
+
 
 
     /* routeUser routes the current user based on the stored shared preferences, if this is the first one a tutorial is shown if they are logged in they are taken to the home screen
@@ -234,7 +242,6 @@ public class Home extends AppCompatActivity {
             // Apply changes
             editor.apply();
             // Show the tutorial
-            // TODO: Once the tutorial is completed implement this redirect
 
             // In the mean time take them to the home page
             startActivity(redirect);

@@ -64,6 +64,12 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
                 Toast.makeText(context, "Chrome is not installed, to read this article please visit: " + articleURL, Toast.LENGTH_LONG).show();
             }
         });
+
+
+        // Set the click listener for the download button
+        holder.downlaodButton.setOnClickListener((v) -> {
+            Toast.makeText(this.context, "Download feature not working", Toast.LENGTH_LONG).show();
+        });
     }
 
 
@@ -98,6 +104,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         TextView mainDesc;
         ImageView backdrop;
         Button readButton;
+        Button downlaodButton;
 
         // Construct
         ArticleView(View itemView) {
@@ -107,7 +114,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
             mainDesc = itemView.findViewById(R.id.description);
             backdrop = itemView.findViewById(R.id.imageBanner);
             readButton = itemView.findViewById(R.id.readID);
-
+            downlaodButton = itemView.findViewById(R.id.downloadID);
         }
     }
     /*
