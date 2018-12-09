@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
@@ -53,6 +54,10 @@ public class ExpandedTimetables extends AppCompatActivity {
         Spinner day = findViewById(R.id.day);
         Spinner week = findViewById(R.id.week);
 
+        int weekID = timetables.getWeek().equals("A") ? 0 : 1;
+        int dayID = Util.stringToDayInt(timetables.getDayStr())-1;
+        day.setSelection(dayID);
+        week.setSelection(weekID);
 
         // Initialize our spinner colours
         initSpinner(day);
@@ -65,6 +70,8 @@ public class ExpandedTimetables extends AppCompatActivity {
             String dayStr = day.getSelectedItem().toString();
             String weekStr = week.getSelectedItem().toString();
 
+            Log.d("Attempting retrieval", dayStr+" "+weekStr);
+
             // Convert the day into a number that the api can read
             // Trim the week
             String splitWeek = weekStr.split(" ")[1];
@@ -76,9 +83,12 @@ public class ExpandedTimetables extends AppCompatActivity {
                 dayInt += 5;
             }
 
+            Log.d("Attempting retrieval", String.valueOf(dayInt));
+
 
                 // Set the new url for the timetable class and reload the content
-            timetables.setURL("http://35.189.45.152:8080/api/v1/timetable/Get?Day=" + String.valueOf(dayInt));
+            timetables.setURL("http://35.189.50.185:8080/api/v1/timetable/Get?Day=" + String.valueOf(dayInt));
+            timetables.setDayAndUpdateBellTimes(dayStr);
             timetables.loadUI(findViewById(R.id.recycler), swiper, findViewById(R.id.loader), findViewById(R.id.errorText), new Handler());
 
 

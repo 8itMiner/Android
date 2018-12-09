@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,8 +33,8 @@ import com.nsb.visions.varun.mynsb.Jobs.TimetableSync;
 import com.nsb.visions.varun.mynsb.Reminders.Reminders;
 import com.nsb.visions.varun.mynsb.Timetable.Timetables;
 
-import java.sql.Time;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 public class Home extends AppCompatActivity {
@@ -104,6 +105,7 @@ public class Home extends AppCompatActivity {
         SwipeRefreshLayout swiperLayout = (SwipeRefreshLayout) mainHolder.getChildAt(1);
         RecyclerView contentHolder = swiperLayout.findViewById(R.id.recyclerLoader);
 
+
         // Determine if the current view parsed into this is a reminder view, allow the timetable view as well coz it has a special expand feature
         if (loader.getClass() == Reminders.class || loader.getClass() == Timetables.class) {
             // Add the scroller, check function documentation for more details
@@ -117,7 +119,15 @@ public class Home extends AppCompatActivity {
             ProgressBar progressBar = mainHolder.findViewById(R.id.loader);
             // Load the UI
             loader.loadUI(contentHolder, swiperLayout, progressBar, errorHolder, uiHandler);
-            loaded.put(entryName, true);
+
+            // Determine if the recyclerview is empty or not, this allows us to figure out if anything was even loaded or not
+            if (contentHolder.getAdapter() == null) {
+                loaded.put(entryName, false);
+            } else if (contentHolder.getAdapter().getItemCount() == 0) {
+                loaded.put(entryName, false);
+            } else {
+                loaded.put(entryName, true);
+            }
         }
     }
 
@@ -234,7 +244,7 @@ public class Home extends AppCompatActivity {
     private void routeUser(SharedPreferences preferences, SharedPreferences.Editor editor) {
         Intent redirect = new Intent(Home.this, SignIn.class);
         // Determine if this is the first time they have run the app if so then take them to the tutorial
-        if (preferences.getBoolean("firstrun", true)) {
+        if (preferences.getBoolean("firstrun", true) || !preferences.getBoolean("logged-in", false)) {
             // Set the logged-in flag to false
             editor.putBoolean("logged-in", false);
             // Set the firstrun flag to false

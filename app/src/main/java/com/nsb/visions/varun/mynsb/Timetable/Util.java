@@ -21,7 +21,7 @@ public class Util {
 
         // This is because some classcodes have numbers which we want to get rid of, eg. 10MAT will become MAT
         // Get the class code regex
-        Pattern getCode = Pattern.compile("(\\d+)([a-zA-z]+)(.*)");
+        Pattern getCode = Pattern.compile("(\\d+)([a-zA-z]+\\d?)(.*)");
         // Determine the code for the class, (2nd matching group)
         Matcher matcher = getCode.matcher(classCode);
 
@@ -29,8 +29,11 @@ public class Util {
         // Push stuff into the matches list
         while(matcher.find()) {
             subjectCode = matcher.group(2);
+            // Determine if the subject code contains RC
+            if (subjectCode.contains("RC")) {
+                subjectCode = "RC";
+            }
         }
-        Log.d("exception-tag-data", subjectCode);
 
 
         // Parse this and determine the full name of the class by reading the class_codes.json file

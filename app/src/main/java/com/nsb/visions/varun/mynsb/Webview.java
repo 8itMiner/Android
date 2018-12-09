@@ -25,7 +25,6 @@ public class Webview extends AppCompatActivity {
         // Get the intent data from a pending intent
         Bundle extras = this.getIntent().getExtras();
         String url = (String) extras.get("url");
-        Log.d("url-data", "d" + url);
 
         // Load the article
         webView.loadUrl(url);

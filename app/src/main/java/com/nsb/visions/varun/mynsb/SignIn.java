@@ -160,7 +160,6 @@ public class SignIn extends AppCompatActivity {
             toReturn.put("success", true);
             toReturn.put("user", user);
         } catch (Exception e) {
-            Log.d("Error", "Looks like the details were invalid");
             throw new Exception("User details were invalid");
         }
 

@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import eu.amirs.JSON;
 import okhttp3.MediaType;
@@ -31,6 +32,8 @@ public class Timetables extends Loader<Subject> {
     private boolean expandOrNot;
     private String adapterTitle;
     private String dayStr;
+    private int requestedDay;
+    private String week;
     private JSON belltimes;
 
 
@@ -41,28 +44,27 @@ public class Timetables extends Loader<Subject> {
         super(context, Timetables.class);
 
         // Determine what day of the week it is as a string
-        int day = Util.calculateDay(context) + 1;
+        int day = Util.calculateDay(context);
         int dayOfWeek = day > 5 ? day - 5 : day;
         String week = Util.weekAorB(this.context);
 
 
         // Build the url
-        this.url = "http://35.189.45.152:8080/api/v1/timetable/Get?Day=" + String.valueOf(day);
-
+        this.url = "http://35.189.50.185:8080/api/v1/timetable/Get?Day=" + String.valueOf(day);
+        this.week = week;
 
 
         if (day > 5) {
             week = "B";
         }
         // This is our title for the adapter
-        String combined = Util.intToDaystr(dayOfWeek) + " " + week;
-        this.adapterTitle = combined;
+        this.adapterTitle = Util.intToDaystr(dayOfWeek + 1) + " " + week;
         // Determine the day as an str
         this.dayStr = Util.intToDaystr(day);
-
         this.preferences = preferences;
         this.expandOrNot = expandOrNot;
         this.belltimes = new JSON(getBelltimes(context, preferences)).key("Body").index(0).key(dayStr);
+        Log.d("Belltimes: ", "d " + getBelltimes(context, preferences));
     }
 
 
@@ -87,12 +89,13 @@ public class Timetables extends Loader<Subject> {
             Request request = new Request.Builder()
                 .get()
                 .url(this.url)
+                .header("Connection", "close")
                 .build();
 
-            Log.d("exception-timetables", httpClient.performRequest(request).body().string());
 
             return httpClient.performRequest(request);
         } catch (Exception e) {
+            Log.d("Exception", "Boom");
             e.printStackTrace();
         }
         return null;
@@ -137,6 +140,7 @@ public class Timetables extends Loader<Subject> {
     public Subject parseJson(JSON jsonRaw, int position) throws Exception {
         // Get the right subject
         JSON json = jsonRaw.index(position);
+        Log.d("Timetable Data:", json.toString());
 
         // Determine what belltime to display to the user
         // Start getting the belltimes for each individual person
@@ -174,7 +178,20 @@ public class Timetables extends Loader<Subject> {
     public void setURL(String url) {
         this.url = url;
     }
-
+    public void setDayAndUpdateBellTimes(String dayStr) {
+        this.dayStr = dayStr;
+        this.belltimes = new JSON(getBelltimes(context, preferences)).key("Body").index(0).key(dayStr);
+        Log.d("Belltimes: ", belltimes.toString());
+    }
+    public void setWeek(String week) {
+        this.week = week;
+    }
+    public String getWeek(){
+        return this.week;
+    }
+    public String getDayStr() {
+        return this.dayStr;
+    }
 
 
 
@@ -184,13 +201,6 @@ public class Timetables extends Loader<Subject> {
 
     // get belltimes data
     public static String getBelltimes(Context context, SharedPreferences preferences) {
-        // Determine if there is anythin in the shared prefs that we can use
-        String belltimes = preferences.getString("belltimes{data}", "");
-        // Determine if there really is any data in the belltimes shared prefs if not then pull the data from the api
-        if (!belltimes.isEmpty()) {
-            return belltimes;
-        }
-
         // Otherwise perform the request from scratch
         final String[] times = {""};
         // Start up a thread
@@ -200,7 +210,8 @@ public class Timetables extends Loader<Subject> {
             // Setup a request
             Request request = new Request.Builder()
                 .get()
-                .url("http://35.189.45.152:8080/api/v1/belltimes/Get")
+                .url("http://35.189.50.185:8080/api/v1/belltimes/Get")
+                .header("Connection", "close")
                 .build();
 
             try {
@@ -218,6 +229,6 @@ public class Timetables extends Loader<Subject> {
         }
 
 
-        return times[0];
+        return new JSON(times[0]).key("Message").toString();
     }
 }

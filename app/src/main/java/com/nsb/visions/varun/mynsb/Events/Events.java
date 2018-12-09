@@ -44,13 +44,14 @@ public class Events extends Loader<Event> {
         HTTP httpClient = new HTTP(this.context);
 
         // Build a request from the data we have
-        String requestURL = String.format(Locale.ENGLISH, "http://35.189.45.152:8080/api/v1/events/Get?start=%s&end=%s",
+        String requestURL = String.format(Locale.ENGLISH, "events/Get?start=%s&end=%s",
             dateRange[0], dateRange[1]);
 
         // Set up the request
         Request request = new Request.Builder()
             .get()
             .url(requestURL)
+            .header("Connection", "close")
             .build();
 
 

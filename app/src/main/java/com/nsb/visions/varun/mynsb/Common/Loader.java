@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
@@ -15,8 +16,16 @@ import android.widget.TextView;
 import com.nsb.visions.varun.mynsb.R;
 import com.nsb.visions.varun.mynsb.Timetable.Timetables;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import eu.amirs.JSON;
 import okhttp3.Response;
@@ -57,14 +66,15 @@ public abstract class Loader<Model> {
           TextView errorHolder
           Handler uiHandler
      */
-    public void loadUI(RecyclerView rv, SwipeRefreshLayout swiper, ProgressBar progressBar, TextView errorHolder, Handler uiHandler) {
+    public boolean loadUI(RecyclerView rv, SwipeRefreshLayout swiper, ProgressBar progressBar, TextView errorHolder, Handler uiHandler) {
+        AtomicBoolean success = new AtomicBoolean(true);
 
         // Determine if there is an internet connection
-        // Dont do this if they are requesting their timetables because that is chached for them
+        // Dont do this if they are requesting their timetables because that is cached for them
         if (!Util.isNetworkAvailable(this.context) && extendedClass != Timetables.class) {
             showErrors(rv, errorHolder, true);
             progressBar.setVisibility(View.GONE);
-            return;
+            return false;
         }
 
         // Set the visibility of the progressbar
@@ -88,7 +98,7 @@ public abstract class Loader<Model> {
             // Get all the models
             List<Model> models = getModels();
             // Load the adapter into the recyclerView
-            loadAdapter(rv, errorHolder, models, uiHandler);
+            boolean state = loadAdapter(rv, errorHolder, models, uiHandler);
 
             // Post it into the UI
             uiHandler.post(() -> {
@@ -99,6 +109,8 @@ public abstract class Loader<Model> {
                 setupRefresher(rv);
             });
         }).start();
+
+        return success.get();
     }
 
 
@@ -116,22 +128,24 @@ public abstract class Loader<Model> {
                 List<Model> models
                 Handler uiHandler
      */
-    private void loadAdapter(RecyclerView recyclerView, TextView errorHolder, List<Model> models, Handler uiHandler) {
+    private boolean loadAdapter(RecyclerView recyclerView, TextView errorHolder, List<Model> models, Handler uiHandler) {
+        AtomicBoolean successState = new AtomicBoolean(true);
         // Post ui update to handler
         uiHandler.post(() -> {
-            showErrors(recyclerView, errorHolder, models == null || models.isEmpty());
-
             if (models != null && !models.isEmpty()) {
                 this.adapter = getAdapterInstance(models);
                 int resId = R.anim.layout_animation_fall_down;
                 LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this.context, resId);
                 recyclerView.setLayoutAnimation(animation);
-
-
                 // Set the adapter
                 recyclerView.setAdapter(this.adapter);
+            } else {
+                showErrors(recyclerView, errorHolder, true);
+                successState.set(false);
             }
         });
+
+        return successState.get();
     }
 
 
@@ -145,7 +159,7 @@ public abstract class Loader<Model> {
     public static void showErrors(RecyclerView recyclerView, TextView errorHolder, boolean errorOrNot) {
         // Article are empty so show the error message
         if (errorOrNot) {
-            recyclerView.setVisibility(View.GONE);
+            recyclerView.swapAdapter(new RecyclerViewEmpty(), true);
             errorHolder.setVisibility(View.VISIBLE);
         } else {
             // Hide the error holder in case it was always it is shown
@@ -167,11 +181,12 @@ public abstract class Loader<Model> {
             new Thread(() -> {
                 List<Model> models = getModels();
 
-                // Determine if errors need to be shown
+                // Display the new content
                 this.uiHandler.post(() -> {
-                    showErrors(recyclerView, this.errorHolder, models == null || models.isEmpty());
                     // Setup the adapter
                     setUpAdapter(recyclerView, models);
+                    // Determine to show and error or not
+                    showErrors(recyclerView, this.errorHolder, models == null || models.isEmpty());
                     // Set the refresher
                     this.swiper.setRefreshing(false);
                     recyclerView.getAdapter().notifyDataSetChanged();
@@ -231,9 +246,10 @@ public abstract class Loader<Model> {
         // Get the response from the httpClient
         try {
             Response response = sendRequest();
-            // Begin reading the json resp
-            assert response != null;
+            // Begin reading the json rest
             String jsonRaw = response.body().string();
+
+            Log.d("Response-Data", jsonRaw);
 
             // Begin parsing that json and push it into the models list
             JSON json = new JSON(jsonRaw);
@@ -243,10 +259,10 @@ public abstract class Loader<Model> {
             // And that there is 7 periods in the day
 
             // Only add it if the calling class is the timetables class
-            if (extendedClass == Timetables.class) {
+            if (extendedClass == com.nsb.visions.varun.mynsb.Timetable.Timetables.class) {
                 // FREE PERIOD CREATION
                 addFreePeriods(bodyArray);
-                // Add the free periods to our JSON object, this just reduces complexity down the line
+                //Add the free periods to our JSON object, this just reduces complexity down the line
             }
 
             // Determine if a method has been overridden for the base class
@@ -265,30 +281,51 @@ public abstract class Loader<Model> {
 
 
 
+    private List<Integer> generateList(int start, int end) {
+        List<Integer> integerList = new ArrayList<>();
+
+        for (int i = 0; i < end-start+1; i++) {
+            integerList.add(start + i);
+        }
+
+        return integerList;
+    }
 
 
-    private void addFreePeriods(JSON bodyArray) {
+
+
+    private void addFreePeriods(JSON bodyArray) throws JSONException {
         // Iterate over json array and push it into the models list
-        for (int i = 1; i > bodyArray.count(); i++) {
-            // Number of frees
-            int period = bodyArray.index(i).key("Period").intValue();
-            int numFrees = period - bodyArray.index(i-1).key("Period").intValue();
+        // Generate an array of "ideals" this is the model array size
 
-            for (int j = 0; j < numFrees; j++) {
-                // Create a JSON object to indert into our data holder
-                JSON freePeriod = JSON.create(
-                    JSON.dic(
-                        "class", "10FREE A",
-                        "day", 1,
-                        "period", String.valueOf(period + j),
-                        "room", "",
-                        "teacher", "BAI"
-                    )
-                );
+        Log.d("Timetable-Data", bodyArray.toString());
 
-                // Insert this into our current JSON holder
-                bodyArray.addWithIndex(freePeriod, i + j);
+        int lastPeriod = Integer.parseInt(bodyArray.index(bodyArray.count() - 2).getJsonObject().getString("Period"));
+        List<Integer> contentMapping = generateList(1, lastPeriod);
+        List<Integer> actualMapping = new ArrayList<>();
+
+        // Generate a mapping for what we actually have with the body array
+        for (int i = 0; i < bodyArray.count()-1; i++) {
+            if (bodyArray.index(i).getJsonObject().getString("Period").isEmpty()) {
+                continue;
             }
+            int periodNumber = Integer.parseInt(bodyArray.index(i).getJsonObject().getString("Period"));
+            actualMapping.add(periodNumber);
+        }
+
+        // Compare these two lists to get a list of missing periods
+        // The free periods are now in the content mapping list
+        contentMapping.removeAll(actualMapping);
+
+        for(int i: contentMapping) {
+            // Build our new JSON
+            JSON data = new JSON("{}");
+            data.addEditWithKey("Teacher", "");
+            data.addEditWithKey("ClassRoom", "");
+            data.addEditWithKey("Subject", "10FREE");
+            data.addEditWithKey("Period", String.valueOf(i));
+
+            bodyArray.addWithIndex(data, i-1);
         }
     }
     /*

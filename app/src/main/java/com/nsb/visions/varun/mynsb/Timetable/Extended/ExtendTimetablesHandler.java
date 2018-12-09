@@ -12,7 +12,6 @@ import com.nsb.visions.varun.mynsb.ExpandedTimetables;
 
 public class ExtendTimetablesHandler {
     public static void handleExtendTimetablesButton(Context context) {
-        Log.d("exception", "you clicked me :)");
         Intent move = new Intent(context, ExpandedTimetables.class);
         context.startActivity(move);
     }

@@ -47,17 +47,17 @@ public class Calendars extends Loader<Calendar> {
         // set up a http client
         HTTP httpClient = new HTTP(this.context);
 
-        String url = String.format(Locale.ENGLISH, "http://35.189.45.152:8080/api/v1/events/Calendar/Get?Start=%s&End=%s", dates[0], dates[1]);
-        Log.d("exception-url", url);
+        String url = String.format(Locale.ENGLISH, "http://35.189.50.185:8080/api/v1/events/Calendar/Get?Start=%s&End=%s", dates[0], dates[1]);
 
 
         // Set up the request
         Request request = new Request.Builder()
             .get()
             .url(url)
+            .header("Connection", "close")
             .build();
 
-        Log.d("content-response", String.format(Locale.ENGLISH, "http://35.189.45.152:8080/api/v1/events/Calendar/Get?Start=%s&End=%s", dates[0], dates[1]));
+        Log.d("content-response", String.format(Locale.ENGLISH, "/events/Calendar/Get?Start=%s&End=%s", dates[0], dates[1]));
 
         // Perform request and return the response
         try {

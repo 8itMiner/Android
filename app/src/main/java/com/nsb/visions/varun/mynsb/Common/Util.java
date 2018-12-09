@@ -170,11 +170,9 @@ public class Util {
         // Get today as an integer
         int today = dayAsInt() - 1;
         String week = weekAorB(context);
-        Log.d("Week-context", String.valueOf(week));
 
         // If today is a saturday or a sunday set it to a monday because there are no timetables for sunday and monday
         if (today == 6 || today == 0) {
-            Log.d("week-context", String.valueOf(today));
             today = 1;
             if (Objects.equals(week.trim(), "A")) {
                 week = "B";
@@ -210,7 +208,8 @@ public class Util {
             // Setup a request
             Request request = new Request.Builder()
                 .get()
-                .url("http://35.189.45.152:8080/api/v1/week/Get")
+                .url("http://35.189.50.185:8080/api/v1/week/Get")
+                .header("Connection", "close")
                 .build();
 
 
@@ -229,7 +228,6 @@ public class Util {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Log.d("json-response-temp", responseStr[0]);
 
 
         return responseStr[0];

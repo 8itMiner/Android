@@ -33,7 +33,6 @@ public class Reminders extends Loader<Reminder>{
 
     public Reminders(Context context, SharedPreferences preferences) {
         super(context, Reminders.class);
-        Log.d("exception", "reminder class has been loaded");
         this.preferences = preferences;
     }
 
@@ -48,7 +47,7 @@ public class Reminders extends Loader<Reminder>{
 
         // Start up a request to be sent to the api
         Request getReminders = new Request.Builder()
-            .url("http://35.189.45.152:8080/api/v1/reminders/Get/Today")
+            .url("http://35.189.50.185:8080/api/v1/reminders/Get/Today")
             .get()
             .cacheControl(cacheControl)
             .build();
@@ -66,7 +65,6 @@ public class Reminders extends Loader<Reminder>{
 
     @Override
     public Reminder parseJson(JSON jsonD, int position) throws Exception {
-        Log.d("exception-data", jsonD.toString());
 
         JSON json = jsonD.index(position);
         return new Reminder(

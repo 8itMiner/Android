@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 
 import eu.amirs.JSON;
 import okhttp3.FormBody;
+import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -23,7 +24,8 @@ import okhttp3.Response;
 public class CreateReminder {
 
     // Http handler used to send http requests
-    public static HTTP httpHandler;
+    @SuppressLint("StaticFieldLeak")
+    private static HTTP httpHandler;
     public static Response response;
 
 
@@ -49,38 +51,37 @@ public class CreateReminder {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm");
         String date = simpleDateFormat.format(reminder.time);
 
+        Log.d("Form-Data", reminder.body + ", " + reminder.subject + ", " + date + ", " + tagsJson);
+
         // Set up the request body to be tagged along with our request
         RequestBody requestBody = new FormBody.Builder()
-            .add("Body", reminder.body)
-            .add("Subject", reminder.subject)
-            .add("Reminder_Date_Time", date)
-            .add("Tags", tagsJson)
+            .addEncoded("Body", reminder.body)
+            .addEncoded("Subject", reminder.subject)
+            .addEncoded("Reminder_Date_Time", date)
+            .addEncoded("Tags", tagsJson)
             .build();
 
         // Set up the request to be sent
         Request request = new Request.Builder()
-            .url("http://35.189.45.152:8080/api/v1/reminders/Create")
+            .url("http://35.189.50.185:8080/api/v1/reminders/Create")
             .post(requestBody)
             .build();
 
-
-        final Exception[] exception = {null};
 
         // Send the request and get the response
         Thread sendRequest = new Thread(() -> {
             try {
                 response = httpHandler.performRequest(request);
-                Log.d("data-resp", response.toString());
+                Log.d("data-resp", response.body().string());
             } catch (Exception e) {
                 e.printStackTrace();
-                exception[0] = e;
             }
         });
         sendRequest.start();
 
-        // Throw and exception if there was an error
-        if (exception[0] != null) {
-            throw exception[0];
+        assert response != null;
+        if (!response.isSuccessful()) {
+            throw new Exception("Request didn't work");
         }
 
 
