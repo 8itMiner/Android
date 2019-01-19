@@ -42,7 +42,7 @@ public class FourU extends Loader<Article> {
         // Set up a request for the client to send
         Request request = new Request.Builder()
             .get()
-            .url("http://35.189.50.185:8080/api/v1/4U/Get")
+            .url(HTTP.API_URL + "/4U/get")
             .header("Connection", "close")
             .build();
 

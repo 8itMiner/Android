@@ -6,8 +6,6 @@ import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
-import java.net.URL;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -18,6 +16,9 @@ import okhttp3.Response;
 
 // HTTP class that uses stuff such as cookie managers and stuff and makes http requests easier
 public class HTTP {
+
+    // Key information
+    public static String API_URL = "https://mynsb.nsbvisions.com/api/v1";
 
     // Cookie manager
     private OkHttpClient client;

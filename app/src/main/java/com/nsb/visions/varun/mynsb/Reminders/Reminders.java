@@ -47,7 +47,7 @@ public class Reminders extends Loader<Reminder>{
 
         // Start up a request to be sent to the api
         Request getReminders = new Request.Builder()
-            .url("http://35.189.50.185:8080/api/v1/reminders/Get/Today")
+            .url(HTTP.API_URL + "/reminders/get/today")
             .get()
             .cacheControl(cacheControl)
             .build();

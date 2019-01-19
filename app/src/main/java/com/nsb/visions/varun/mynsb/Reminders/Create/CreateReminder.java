@@ -63,7 +63,7 @@ public class CreateReminder {
 
         // Set up the request to be sent
         Request request = new Request.Builder()
-            .url("http://35.189.50.185:8080/api/v1/reminders/Create")
+            .url(HTTP.API_URL + "/reminders/Create")
             .post(requestBody)
             .build();
 

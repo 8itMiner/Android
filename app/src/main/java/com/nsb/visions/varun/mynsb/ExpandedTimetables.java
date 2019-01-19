@@ -87,7 +87,7 @@ public class ExpandedTimetables extends AppCompatActivity {
 
 
                 // Set the new url for the timetable class and reload the content
-            timetables.setURL("http://35.189.50.185:8080/api/v1/timetable/Get?Day=" + String.valueOf(dayInt));
+            timetables.setURL(HTTP.API_URL + "/timetable/get?Day=" + String.valueOf(dayInt));
             timetables.setDayAndUpdateBellTimes(dayStr);
             timetables.loadUI(findViewById(R.id.recycler), swiper, findViewById(R.id.loader), findViewById(R.id.errorText), new Handler());
 

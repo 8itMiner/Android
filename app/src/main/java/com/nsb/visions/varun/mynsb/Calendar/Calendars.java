@@ -47,7 +47,7 @@ public class Calendars extends Loader<Calendar> {
         // set up a http client
         HTTP httpClient = new HTTP(this.context);
 
-        String url = String.format(Locale.ENGLISH, "http://35.189.50.185:8080/api/v1/events/Calendar/Get?Start=%s&End=%s", dates[0], dates[1]);
+        String url = String.format(Locale.ENGLISH, HTTP.API_URL + "/events/calendar/get?Start=%s&End=%s", dates[0], dates[1]);
 
 
         // Set up the request

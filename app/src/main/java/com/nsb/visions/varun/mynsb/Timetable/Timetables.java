@@ -50,7 +50,7 @@ public class Timetables extends Loader<Subject> {
 
 
         // Build the url
-        this.url = "http://35.189.50.185:8080/api/v1/timetable/Get?Day=" + String.valueOf(day);
+        this.url = HTTP.API_URL + "/timetable/Get?Day=" + String.valueOf(day);
         this.week = week;
 
 
@@ -210,7 +210,7 @@ public class Timetables extends Loader<Subject> {
             // Setup a request
             Request request = new Request.Builder()
                 .get()
-                .url("http://35.189.50.185:8080/api/v1/belltimes/Get")
+                .url(HTTP.API_URL + "/belltimes/Get")
                 .header("Connection", "close")
                 .build();
 

@@ -50,7 +50,7 @@ public class Auth {
     public User auth(String studentID, String password) throws Exception {
         // Set up the request
         Request login = new Request.Builder()
-                .url("http://35.189.50.185:8080/api/v1/user/Auth")
+                .url(HTTP.API_URL + "/user/auth")
                 .method("POST", RequestBody.create(null, new byte[0]))
                 .addHeader("Authorization", Credentials.basic(studentID, password))
                 .build();
@@ -80,7 +80,7 @@ public class Auth {
     public User getUserDetails() throws Exception {
         // Get user data and return it
         Request getUserDetails = new Request.Builder()
-                .url("http://35.189.50.185:8080/api/v1/user/GetDetails")
+                .url(HTTP.API_URL + "/user/getdetails")
                 .build();
         Response userDataResp = httpClient.performRequest(getUserDetails);
         // Read Body

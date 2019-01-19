@@ -208,7 +208,7 @@ public class Util {
             // Setup a request
             Request request = new Request.Builder()
                 .get()
-                .url("http://35.189.50.185:8080/api/v1/week/Get")
+                .url(HTTP.API_URL + "/week/get")
                 .header("Connection", "close")
                 .build();
 
