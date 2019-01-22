@@ -33,11 +33,7 @@
         </activity>
         <activity android:name=".TutorialSlider" />
 
-        <receiver android:name=".Notifications.AlarmReceiver">
-            <intent-filter>
-                <action android:name="com.intent.action.ALARM" />
-            </intent-filter>
-        </receiver>
+
 
         <activity android:name=".Webview" />
         <activity android:name=".ExpandedTimetables"></activity>

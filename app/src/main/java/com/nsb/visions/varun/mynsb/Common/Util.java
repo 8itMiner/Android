@@ -5,19 +5,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.util.Log;
 
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
-import com.nsb.visions.varun.mynsb.Jobs.Dispatchers.JobDispatcher;
 
-import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
-import java.util.concurrent.ExecutionException;
 
 import eu.amirs.JSON;
 import okhttp3.Request;
@@ -164,7 +160,6 @@ public class Util {
         it sends to the API's week/get feature which returns the week through a calculation made from data on the school's calendar
             @params;
                 nil
-
      */
     public static int calculateDay(Context context) {
         // Get today as an integer
@@ -208,7 +203,7 @@ public class Util {
             // Setup a request
             Request request = new Request.Builder()
                 .get()
-                .url(HTTP.API_URL + "/week/get")
+                .url("http://35.189.50.185:8080/api/v1/week/Get")
                 .header("Connection", "close")
                 .build();
 
@@ -241,61 +236,6 @@ public class Util {
             = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-
-
-
-
-
-
-
-
-    /* getDay returns the day cached in our data store
-            @params;
-                SharedPreferences dataStore
-                Context context
-            @thorws;
-                Exception
-     */
-    @SuppressWarnings("all")
-    public static Integer getDay(SharedPreferences dataStore, Context context) {
-        // Read from our shared preferences
-
-        // Attain the day data from our data store, but first determine if this data is outdated or not
-        String creation = dataStore.getString("timetables{day{last-update}}", "2018-02-19");
-
-        try {
-            // Parse this creation data
-            SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
-
-            // Parse the date
-            Date lastInsert = parser.parse(creation);
-            // Get the current date from a calendar singleton
-            Calendar calendar = Calendar.getInstance();
-
-            // Get the current day            calendar.setTimeZone(TimeZone.getDefault());
-
-            Date currentDate = calendar.getTime();
-            // Format and parse our dates
-            Date formattedCurrentDate = parser.parse(parser.format(currentDate));
-
-            // Compare the two dates
-            if (formattedCurrentDate.after(lastInsert)) {
-                // Call the function to calculate the day for us
-                Integer day = Util.calculateDay(context);
-                // Update the day
-                dataStore.edit().putString("timetables{day{last-update}}", parser.format(formattedCurrentDate));
-                dataStore.edit().apply();
-                return day;
-            }
-        } catch (Exception e) {
-            return 1;
-
-        }
-
-        // Extract the day
-        return dataStore.getInt("timetables{day{current-day}}", 1);
     }
 
 

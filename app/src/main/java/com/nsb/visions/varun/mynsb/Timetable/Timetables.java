@@ -2,7 +2,6 @@ package com.nsb.visions.varun.mynsb.Timetable;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
@@ -10,37 +9,29 @@ import com.nsb.visions.varun.mynsb.Common.Loader;
 import com.nsb.visions.varun.mynsb.Common.Util;
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import eu.amirs.JSON;
-import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 /**
  */
 
 public class Timetables extends Loader<Subject> {
 
-    private SharedPreferences preferences;
     private String url = "";
     private boolean expandOrNot;
     private String adapterTitle;
     private String dayStr;
-    private int requestedDay;
     private String week;
-    private JSON belltimes;
+    public JSON belltimes;
 
 
 
 
     // NOTE: expandOrNot tells us if this is being used in the expandedTimetables view or the regular timetable view
-    public Timetables(Context context, SharedPreferences preferences, Boolean expandOrNot) {
+    public Timetables(Context context, Boolean expandOrNot) {
         super(context, Timetables.class);
 
         // Determine what day of the week it is as a string
@@ -50,7 +41,7 @@ public class Timetables extends Loader<Subject> {
 
 
         // Build the url
-        this.url = HTTP.API_URL + "/timetable/Get?Day=" + String.valueOf(day);
+        this.url = "http://35.189.50.185:8080/api/v1/timetable/Get?Day=" + String.valueOf(day);
         this.week = week;
 
 
@@ -61,10 +52,8 @@ public class Timetables extends Loader<Subject> {
         this.adapterTitle = Util.intToDaystr(dayOfWeek + 1) + " " + week;
         // Determine the day as an str
         this.dayStr = Util.intToDaystr(day);
-        this.preferences = preferences;
         this.expandOrNot = expandOrNot;
-        this.belltimes = new JSON(getBelltimes(context, preferences)).key("Body").index(0).key(dayStr);
-        Log.d("Belltimes: ", "d " + getBelltimes(context, preferences));
+        this.belltimes = new JSON(getBelltimes(context)).key("Body").index(0).key(dayStr);
     }
 
 
@@ -79,11 +68,6 @@ public class Timetables extends Loader<Subject> {
             // CreateReminder a http client from the parsed context
             HTTP httpClient = new HTTP(this.context);
 
-            //Response syncedTimetables = getSyncedTimetables(httpClient);
-            //// Return synced timetables if it is not null
-            //if (syncedTimetables != null) {
-            //    return syncedTimetables;
-            //}
 
             // Set up the request
             Request request = new Request.Builder()
@@ -100,39 +84,6 @@ public class Timetables extends Loader<Subject> {
         }
         return null;
     }
-
-
-
-
-    private Response getSyncedTimetables(HTTP httpHandler) throws Exception {
-        // Make a fake request coz that seems to be the only way we can get a response object
-        Request request = new Request.Builder().build();
-        Response response = httpHandler.performRequest(request);
-        // Simple date format for parsing dates
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        // First lets check the shared preferences to determine if there already is a synced timetable
-        String lastUpdateStr = preferences.getString("timetables{tables{last-update}}", "");
-        String timetable = preferences.getString("timetables{tables}", "{\"Body\": []}");
-        Date lastUpdate = dateFormat.parse(lastUpdateStr);
-        Date today = Calendar.getInstance().getTime();
-        // Make sure we only have the day month year format
-        today = dateFormat.parse(dateFormat.format(today));
-
-        // Determine if can return the synced result or not
-        if (!(today.after(lastUpdate))) {
-            MediaType contentType = MediaType.parse("text/json");
-            ResponseBody body = ResponseBody.create(contentType, timetable);
-
-            return response.newBuilder().body(body).build();
-        }
-
-        return null;
-    }
-
-
-
-
-
 
 
     // Parse the json data
@@ -164,7 +115,7 @@ public class Timetables extends Loader<Subject> {
         }
         // Return an adapter instance
         // TODO: ADD BELLTIMES AS PART OF THE SUBJECT CLASS
-        return new TimetableAdapter(subjects, this.adapterTitle, this.dayStr, preferences, context);
+        return new TimetableAdapter(subjects, this.adapterTitle, context);
     }
 
 
@@ -180,7 +131,7 @@ public class Timetables extends Loader<Subject> {
     }
     public void setDayAndUpdateBellTimes(String dayStr) {
         this.dayStr = dayStr;
-        this.belltimes = new JSON(getBelltimes(context, preferences)).key("Body").index(0).key(dayStr);
+        this.belltimes = new JSON(getBelltimes(context)).key("Body").index(0).key(dayStr);
         Log.d("Belltimes: ", belltimes.toString());
     }
     public void setWeek(String week) {
@@ -198,9 +149,8 @@ public class Timetables extends Loader<Subject> {
 
 
 
-
     // get belltimes data
-    public static String getBelltimes(Context context, SharedPreferences preferences) {
+    public static String getBelltimes(Context context) {
         // Otherwise perform the request from scratch
         final String[] times = {""};
         // Start up a thread
@@ -210,7 +160,7 @@ public class Timetables extends Loader<Subject> {
             // Setup a request
             Request request = new Request.Builder()
                 .get()
-                .url(HTTP.API_URL + "/belltimes/Get")
+                .url("http://35.189.50.185:8080/api/v1/belltimes/Get")
                 .header("Connection", "close")
                 .build();
 

@@ -13,7 +13,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,12 +28,10 @@ import com.nsb.visions.varun.mynsb.Common.Loader;
 import com.nsb.visions.varun.mynsb.Common.Util;
 import com.nsb.visions.varun.mynsb.Events.Events;
 import com.nsb.visions.varun.mynsb.FourU.FourU;
-import com.nsb.visions.varun.mynsb.Jobs.TimetableSync;
 import com.nsb.visions.varun.mynsb.Reminders.Reminders;
 import com.nsb.visions.varun.mynsb.Timetable.Timetables;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 public class Home extends AppCompatActivity {
@@ -57,7 +54,7 @@ public class Home extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_timetable:
                     mTextMessage.setText("Your Timetable");
-                    Timetables timetables = new Timetables(getApplicationContext(), sharePref, false);
+                    Timetables timetables = new Timetables(getApplicationContext(), false);
                     pushUI(timetables, 3, "Timetables");
                     return true;
                 case R.id.navigation_events:
@@ -177,9 +174,6 @@ public class Home extends AppCompatActivity {
         this.sharePref = getSharedPreferences("MyNSB", Context.MODE_PRIVATE);
         routeUser(this.sharePref, this.sharePref.edit());
         super.onCreate(savedInstanceState);
-
-        // Start the sync timetable activity
-        TimetableSync.scheduleTask();
 
         // Setup the shared preferences
         setContentView(R.layout.activity_home);

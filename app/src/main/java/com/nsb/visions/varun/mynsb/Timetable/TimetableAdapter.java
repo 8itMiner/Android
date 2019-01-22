@@ -34,7 +34,7 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
 
-    TimetableAdapter(List<Subject> subjects, String title, String dayStr, SharedPreferences preferences, Context context) {
+    TimetableAdapter(List<Subject> subjects, String title, Context context) {
         // Reverse the subjects so that roll call is first
         subjects.add(0, subjects.get(subjects.size()-1));
         subjects.remove(subjects.size()-1);

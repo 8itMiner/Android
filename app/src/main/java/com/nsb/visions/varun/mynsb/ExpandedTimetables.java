@@ -10,13 +10,11 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.nsb.visions.varun.mynsb.Common.Util;
-import com.nsb.visions.varun.mynsb.R;
 import com.nsb.visions.varun.mynsb.Timetable.Timetables;
 
 // Expanded timetables are an overall view of your future timetables, the feature is rather sinmple and therefore should be prioritised for completion only after the other components are complete
@@ -41,7 +39,7 @@ public class ExpandedTimetables extends AppCompatActivity {
         // Attain the corresponding variables
 
         // Create a new timetable instance
-        Timetables timetables = new Timetables(getApplicationContext(), sharePref, true);
+        Timetables timetables = new Timetables(getApplicationContext(), true);
         SwipeRefreshLayout swiper = findViewById(R.id.swiperefresh);
 
 
@@ -86,8 +84,8 @@ public class ExpandedTimetables extends AppCompatActivity {
             Log.d("Attempting retrieval", String.valueOf(dayInt));
 
 
-                // Set the new url for the timetable class and reload the content
-            timetables.setURL(HTTP.API_URL + "/timetable/get?Day=" + String.valueOf(dayInt));
+            // Set the new url for the timetable class and reload the content
+            timetables.setURL("http://35.189.50.185:8080/api/v1/timetable/Get?Day=" + String.valueOf(dayInt));
             timetables.setDayAndUpdateBellTimes(dayStr);
             timetables.loadUI(findViewById(R.id.recycler), swiper, findViewById(R.id.loader), findViewById(R.id.errorText), new Handler());
 

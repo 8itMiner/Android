@@ -39,6 +39,9 @@ public class FourU extends Loader<Article> {
     @Override
     public Response sendRequest() {
         HTTP httpClient = new HTTP(context);
+
+
+
         // Set up a request for the client to send
         Request request = new Request.Builder()
             .get()
