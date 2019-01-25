@@ -34,28 +34,12 @@ public class Util {
         @params;
             nil
     */
-    public static int dayAsInt() {
+    private static int dayAsInt() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getDefault());
-        int day = calendar.get(Calendar.DAY_OF_WEEK);
 
-        switch (day) {
-            case Calendar.SUNDAY:
-                return 1;
-            case Calendar.MONDAY:
-                return 2;
-            case Calendar.TUESDAY:
-                return 3;
-            case Calendar.WEDNESDAY:
-                return 4;
-            case Calendar.THURSDAY:
-                return 5;
-            case Calendar.FRIDAY:
-                return 6;
-            case Calendar.SATURDAY:
-                return 7;
-        }
-        return 0;
+        // The MyNSB API starts monday at 1 and since java's equiv of 1 is sunday we must then subtract 1 from everything
+        return calendar.get(Calendar.DAY_OF_WEEK) - 1;
     }
 
     public static String intToDaystr(int day) {
@@ -161,14 +145,14 @@ public class Util {
             @params;
                 nil
      */
-    public static int calculateDay(Context context) {
-        // Get today as an integer
-        int today = dayAsInt() - 1;
-        String week = weekAorB(context);
+    public static int calculateDay(String week) {
+        int today = dayAsInt();
 
         // If today is a saturday or a sunday set it to a monday because there are no timetables for sunday and monday
         if (today == 6 || today == 0) {
             today = 1;
+
+            // Reset our week, e.g if its week b on a sunday set it to week a for the monday
             if (Objects.equals(week.trim(), "A")) {
                 week = "B";
             } else {
@@ -203,7 +187,7 @@ public class Util {
             // Setup a request
             Request request = new Request.Builder()
                 .get()
-                .url("http://35.189.50.185:8080/api/v1/week/Get")
+                .url(HTTP.API_URL + "/week/get")
                 .header("Connection", "close")
                 .build();
 

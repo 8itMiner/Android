@@ -30,7 +30,7 @@ public class HTTP {
     private OkHttpClient client;
     private Context context;
     // Cache
-    File httpCacheDirectory = new File(context.getCacheDir(), "mynsb-http-data");
+    File httpCacheDirectory;
 
 
     // Interceptor
@@ -54,6 +54,7 @@ public class HTTP {
 
     public HTTP(Context context) {
         this.context = context;
+        this.httpCacheDirectory = new File(context.getCacheDir(), "mynsb-http-data");
 
         // Setup the cookie jar
         ClearableCookieJar cookieJar =

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "825047933860",
+    "firebase_url": "https://mynsb-225008.firebaseio.com",
+    "project_id": "mynsb-225008",
+    "storage_bucket": "mynsb-225008.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825047933860:android:5101d60806ddd006",
+        "android_client_info": {
+          "package_name": "com.nsb.visions.varun.sethu.mynsb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "825047933860-muijmgs6hbee5vtdpnbvsbmls4s01phe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIksuk1zT7gjH6Y53LyyETCZgF5rYPcPI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

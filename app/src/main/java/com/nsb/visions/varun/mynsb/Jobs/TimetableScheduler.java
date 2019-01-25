@@ -34,7 +34,8 @@ public class TimetableScheduler extends DailyJob {
 
         // Build our timetable instance
         Timetables generator = new Timetables(getContext(), false);
-        int day = Util.calculateDay(getContext());
+        String week = Util.weekAorB(getContext());
+        int day = Util.calculateDay(week);
         generator.setDayAndUpdateBellTimes(Util.intToDaystr(day));
         // Get the entire timetables
         List<Subject> timetables = generator.getModels();
@@ -43,7 +44,7 @@ public class TimetableScheduler extends DailyJob {
         for (Subject subject : timetables) {
             // Format the string and build the notification
             String data = String.format("Your next period is: %s. With: %s, At: %s", subject.className, subject.teacher, subject.room);
-            Notification notification = new Notification(R.drawable.timetable_logo, "MyNSB - Timetable", data);
+            Notification notification = new Notification(R.drawable.mynsb_notification_logo, "MyNSB - Timetable", data);
 
 
             // Get the requested time
@@ -55,7 +56,7 @@ public class TimetableScheduler extends DailyJob {
             // Try building & scheduling the notification
             try {
                 Date start = dateFormat.parse(times[0]);
-                NotifJob.schedule(start, notification);
+                NotifJob.schedule(start, notification, Notification.TIMETABLE_NOTIF_CHANNEL, Notification.TIMETABLE_NOTIF_CHANNEL_NAME);
             } catch (ParseException e) {
                 e.printStackTrace();
             }

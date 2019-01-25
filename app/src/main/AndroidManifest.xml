@@ -32,11 +32,21 @@
             </intent-filter>
         </activity>
         <activity android:name=".TutorialSlider" />
-
-
-
         <activity android:name=".Webview" />
         <activity android:name=".ExpandedTimetables"></activity>
+
+
+
+        <service android:name=".Firebase.MessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/mynsb_notification_logo" />
     </application>
 
 </manifest>

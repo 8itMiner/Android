@@ -8,6 +8,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -145,11 +146,9 @@ public class CreateReminderHandler {
     private static boolean handleReminderCreation(String reminderSubject, String reminderBody,
                                                   String reminderDate, String reminderTime, String tag, Application application) {
         // The format the dates will be in post reminder push
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat endParse = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+        SimpleDateFormat endParse = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         // The format the dates will be in pre reminder push
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat startParse = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+        SimpleDateFormat startParse = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
         // Try catch to determine if there was an error during reminder creation
         try {
@@ -159,6 +158,7 @@ public class CreateReminderHandler {
             // Post parse string
             String finalDate = endParse.format(prePass);
 
+            Log.d("Reminder-Response: ", finalDate);
 
             CreateReminder.createReminder(application.getApplicationContext(),
                 new Reminder(reminderSubject, reminderBody, new JSONArray().put(0, tag), finalDate));
@@ -187,7 +187,6 @@ public class CreateReminderHandler {
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
         // SDF for formatting the response
-        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
         pickDate.setText(dateFormat.format(calendar.getTime()));
@@ -206,7 +205,6 @@ public class CreateReminderHandler {
         calendar.set(Calendar.MINUTE, minuteOfHour);
 
         // SDF for formatting the response
-        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat dateFormat = new SimpleDateFormat("kk:mm");
 
         // Set the selected time
@@ -230,11 +228,12 @@ public class CreateReminderHandler {
             return;
         }
 
+
         // Attain the text fields we want
         boolean success = handleReminderCreation(tag, body, date, time, tag, application);
         if (!success) {
             // Throw a toast
-            Toast.makeText(context, "Could not create reminder", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Could not create reminder, your date might be in the past", Toast.LENGTH_LONG).show();
             alertDialog.cancel();
             fab.setClickable(true);
             return;

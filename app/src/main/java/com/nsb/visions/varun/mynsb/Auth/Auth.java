@@ -3,6 +3,7 @@ package com.nsb.visions.varun.mynsb.Auth;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import eu.amirs.JSON;
 import okhttp3.Credentials;
@@ -56,7 +57,6 @@ public class Auth {
                 .build();
         // Retrieve the response
         Response loginResp = httpClient.performRequest(login);
-
 
 
         // Get the set cookie header from the request

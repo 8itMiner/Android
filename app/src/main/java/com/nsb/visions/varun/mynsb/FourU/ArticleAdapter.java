@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -145,6 +146,9 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
             ImageView imageView
      */
     private void setImage(Article article, ImageView imageView) {
+
+        // Set the colour tint
+        imageView.setColorFilter(ContextCompat.getColor(context, R.color.colorSecondaryAccent), android.graphics.PorterDuff.Mode.MULTIPLY);
         try {
             // Start encoding the URL
             URL url = new URL(article.ImageURL);

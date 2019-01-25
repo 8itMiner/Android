@@ -3,6 +3,7 @@ package com.nsb.visions.varun.mynsb.Reminders;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.nsb.visions.varun.mynsb.Common.Loader;
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
@@ -39,14 +40,15 @@ public class Reminders extends Loader<Reminder>{
 
         // Start up a request to be sent to the api
         Request getReminders = new Request.Builder()
-            .url("http://35.189.50.185:8080/api/v1/reminders/Get/Today")
+            .url(HTTP.API_URL + "/reminders/get/Today")
             .get()
             .cacheControl(cacheControl)
             .build();
         // Send the request
 
         try {
-            return httpclient.performRequest(getReminders);
+            Response resp = httpclient.performRequest(getReminders);
+            return resp;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -59,9 +61,10 @@ public class Reminders extends Loader<Reminder>{
     public Reminder parseJson(JSON jsonD, int position) throws Exception {
 
         JSON json = jsonD.index(position);
+
         return new Reminder(
             json.key("Headers").key("Subject").stringValue(), json.key("Body").stringValue(),
-            json.key("Tags").getJsonArray(), json.key("ReminderDateTime").stringValue());
+            json.key("Tags").getJsonArray(), json.key("DateTime").stringValue());
     }
 
 

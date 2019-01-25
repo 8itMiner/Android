@@ -50,11 +50,11 @@ dependencies {
     compile 'jp.wasabeef:recyclerview-animators:2.2.7'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.google.firebase:firebase-core:16.0.6'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
     compile 'com.github.amirdew:JSON:v1.0.0'
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
-    //noinspection UseOfBundledGooglePlayServices
-    compile 'com.google.android.gms:play-services:12.0.1'
     implementation 'com.evernote:android-job:1.2.6'
     compile 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
     compile 'com.github.markushi:android-ui:1.2'
@@ -72,3 +72,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'org.jetbrains:annotations:15.0'
 }
+
+apply plugin: 'com.google.gms.google-services'

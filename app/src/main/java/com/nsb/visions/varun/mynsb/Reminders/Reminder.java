@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -31,9 +32,11 @@ public class Reminder {
         this.subject = subject;
         this.body = body;
         // Simpledateformat for parsing reminder dates
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+        // Get the current time
+        Calendar calendar = Calendar.getInstance();
 
         // Set up the time and add tags
         try {
@@ -46,6 +49,8 @@ public class Reminder {
             // Set the current date
             this.date = dateFormat.format(this.time);
         } catch (Exception e) {
+            this.date = "";
+            this.time = calendar.getTime();
             e.printStackTrace();
         }
 

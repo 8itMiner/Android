@@ -15,12 +15,15 @@ import com.nsb.visions.varun.mynsb.Common.ReminderColours;
 import com.nsb.visions.varun.mynsb.R;
 import com.nsb.visions.varun.mynsb.Timetable.Subject;
 
+import org.json.JSONArray;
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import eu.amirs.JSON;
 
 public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -29,26 +32,6 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     // Constructor
     ReminderAdapter(List<Reminder> reminders, SharedPreferences prefs) {
-        // We need to break apart the reminder list into date categories
-        for (int i = 1; i < reminders.size(); i++) {
-            // The way we determine if a reminder is on a different day is that we look at the dates, if they are the same there are the same day else
-            // different days, this only works because the reminders are in ascending order in terms of the reminder_date_time, make sense?
-            // great!
-            // Attain the current reminder
-            Reminder curr = reminders.get(i);
-            Reminder past = reminders.get(i-1);
-
-            // Determine if this is a new day
-            if (!(past.date.equals(curr.date))) {
-                // Insert a reminder and this just contains
-                // Convert date into an actual day
-                String day = curr.date;
-                reminders.add(i, new Reminder(day, "", null, null));
-            }
-        }
-        // End of appending times to the list
-
-
         this.reminders = reminders;
         this.preferences = prefs;
     }
@@ -180,10 +163,14 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private String convertToAMPM(Date time) {
         // Convert the date into the format we need
         @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String modifier = "";
+
 
         // Format the date
         String dateTime = simpleDateFormat.format(time);
+
+        Log.d("Requested-DateTime", dateTime);
 
         // Get the raw time
         String rawTime = dateTime.split(" ")[1];
@@ -192,11 +179,18 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         String minutes = rawTime.split(":")[1];
         // Convert the hour
         Integer hour = Integer.parseInt(hour24);
-        // Determine the modifier
-        String modifier = hour > 12 ? "am" : "pm";
-        // Round the modifier
-        hour %= 12;
 
+        if (hour != 12 && hour != 0) {
+            // Determine the modifier
+            modifier = hour < 12 ? "am" : "pm";
+            // Round the modifier
+            hour %= 12;
+        } else {
+            modifier = (hour == 12 ? "pm" : "am");
+            hour = 12;
+        }
+
+        // Deal with AM AND PM for early morning and noon
         // Concat and return
         return hour.toString() + ":" + minutes + " " + modifier;
     }

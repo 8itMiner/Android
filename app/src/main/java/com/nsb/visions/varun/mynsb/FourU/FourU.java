@@ -5,6 +5,7 @@ package com.nsb.visions.varun.mynsb.FourU;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import java.util.List;
 
@@ -26,9 +27,9 @@ public class FourU extends Loader<Article> {
     public Article parseJson(JSON jsonD, int position) {
         JSON json = jsonD.index(position);
 
-        return new Article(json.key("ArticleName").stringValue(),
-            json.key("ArticleDesc").stringValue(),
-            json.key("ArticleImageUrl").stringValue(), json.key("Link").stringValue());
+        return new Article(json.key("Name").stringValue(),
+            json.key("Desc").stringValue(),
+            json.key("ImageUrl").stringValue(), json.key("Link").stringValue());
     }
 
     @Override

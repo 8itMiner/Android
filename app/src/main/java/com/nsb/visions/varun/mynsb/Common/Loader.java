@@ -249,7 +249,6 @@ public abstract class Loader<Model> {
             // Begin reading the json rest
             String jsonRaw = response.body().string();
 
-            Log.d("Response-Data", jsonRaw);
 
             // Begin parsing that json and push it into the models list
             JSON json = new JSON(jsonRaw);
@@ -295,11 +294,9 @@ public abstract class Loader<Model> {
 
 
     private void addFreePeriods(JSON bodyArray) throws JSONException {
+
         // Iterate over json array and push it into the models list
         // Generate an array of "ideals" this is the model array size
-
-        Log.d("Timetable-Data", bodyArray.toString());
-
         int lastPeriod = Integer.parseInt(bodyArray.index(bodyArray.count() - 2).getJsonObject().getString("Period"));
         List<Integer> contentMapping = generateList(1, lastPeriod);
         List<Integer> actualMapping = new ArrayList<>();

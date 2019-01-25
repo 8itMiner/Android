@@ -34,24 +34,27 @@ public class Timetables extends Loader<Subject> {
     public Timetables(Context context, Boolean expandOrNot) {
         super(context, Timetables.class);
 
-        // Determine what day of the week it is as a string
-        int day = Util.calculateDay(context);
-        int dayOfWeek = day > 5 ? day - 5 : day;
         String week = Util.weekAorB(this.context);
-
+        // Determine what day of the week it is as a string
+        int day = Util.calculateDay(week);
+        // Convert the returned day to a dayOfWeek, e.g 6 = 1 = Monday, 7 = 2 = Tuesday
+        int dayOfWeek = day > 5 ? day - 5 : day;
 
         // Build the url
-        this.url = "http://35.189.50.185:8080/api/v1/timetable/Get?Day=" + String.valueOf(day);
+        this.url = HTTP.API_URL + "/timetable/Get?Day=" + String.valueOf(day);
         this.week = week;
 
 
         if (day > 5) {
             week = "B";
         }
+
+        Log.d("Timetable-Day", String.valueOf(dayOfWeek));
+
         // This is our title for the adapter
         this.adapterTitle = Util.intToDaystr(dayOfWeek + 1) + " " + week;
         // Determine the day as an str
-        this.dayStr = Util.intToDaystr(day);
+        this.dayStr = Util.intToDaystr(dayOfWeek + 1);
         this.expandOrNot = expandOrNot;
         this.belltimes = new JSON(getBelltimes(context)).key("Body").index(0).key(dayStr);
     }
@@ -79,7 +82,6 @@ public class Timetables extends Loader<Subject> {
 
             return httpClient.performRequest(request);
         } catch (Exception e) {
-            Log.d("Exception", "Boom");
             e.printStackTrace();
         }
         return null;
@@ -91,7 +93,6 @@ public class Timetables extends Loader<Subject> {
     public Subject parseJson(JSON jsonRaw, int position) throws Exception {
         // Get the right subject
         JSON json = jsonRaw.index(position);
-        Log.d("Timetable Data:", json.toString());
 
         // Determine what belltime to display to the user
         // Start getting the belltimes for each individual person
@@ -132,7 +133,6 @@ public class Timetables extends Loader<Subject> {
     public void setDayAndUpdateBellTimes(String dayStr) {
         this.dayStr = dayStr;
         this.belltimes = new JSON(getBelltimes(context)).key("Body").index(0).key(dayStr);
-        Log.d("Belltimes: ", belltimes.toString());
     }
     public void setWeek(String week) {
         this.week = week;
@@ -160,7 +160,7 @@ public class Timetables extends Loader<Subject> {
             // Setup a request
             Request request = new Request.Builder()
                 .get()
-                .url("http://35.189.50.185:8080/api/v1/belltimes/Get")
+                .url(HTTP.API_URL + "/belltimes/Get")
                 .header("Connection", "close")
                 .build();
 

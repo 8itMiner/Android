@@ -2,16 +2,20 @@ package com.nsb.visions.varun.mynsb.Reminders.Create;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.evernote.android.job.JobCreator;
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
+import com.nsb.visions.varun.mynsb.Jobs.NotifJob;
+import com.nsb.visions.varun.mynsb.Notifications.Notification;
+import com.nsb.visions.varun.mynsb.R;
 import com.nsb.visions.varun.mynsb.Reminders.Reminder;
 
 import java.text.SimpleDateFormat;
 
 import eu.amirs.JSON;
 import okhttp3.FormBody;
-import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -48,22 +52,21 @@ public class CreateReminder {
 
         // Covert our date into a format accepted by the API
         @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         String date = simpleDateFormat.format(reminder.time);
 
-        Log.d("Form-Data", reminder.body + ", " + reminder.subject + ", " + date + ", " + tagsJson);
 
         // Set up the request body to be tagged along with our request
         RequestBody requestBody = new FormBody.Builder()
             .addEncoded("Body", reminder.body)
             .addEncoded("Subject", reminder.subject)
-            .addEncoded("Reminder_Date_Time", date)
+            .addEncoded("Date_Time", date)
             .addEncoded("Tags", tagsJson)
             .build();
 
         // Set up the request to be sent
         Request request = new Request.Builder()
-            .url(HTTP.API_URL + "/reminders/Create")
+            .url(HTTP.API_URL + "/reminders/create")
             .post(requestBody)
             .build();
 
@@ -72,16 +75,27 @@ public class CreateReminder {
         Thread sendRequest = new Thread(() -> {
             try {
                 response = httpHandler.performRequest(request);
-                Log.d("data-resp", response.body().string());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
         sendRequest.start();
+        sendRequest.join();
 
-        assert response != null;
         if (!response.isSuccessful()) {
             throw new Exception("Request didn't work");
+        }
+
+
+        if (DateUtils.isToday(reminder.time.getTime())) {
+            // Create a notification from our new reminder now
+            Thread createNotif = new Thread(() -> {
+                Log.d("Creating notificatoin", "xd");
+                // Construct the notification
+                Notification notif = new Notification(R.drawable.mynsb_notification_logo, reminder.subject, reminder.body);
+                NotifJob.schedule(reminder.time, notif, Notification.REMINDER_NOTIF_CHANNEL, Notification.REMINDER_NOTIF_CHANNEL_NAME);
+            });
+            createNotif.start();
         }
 
 

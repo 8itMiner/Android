@@ -2,6 +2,7 @@ package com.nsb.visions.varun.mynsb.Jobs;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.evernote.android.job.Job;
 
@@ -18,6 +19,8 @@ public class JobCreator implements com.evernote.android.job.JobCreator {
                 return new NotifJob();
             case TimetableScheduler.TAG:
                 return new TimetableScheduler();
+            case ReminderScheduler.TAG:
+                return new ReminderScheduler();
             default:
                 return null;
         }

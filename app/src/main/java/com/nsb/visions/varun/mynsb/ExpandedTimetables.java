@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.nsb.visions.varun.mynsb.Common.Util;
+import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 import com.nsb.visions.varun.mynsb.Timetable.Timetables;
 
 // Expanded timetables are an overall view of your future timetables, the feature is rather sinmple and therefore should be prioritised for completion only after the other components are complete
@@ -68,7 +69,6 @@ public class ExpandedTimetables extends AppCompatActivity {
             String dayStr = day.getSelectedItem().toString();
             String weekStr = week.getSelectedItem().toString();
 
-            Log.d("Attempting retrieval", dayStr+" "+weekStr);
 
             // Convert the day into a number that the api can read
             // Trim the week
@@ -81,11 +81,10 @@ public class ExpandedTimetables extends AppCompatActivity {
                 dayInt += 5;
             }
 
-            Log.d("Attempting retrieval", String.valueOf(dayInt));
 
 
             // Set the new url for the timetable class and reload the content
-            timetables.setURL("http://35.189.50.185:8080/api/v1/timetable/Get?Day=" + String.valueOf(dayInt));
+            timetables.setURL(HTTP.API_URL + "/timetable/get?Day=" + String.valueOf(dayInt));
             timetables.setDayAndUpdateBellTimes(dayStr);
             timetables.loadUI(findViewById(R.id.recycler), swiper, findViewById(R.id.loader), findViewById(R.id.errorText), new Handler());
 

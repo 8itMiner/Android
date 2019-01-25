@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.evernote.android.job.JobManager;
 import com.nsb.visions.varun.mynsb.Jobs.JobCreator;
+import com.nsb.visions.varun.mynsb.Jobs.ReminderScheduler;
 import com.nsb.visions.varun.mynsb.Jobs.TimetableScheduler;
 
 /**
@@ -17,6 +18,7 @@ public class App extends Application{
 
         JobManager.create(this).addJobCreator(new JobCreator());
         TimetableScheduler.schedule();
+        ReminderScheduler.schedule();
     }
 
 }
