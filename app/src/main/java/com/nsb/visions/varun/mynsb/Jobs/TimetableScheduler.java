@@ -26,13 +26,13 @@ import eu.amirs.JSON;
  * Created by varun on 22/01/2019. Coz varun is awesome as hell :)
  */
 
-public class TimetableScheduler extends DailyJob {
+public class TimetableScheduler extends Job {
 
     public static final String TAG = "mynsb-timetableScheduler";
 
     @NonNull
     @Override
-    protected DailyJobResult onRunDailyJob(@NonNull Params params) {
+    protected Result onRunJob(@NonNull Params params) {
 
         Log.d("Mynsb-notif: ", "dsadsa");
 
@@ -57,6 +57,8 @@ public class TimetableScheduler extends DailyJob {
             // Parse the first date
             SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
+            Log.d("evernote-dumo", dateFormat.parse(times[0]).toString())
+
             // Try building & scheduling the notification
             try {
                 Date start = dateFormat.parse(times[0]);
@@ -66,7 +68,7 @@ public class TimetableScheduler extends DailyJob {
             }
         }
 
-        return DailyJobResult.SUCCESS;
+        return Result.SUCCESS;
     }
 
 
@@ -74,11 +76,14 @@ public class TimetableScheduler extends DailyJob {
     @SuppressLint("LongLogTag")
     static public void schedule() {
         Log.d(TAG, "Attempting to create a mynsb reminder");
-        DailyJob.schedule(
-            new JobRequest.Builder(TAG)
-            .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
-            .setRequirementsEnforced(true),
-            TimeUnit.HOURS.toMillis(15),
-            TimeUnit.HOURS.toMillis(16));
+
+        long executionTime = System.currentTimeMillis() + 10 - System.currentTimeMillis();
+
+
+        new JobRequest.Builder(TAG)
+            .setExact(executionTime)
+            .setUpdateCurrent(true)
+            .build()
+            .schedule();
     }
 }
