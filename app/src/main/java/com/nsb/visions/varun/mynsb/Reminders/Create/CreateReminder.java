@@ -83,7 +83,7 @@ public class CreateReminder {
         sendRequest.join();
 
         if (!response.isSuccessful()) {
-            throw new Exception("Request didn't work");
+            throw new Exception(response.body().string());
         }
 
 
