@@ -34,3 +34,7 @@ output.json
 #NDK
 obj/
 .externalNativeBuild.externalNativeBuild*.apk
+
+
+# Private sutff
+google-services.json
