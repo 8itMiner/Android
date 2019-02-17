@@ -1,7 +1,5 @@
 package com.nsb.visions.varun.mynsb.Timetable;
 
-import android.util.Log;
-
 /**
  */
 

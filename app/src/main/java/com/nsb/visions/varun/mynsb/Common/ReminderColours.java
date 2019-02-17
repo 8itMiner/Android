@@ -1,8 +1,6 @@
 package com.nsb.visions.varun.mynsb.Common;
 
-import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

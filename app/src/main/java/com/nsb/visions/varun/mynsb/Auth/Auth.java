@@ -2,19 +2,16 @@ package com.nsb.visions.varun.mynsb.Auth;
 
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
-import eu.amirs.JSON;
-import okhttp3.Credentials;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 import com.nsb.visions.varun.mynsb.User.User;
 
-import java.io.IOException;
+import eu.amirs.JSON;
+import okhttp3.Credentials;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  */
@@ -49,20 +46,25 @@ public class Auth {
                Exception: Just an error that could be returned from the request
     */
     public User auth(String studentID, String password) throws Exception {
+
+        // Clear all the cookies rn
+        httpClient.cookieJar.clear();
+
         // Set up the request
         Request login = new Request.Builder()
                 .url(HTTP.API_URL + "/user/auth")
                 .method("POST", RequestBody.create(null, new byte[0]))
                 .addHeader("Authorization", Credentials.basic(studentID, password))
                 .build();
-        // Retrieve the response
+
+
         Response loginResp = httpClient.performRequest(login);
 
 
         // Get the set cookie header from the request
         if (loginResp.code() != 200) {
             // Throw the error meaning that the request was unsuccessful
-            throw new Exception("User details are invalid");
+            throw new Exception(loginResp.body().string());
         }
         // Return the details for the currently logged in user
         return this.getUserDetails();
@@ -102,6 +104,7 @@ public class Auth {
             // Push into user container
             user = new User(StudentID, Fname, Lname, Year);
         } catch (Exception e) {
+            Log.d("HTTP-Information", body);
             throw new RuntimeException("Something went horribly wrong");
         }
 

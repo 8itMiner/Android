@@ -2,10 +2,10 @@ package com.nsb.visions.varun.mynsb.Reminders.Create;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Handler;
 import android.text.format.DateUtils;
-import android.util.Log;
+import android.widget.Toast;
 
-import com.evernote.android.job.JobCreator;
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 import com.nsb.visions.varun.mynsb.Jobs.NotifJob;
 import com.nsb.visions.varun.mynsb.Notifications.Notification;
@@ -30,8 +30,6 @@ public class CreateReminder {
     // Http handler used to send http requests
     @SuppressLint("StaticFieldLeak")
     private static HTTP httpHandler;
-    public static Response response;
-
 
 
 
@@ -42,7 +40,12 @@ public class CreateReminder {
             Reminder reminder
 
      */
-    public static Response createReminder(Context context, Reminder reminder) throws Exception {
+    public static void createReminder(Context context, Reminder reminder) throws Exception {
+
+        // Start the UI handler thread
+        final Handler handler = new Handler();
+
+
         // This is very unnecessary but i feel as if i might beed to access
         // the http handler in the future
         httpHandler = new HTTP(context);
@@ -74,32 +77,34 @@ public class CreateReminder {
         // Send the request and get the response
         Thread sendRequest = new Thread(() -> {
             try {
-                response = httpHandler.performRequest(request);
+                Response response = httpHandler.performRequest(request);
+                if (!response.isSuccessful()) {
+                    handler.post(() -> {
+                        Toast.makeText(context, "Could not create reminder. Your date/time was probably in the past!", Toast.LENGTH_LONG).show();
+                    });
+                    throw new Exception(response.body().string());
+                }
+                handler.post(() -> {
+                    Toast.makeText(context, "Reminder created! Please reload the page.", Toast.LENGTH_LONG).show();
+                });
+
+
+                // Schedule a notification for the reminder
+                if (DateUtils.isToday(reminder.time.getTime())) {
+                    // Create a notification from our new reminder now
+                    Thread createNotif = new Thread(() -> {
+                        // Construct the notification
+                        Notification notif = new Notification(R.drawable.mynsb_notification_logo, reminder.subject, reminder.body);
+                        NotifJob.schedule(reminder.time, notif, Notification.REMINDER_NOTIF_CHANNEL, Notification.REMINDER_NOTIF_CHANNEL_NAME);
+                    });
+                    createNotif.start();
+                }
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
         sendRequest.start();
-        sendRequest.join();
-
-        if (!response.isSuccessful()) {
-            throw new Exception(response.body().string());
-        }
-
-
-        if (DateUtils.isToday(reminder.time.getTime())) {
-            // Create a notification from our new reminder now
-            Thread createNotif = new Thread(() -> {
-                Log.d("Creating notificatoin", "xd");
-                // Construct the notification
-                Notification notif = new Notification(R.drawable.mynsb_notification_logo, reminder.subject, reminder.body);
-                NotifJob.schedule(reminder.time, notif, Notification.REMINDER_NOTIF_CHANNEL, Notification.REMINDER_NOTIF_CHANNEL_NAME);
-            });
-            createNotif.start();
-        }
-
-
-        return response;
     }
-
 }

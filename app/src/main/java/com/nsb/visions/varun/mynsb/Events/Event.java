@@ -2,8 +2,8 @@ package com.nsb.visions.varun.mynsb.Events;
 
 import android.annotation.SuppressLint;
 
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by varun on 21/01/2018. Coz varun is awesome as hell :)
@@ -18,16 +18,18 @@ public class Event {
     public String eventLocation;
     public String eventOrganiser;
     public String eventShortDesc;
+    public String eventLongDesc;
     public String eventPictureUrl;
 
     public Event(int eventId, String eventName, String eventStart, String eventEnd, String eventLocation,
-                 String eventOrganiser, String eventShortDesc, String eventPictureUrl) throws Exception {
+                 String eventOrganiser, String eventShortDesc, String eventLongDesc, String eventPictureUrl) throws Exception {
 
         this.eventID = eventId;
         this.eventName = eventName;
         this.eventLocation = eventLocation;
         this.eventOrganiser = eventOrganiser;
         this.eventShortDesc = eventShortDesc;
+        this.eventLongDesc = eventLongDesc;
         this.eventPictureUrl = eventPictureUrl;
 
         // Convert the date strings to actual dates

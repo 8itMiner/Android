@@ -1,7 +1,6 @@
 package com.nsb.visions.varun.mynsb.Events;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jakewharton.picasso.OkHttp3Downloader;
 import com.nsb.visions.varun.mynsb.R;
 import com.squareup.picasso.Picasso;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -57,19 +54,24 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     @Override
     public void onBindViewHolder(EventViewHolder holder, int position) {
+
         Event event = events.get(position);
         // Start setting the text fields
         holder.eventName.setText(event.eventName);
         holder.shortDesc.setText(event.eventShortDesc);
+        holder.longDesc.setText(event.eventLongDesc);
         // Set the image into the eventImage box
         setImage(event, holder.eventImage);
-        holder.readMore.setOnClickListener((v) -> {
-            // Fromat our dates
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-            String start = formatter.format(event.eventStart);
-            String end = formatter.format(event.eventEnd);
 
-            String message = String.format(Locale.ENGLISH, "Created By: %s, Starts: %s, Ends: %s", event.eventOrganiser, start, end);
+        // Base format
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy");
+        String start = formatter.format(event.eventStart);
+        String end = formatter.format(event.eventEnd);
+
+        holder.timeData.setText(start + " - " + end);
+
+        holder.readMore.setOnClickListener((v) -> {
+            String message = String.format(Locale.ENGLISH, "Created By: %s", event.eventOrganiser);
             Toast.makeText(this.context, message, Toast.LENGTH_LONG).show();
         });
 
@@ -89,13 +91,17 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     class EventViewHolder extends RecyclerView.ViewHolder {
         TextView eventName;
         TextView shortDesc;
+        TextView longDesc;
+        TextView timeData;
         ImageView eventImage;
         Button readMore;
 
         public EventViewHolder(View itemView) {
             super(itemView);
             eventName  = itemView.findViewById(R.id.eventTitle);
-            shortDesc  = itemView.findViewById(R.id.description);
+            timeData = itemView.findViewById(R.id.timing);
+            shortDesc  = itemView.findViewById(R.id.short_description);
+            longDesc = itemView.findViewById(R.id.long_description);
             eventImage = itemView.findViewById(R.id.eventImage);
             readMore = itemView.findViewById(R.id.readMore);
         }
@@ -120,8 +126,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
 
             // Load the image with picasso
-            Picasso.with(context)
-                .load(url.toString())
+            Picasso picasso = Picasso.with(context);
+            picasso.setLoggingEnabled(true);
+            picasso.load(url.toString())
                 .into(imageView);
         } catch (Exception e) {
             e.printStackTrace();

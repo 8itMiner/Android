@@ -79,7 +79,6 @@ public class Timetables extends Loader<Subject> {
                 .header("Connection", "close")
                 .build();
 
-
             return httpClient.performRequest(request);
         } catch (Exception e) {
             e.printStackTrace();

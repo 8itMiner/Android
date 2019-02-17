@@ -1,6 +1,7 @@
 package com.nsb.visions.varun.mynsb;
 
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +13,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TimingLogger;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +48,7 @@ public class SignIn extends AppCompatActivity {
 
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +80,8 @@ public class SignIn extends AppCompatActivity {
         Button signInButton = findViewById(R.id.signInButton);
         // Initialize the UI
         initUI(titleText);
+
+
 
 
 
@@ -160,6 +163,7 @@ public class SignIn extends AppCompatActivity {
             toReturn.put("success", true);
             toReturn.put("user", user);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("User details were invalid");
         }
 

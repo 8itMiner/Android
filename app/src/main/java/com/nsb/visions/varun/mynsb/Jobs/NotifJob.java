@@ -18,6 +18,7 @@ import com.nsb.visions.varun.mynsb.Notifications.Notification;
 import com.nsb.visions.varun.mynsb.R;
 
 import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by varun on 22/01/2019. Coz varun is awesome as hell :)
@@ -68,9 +69,11 @@ public class NotifJob extends Job {
             notificationManager.createNotificationChannel(notifChannel);
         }
 
+
+        Random random = new Random();
         // Send the notification
         assert notificationManager != null;
-        notificationManager.notify(0, notification.build());
+        notificationManager.notify(random.nextInt(), notification.build());
 
         return Result.SUCCESS;
     }
@@ -85,12 +88,10 @@ public class NotifJob extends Job {
         extras.putString("notificationChannelName", channelName);
         extras.putInt("smallIcon", notification.smallIcon);
 
-
         long executionTime = expected.getTime() - System.currentTimeMillis();
 
         new JobRequest.Builder(NotifJob.TAG)
             .setExact(executionTime)
-            .setUpdateCurrent(true)
             .setExtras(new PersistableBundleCompat(extras))
             .build()
             .schedule();

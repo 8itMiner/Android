@@ -58,7 +58,7 @@ public class Home extends AppCompatActivity {
                     pushUI(timetables, 3, "Timetables");
                     return true;
                 case R.id.navigation_events:
-                    mTextMessage.setText("Events This Week");
+                    mTextMessage.setText("Events Running This Week");
                     // Set up the events client
                     Events events = new Events(getApplicationContext());
                     // Load the ui

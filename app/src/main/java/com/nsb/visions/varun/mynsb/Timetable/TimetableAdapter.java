@@ -1,26 +1,17 @@
 package com.nsb.visions.varun.mynsb.Timetable;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.nsb.visions.varun.mynsb.Common.Util;
-import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 import com.nsb.visions.varun.mynsb.R;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import eu.amirs.JSON;
-import okhttp3.Request;
 
 
 public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

@@ -1,6 +1,5 @@
 package com.nsb.visions.varun.mynsb.Reminders.Create;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.app.DatePickerDialog;
@@ -15,7 +14,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nsb.visions.varun.mynsb.R;
@@ -42,6 +40,12 @@ public class CreateReminderHandler {
     private static Button createReminder;
     private static EditText pickDate;
     private static EditText pickTime;
+
+
+
+
+
+
 
     /*
     UTIL FUNCTIONS ======================
@@ -89,6 +93,10 @@ public class CreateReminderHandler {
     }
 
 
+
+
+
+
     /* setupHandlers sets up the button click handlers so that the buttons respond to certain actions
             @params;
                 Context context
@@ -133,6 +141,11 @@ public class CreateReminderHandler {
     }
 
 
+
+
+
+
+
     /* handleReminderCreation creates a reminder given specific details and parameters
             @params;
                 String reminderSubject
@@ -172,6 +185,10 @@ public class CreateReminderHandler {
 
 
 
+
+
+
+
     /* handleDateEntry handles the logic of date entry and what to do with invalid dates
             @params;
                AlertDialog alertDialog
@@ -193,6 +210,11 @@ public class CreateReminderHandler {
     }
 
 
+
+
+
+
+
     /* handleTimeEntry is like handleDateEntry except for times
             @params;
                AlertDialog alertDialog
@@ -212,6 +234,11 @@ public class CreateReminderHandler {
     }
 
 
+
+
+
+
+
     /* handleReminderSubmission handles the submission of a reminder whenever the create reminder button is clicked
             @params;
                 Context context
@@ -228,21 +255,10 @@ public class CreateReminderHandler {
             return;
         }
 
-
         // Attain the text fields we want
-        boolean success = handleReminderCreation(tag, body, date, time, tag, application);
-        if (!success) {
-            // Throw a toast
-            Toast.makeText(context, "Could not create reminder, your date might be in the past", Toast.LENGTH_LONG).show();
-            alertDialog.cancel();
-            fab.setClickable(true);
-            return;
-        }
-
-        // Close the dialog
+        handleReminderCreation(tag, body, date, time, tag, application);
         alertDialog.cancel();
         fab.setClickable(true);
-        Toast.makeText(context, "Please refresh the page for your reminders to show up", Toast.LENGTH_LONG).show();
     }
 
 

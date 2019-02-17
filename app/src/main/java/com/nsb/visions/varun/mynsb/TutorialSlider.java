@@ -1,7 +1,7 @@
 package com.nsb.visions.varun.mynsb;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 public class TutorialSlider extends AppCompatActivity {
 

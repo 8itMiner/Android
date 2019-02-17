@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.evernote.android.job.DailyJob;
-import com.evernote.android.job.Job;
 import com.evernote.android.job.JobRequest;
 import com.nsb.visions.varun.mynsb.Notifications.Notification;
 import com.nsb.visions.varun.mynsb.R;
@@ -49,7 +48,7 @@ public class ReminderScheduler extends DailyJob {
             new JobRequest.Builder(TAG)
                 .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
                 .setRequirementsEnforced(true),
-            TimeUnit.HOURS.toMillis(0),
-            TimeUnit.HOURS.toMillis(6));
+            TimeUnit.HOURS.toMillis(5),
+            TimeUnit.HOURS.toMillis(8));
     }
 }

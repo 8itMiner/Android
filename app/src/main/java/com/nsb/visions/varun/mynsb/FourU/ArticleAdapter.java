@@ -5,8 +5,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nsb.visions.varun.mynsb.R;
-import com.nsb.visions.varun.mynsb.Webview;
 import com.squareup.picasso.Picasso;
 
 import java.net.URI;
@@ -147,8 +144,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
      */
     private void setImage(Article article, ImageView imageView) {
 
-        // Set the colour tint
-        imageView.setColorFilter(ContextCompat.getColor(context, R.color.colorSecondaryAccent), android.graphics.PorterDuff.Mode.MULTIPLY);
         try {
             // Start encoding the URL
             URL url = new URL(article.ImageURL);

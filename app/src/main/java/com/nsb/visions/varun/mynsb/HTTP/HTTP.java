@@ -1,6 +1,7 @@
 package com.nsb.visions.varun.mynsb.HTTP;
 
 import android.content.Context;
+
 import com.franmontiel.persistentcookiejar.ClearableCookieJar;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
@@ -28,6 +29,7 @@ public class HTTP {
 
     // Cookie manager
     private OkHttpClient client;
+    public ClearableCookieJar cookieJar;
     private Context context;
     // Cache
     File httpCacheDirectory;
@@ -57,8 +59,7 @@ public class HTTP {
         this.httpCacheDirectory = new File(context.getCacheDir(), "mynsb-http-data");
 
         // Setup the cookie jar
-        ClearableCookieJar cookieJar =
-                new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(this.context));
+        this.cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(this.context));
 
         //setup cache
         int cacheSize = 30 * 1024 * 1024; // 10 MiB

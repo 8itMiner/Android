@@ -2,19 +2,14 @@ package com.nsb.visions.varun.mynsb.Reminders;
 
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.text.SimpleDateFormat;
 import java.util.List;
-
-import eu.amirs.JSON;
 
 /**
  * Created by varun on 17/01/2018. Coz varun is awesome as hell :)

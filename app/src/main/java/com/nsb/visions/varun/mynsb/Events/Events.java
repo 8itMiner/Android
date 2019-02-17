@@ -1,27 +1,18 @@
 package com.nsb.visions.varun.mynsb.Events;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.nsb.visions.varun.mynsb.Common.Loader;
-
 import com.nsb.visions.varun.mynsb.Common.Util;
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import eu.amirs.JSON;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import static java.util.Calendar.*;
 
 /**
  * Created by varun on 21/01/2018. Coz varun is awesome as hell :)
@@ -44,13 +35,13 @@ public class Events extends Loader<Event> {
         HTTP httpClient = new HTTP(this.context);
 
         // Build a request from the data we have
-        String requestURL = String.format(Locale.ENGLISH, "events/Get?start=%s&end=%s",
+        String requestURL = String.format(Locale.ENGLISH, "/events/get?start=%s&end=%s",
             dateRange[0], dateRange[1]);
 
         // Set up the request
         Request request = new Request.Builder()
             .get()
-            .url(requestURL)
+            .url(HTTP.API_URL + requestURL)
             .header("Connection", "close")
             .build();
 
@@ -67,9 +58,9 @@ public class Events extends Loader<Event> {
     public Event parseJson(JSON bodyBlock, int position) throws Exception {
         JSON json = bodyBlock.index(position);
 
-        return new Event(json.key("EventID").intValue(), json.key("EventName").stringValue(), json.key("EventStart").stringValue(),
-            json.key("EventEnd").stringValue(), json.key("EventLocation").stringValue(),
-            json.key("EventOrganiser").stringValue(), json.key("EventShortDesc").stringValue(), json.key("EventPictureURL").stringValue());
+        return new Event(json.key("ID").intValue(), json.key("Name").stringValue(), json.key("Start").stringValue(),
+            json.key("End").stringValue(), json.key("Location").stringValue(),
+            json.key("Organiser").stringValue(), json.key("ShortDesc").stringValue(), json.key("LongDesc").toString(), json.key("PictureURL").stringValue());
 
     }
 

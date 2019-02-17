@@ -2,7 +2,6 @@ package com.nsb.visions.varun.mynsb.Timetable.Extended;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.nsb.visions.varun.mynsb.ExpandedTimetables;
 

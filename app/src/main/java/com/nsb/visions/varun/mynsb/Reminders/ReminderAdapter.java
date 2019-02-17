@@ -13,28 +13,30 @@ import android.widget.TextView;
 
 import com.nsb.visions.varun.mynsb.Common.ReminderColours;
 import com.nsb.visions.varun.mynsb.R;
-import com.nsb.visions.varun.mynsb.Timetable.Subject;
-
-import org.json.JSONArray;
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import eu.amirs.JSON;
-
 public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Reminder> reminders = new ArrayList<>();
     private SharedPreferences preferences;
+
+
+
+
 
     // Constructor
     ReminderAdapter(List<Reminder> reminders, SharedPreferences prefs) {
         this.reminders = reminders;
         this.preferences = prefs;
     }
+
+
+
+
 
 
 
@@ -60,6 +62,11 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         // Btw this will never happen
         return null;
     }
+
+
+
+
+
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -88,6 +95,10 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
 
+
+
+
+
     // Determine the item's view type
     @Override
     public int getItemViewType(int position) {
@@ -102,6 +113,9 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
 
+
+
+
     @Override
     public int getItemCount() {
         return reminders.size();
@@ -109,6 +123,9 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     /*
         END OVERRIDDEN FUNCTIONS =========================
      */
+
+
+
 
 
 
@@ -135,6 +152,9 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
 
+
+
+
     // Holds the text for a reminder for a specific day
     class DayHolder extends RecyclerView.ViewHolder {
 
@@ -148,6 +168,10 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     /*
         END HOLDER CLASSES =========================
      */
+
+
+
+
 
 
 
@@ -194,6 +218,12 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         // Concat and return
         return hour.toString() + ":" + minutes + " " + modifier;
     }
+
+
+
+
+
+
 
 
     /* getColour reads the sharedPreferences for a user, gets the tag colours and determines what colour is the correct one

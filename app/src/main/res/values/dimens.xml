@@ -7,6 +7,7 @@
     <dimen name="loginBoxWidth">300dp</dimen>
     <dimen name="logoMargin">23dp</dimen>
     <dimen name="textMargin">9dp</dimen>
+    <dimen name="loginCardMarginBottom">65dp</dimen>
     <dimen name="userNameInputMargin">40dp</dimen>
     <dimen name="passwordInputMargin">130dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->

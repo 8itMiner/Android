@@ -5,16 +5,15 @@ package com.nsb.visions.varun.mynsb.FourU;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+
+import com.nsb.visions.varun.mynsb.Common.Loader;
+import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 
 import java.util.List;
 
 import eu.amirs.JSON;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import com.nsb.visions.varun.mynsb.HTTP.HTTP;
-import com.nsb.visions.varun.mynsb.Common.Loader;
 
 public class FourU extends Loader<Article> {
 

@@ -2,16 +2,13 @@ package com.nsb.visions.varun.mynsb.Common;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
 

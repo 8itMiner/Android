@@ -1,7 +1,5 @@
 package com.nsb.visions.varun.mynsb.Notifications;
 
-import android.app.PendingIntent;
-
 /**
  * Created by varun on 20/01/2019.
  */

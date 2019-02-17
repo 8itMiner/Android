@@ -1,5 +1,0 @@
-TODO
- - Finsih off reminders UI
- - Finish off create reminders ui
- - Finish off timetable UI
-

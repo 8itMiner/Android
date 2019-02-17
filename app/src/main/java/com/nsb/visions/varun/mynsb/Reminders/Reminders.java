@@ -8,7 +8,11 @@ import android.util.Log;
 import com.nsb.visions.varun.mynsb.Common.Loader;
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import eu.amirs.JSON;
 import okhttp3.CacheControl;
@@ -37,10 +41,21 @@ public class Reminders extends Loader<Reminder>{
         // Prevent caching
         CacheControl cacheControl = CacheControl.FORCE_NETWORK;
 
+        // Simple date format
+        SimpleDateFormat apiFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+
+        // Get the time extremes
+        Calendar calendar = Calendar.getInstance();
+        String now = apiFormat.format(calendar.getTime());
+
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        String endOfDay = apiFormat.format(calendar.getTime());
+
 
         // Start up a request to be sent to the api
         Request getReminders = new Request.Builder()
-            .url(HTTP.API_URL + "/reminders/get/Today")
+            .url(HTTP.API_URL + String.format(Locale.ENGLISH,"/reminders/get?Start_Time=%s&End_Time=%s", now, endOfDay))
             .get()
             .cacheControl(cacheControl)
             .build();
