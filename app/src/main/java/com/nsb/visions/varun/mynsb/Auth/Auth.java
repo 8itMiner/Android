@@ -2,15 +2,14 @@ package com.nsb.visions.varun.mynsb.Auth;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 import com.nsb.visions.varun.mynsb.User.User;
 
+import java.io.IOException;
+
 import eu.amirs.JSON;
 import okhttp3.Credentials;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -20,51 +19,22 @@ import okhttp3.Response;
 // Auth class for attaining user details or logging in
 public class Auth {
 
-    private Context context;
     private HTTP httpClient;
+    public Auth(Context context) {this.httpClient = new HTTP(context);}
 
 
 
-    /* constructor is just a constructor lmao
-            @params;
-                Context context
 
-     */
-    public Auth(Context context) {
-        this.context = context;
-        this.httpClient = new HTTP(this.context);
-    }
-
-
-
-    /* Auth function for quick authentication, simply just uses the API
-            @params;
-                String studentID
-                String password
-
-            @throws;
-               Exception: Just an error that could be returned from the request
-    */
-    public User auth(String studentID, String password) throws Exception {
-
-        // Clear all the cookies rn
+    // auth takes a studentID and password and authenticates against the API, it then returns a User obj which contains all of the info of the current user
+    public User auth(String studentID, String password) throws IOException, InterruptedException, HTTP.HTTPUserError, HTTP.HTTPError {
+        // Clear all the cookies currently in storage
         httpClient.cookieJar.clear();
 
-        // Set up the request
-        Request login = new Request.Builder()
-                .url(HTTP.API_URL + "/user/auth")
-                .method("POST", RequestBody.create(null, new byte[0]))
-                .addHeader("Authorization", Credentials.basic(studentID, password))
-                .build();
-
-
-        Response loginResp = httpClient.performRequest(login);
-
-
-        // Get the set cookie header from the request
+        Response loginResp = httpClient.performRequest(
+            httpClient.buildRequest(HTTP.POST, "/user/auth", null)
+                .addHeader("Authorization", Credentials.basic(studentID, password)), false);
         if (loginResp.code() != 200) {
-            // Throw the error meaning that the request was unsuccessful
-            throw new Exception(loginResp.body().string());
+            throw new HTTP.HTTPUserError("Could not log in");
         }
         // Return the details for the currently logged in user
         return this.getUserDetails();
@@ -72,28 +42,19 @@ public class Auth {
 
 
 
-    /* getUserDetails is a function to get user details for the currently logged in user
-            @params;
-                nil
 
-            @throws;
-                Exception: Just an error that could be returned from the request
-    */
-    public User getUserDetails() throws Exception {
-        // Get user data and return it
-        Request getUserDetails = new Request.Builder()
-                .url(HTTP.API_URL + "/user/getdetails")
-                .build();
-        Response userDataResp = httpClient.performRequest(getUserDetails);
-        // Read Body
-        String body = userDataResp.body().string();
+    // getUserDetails gets the details for the user currently logged into the API
+    private User getUserDetails() throws HTTP.HTTPError, IOException, InterruptedException {
+        Response userDataResp = httpClient.performRequest(
+                httpClient.buildRequest(HTTP.GET, "/user/getdetails", null), false);
         User user;
-        // Begin parsing json
-        JSON userData = new JSON(body);
         try {
+            String body = userDataResp.body().string();
+            JSON userData = new JSON(body);
+
             // Determine if the request was successful
             if (userDataResp.code() != 200) {
-                throw new RuntimeException("Something went horrible wrong");
+                throw new HTTP.HTTPError("Something went horrible wrong");
             }
 
             // Get the user data and parse it
@@ -101,11 +62,10 @@ public class Auth {
             String Fname = userData.key("Message").key("Body").index(0).key("Fname").stringValue();
             String Lname = userData.key("Message").key("Body").index(0).key("Lname").stringValue();
             Integer Year = userData.key("Message").key("Body").index(0).key("Year").intValue();
-            // Push into user container
+
             user = new User(StudentID, Fname, Lname, Year);
         } catch (Exception e) {
-            Log.d("HTTP-Information", body);
-            throw new RuntimeException("Something went horribly wrong");
+            throw new HTTP.HTTPError("Something went horribly wrong");
         }
 
         return user;

@@ -2,17 +2,14 @@ package com.nsb.visions.varun.mynsb.Calendar;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.nsb.visions.varun.mynsb.Common.Loader;
 import com.nsb.visions.varun.mynsb.Common.Util;
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 
 import java.util.List;
-import java.util.Locale;
 
 import eu.amirs.JSON;
-import okhttp3.Request;
 import okhttp3.Response;
 
 /**
@@ -21,47 +18,23 @@ import okhttp3.Response;
 // The calendars class is the loader for all the current calendars in the API
 public class Calendars extends Loader<Calendar> {
 
-    /* constructor is just a constructor lmao
-            @params;
-                Context context
-
-     */
-    public Calendars(Context context) {
-        super(context, Calendars.class);
-    }
+    // Constructor
+    public Calendars(Context context) {super(context);}
 
 
 
-    /*
-        OVERRIDDEN METHODS ============================
-     */
-    /* sendRequest is a function in the loader class, it uses the API to get the desired response
-            @params;
-                nil
-     */
+
+    // sendRequest is the overridden function the Loader class uses to get the API data for a specific view
     @Override
     public Response sendRequest() {
-        // Get the dates we should use for the request, the start and the end of the week
-        String[] dates = Util.getDateRange("dd-MM-yyyy");
-
-        // set up a http client
         HTTP httpClient = new HTTP(this.context);
 
-        String url = String.format(Locale.ENGLISH, HTTP.API_URL + "/events/calendar/get?Start=%s&End=%s", dates[0], dates[1]);
+        String[] weekRange = Util.getStartAndEndWeek();
+        String[] params = {"Start="+weekRange[0], "End="+weekRange[1]};
 
-
-        // Set up the request
-        Request request = new Request.Builder()
-            .get()
-            .url(url)
-            .header("Connection", "close")
-            .build();
-
-        Log.d("content-response", String.format(Locale.ENGLISH, "/events/Calendar/Get?Start=%s&End=%s", dates[0], dates[1]));
-
-        // Perform request and return the response
         try {
-            return httpClient.performRequest(request);
+            return httpClient.performRequest(
+                httpClient.buildRequest(HTTP.GET, "/events/calendar/get", params), false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -69,10 +42,9 @@ public class Calendars extends Loader<Calendar> {
     }
 
 
-    /* parseJson is a function in the loader class, it parses the JSON for an individual element
-            @params;
-                nil
-     */
+
+
+    // parseJSON parses the specific JSON response from the API
     @Override
     public Calendar parseJson(JSON jsonD, int position) throws Exception {
         JSON json = jsonD.index(position);
@@ -81,16 +53,10 @@ public class Calendars extends Loader<Calendar> {
 
 
 
-    /* getAdapterInstance returns an instance of our associated adapter
-            @params;
-                List<Model> models
-     */
+
+    // getAdapterInstance returns a instance of a recyclerViewAdapter
     @Override
     public RecyclerView.Adapter getAdapterInstance(List<Calendar> calendars) {
         return new CalendarAdapter(calendars);
     }
-
-    /*
-       END OVERRIDDEN METHODS ============================
-     */
 }

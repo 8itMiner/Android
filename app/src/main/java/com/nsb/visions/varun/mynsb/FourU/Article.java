@@ -8,7 +8,7 @@ class Article {
     String ImageURL;
     String issuuLink;
 
-    public Article(String name, String longDesc, String imageURL, String issuuLink) {
+    Article(String name, String longDesc, String imageURL, String issuuLink) {
         this.name = name;
         this.LongDesc = longDesc;
         this.ImageURL = imageURL;

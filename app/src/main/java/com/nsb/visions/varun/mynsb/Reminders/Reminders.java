@@ -3,20 +3,15 @@ package com.nsb.visions.varun.mynsb.Reminders;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.nsb.visions.varun.mynsb.Common.Loader;
+import com.nsb.visions.varun.mynsb.Common.Util;
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import eu.amirs.JSON;
-import okhttp3.CacheControl;
-import okhttp3.Request;
 import okhttp3.Response;
 
 /**
@@ -28,42 +23,33 @@ public class Reminders extends Loader<Reminder>{
 
     private SharedPreferences preferences;
 
+
+
+
+    // Constructor
     public Reminders(Context context, SharedPreferences preferences) {
-        super(context, Reminders.class);
+        super(context);
         this.preferences = preferences;
     }
 
 
+
+    // sendRequest gets all the reminders
     @Override
     public Response sendRequest() {
         // Set up the http client
         HTTP httpclient = new HTTP(this.context);
-        // Prevent caching
-        CacheControl cacheControl = CacheControl.FORCE_NETWORK;
-
-        // Simple date format
-        SimpleDateFormat apiFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
         // Get the time extremes
         Calendar calendar = Calendar.getInstance();
-        String now = apiFormat.format(calendar.getTime());
-
+        String now = Util.formateDate(calendar.getTime(), "dd-MM-yyyy HH:mm");
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
-        String endOfDay = apiFormat.format(calendar.getTime());
+        String endOfDay = Util.formateDate(calendar.getTime(), "dd-MM-yyyy HH:mm");
 
-
-        // Start up a request to be sent to the api
-        Request getReminders = new Request.Builder()
-            .url(HTTP.API_URL + String.format(Locale.ENGLISH,"/reminders/get?Start_Time=%s&End_Time=%s", now, endOfDay))
-            .get()
-            .cacheControl(cacheControl)
-            .build();
-        // Send the request
-
+        String[] params = {"Start_Time="+now, "End_Time="+endOfDay};
         try {
-            Response resp = httpclient.performRequest(getReminders);
-            return resp;
+            return httpclient.performRequest(httpclient.buildRequest(HTTP.GET, "/reminders/get", params), false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -72,15 +58,17 @@ public class Reminders extends Loader<Reminder>{
 
 
 
+
+    // parseJSON does what it says, parses the API's JSON
     @Override
     public Reminder parseJson(JSON jsonD, int position) throws Exception {
-
         JSON json = jsonD.index(position);
-
         return new Reminder(
             json.key("Headers").key("Subject").stringValue(), json.key("Body").stringValue(),
             json.key("Tags").getJsonArray(), json.key("DateTime").stringValue());
     }
+
+
 
 
     @Override

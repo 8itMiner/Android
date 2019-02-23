@@ -2,7 +2,6 @@ package com.nsb.visions.varun.mynsb.Timetable;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,50 +14,37 @@ import eu.amirs.JSON;
 // Special functions used by the timetable class
 public class Util {
 
+    // getClassName takes a class code like: "10SCI.C" and Spits out its full name: "Science"
+    static String getClassName(String classCode, Context context) throws IOException {
 
-    public static String getClassName(String classCode, Context context) throws IOException {
-
-        Log.d("Timetable-ClassCode: ", "h " + classCode);
-
-        // This is because some classcodes have numbers which we want to get rid of, eg. 10MAT will become MAT
-        // Get the class code regex
+        // Regex to parse class code, see: https://regex101.com/r/QUG50E/1/ to test our the regex
         Pattern getCode = Pattern.compile("(\\d+)([a-zA-z]+\\d?)(.*)");
-        // Determine the code for the class, (2nd matching group)
         Matcher matcher = getCode.matcher(classCode);
-
-
         String subjectCode = "";
-        // This is just to test if they are an SRC student, this part is a bit of a hack but I'm really CBBS RN
+
+        // This is a quick hack that deals with SRC roll-calls
         if (Objects.equals(classCode, "SRC RC")) {
             subjectCode = "RC";
         }
-        // Push stuff into the matches list
+        // Read the regex group into the subject code var
         while(matcher.find()) {
             subjectCode = matcher.group(2);
-
             // Determine if the class code contains RC, we compare against the class code and not subject because some students are SRC members and as such their SRC roll call doesn't get
-            // regex matched
             if (subjectCode.contains("RC")) {
                 subjectCode = "RC";
             }
         }
 
-
-
-        // Parse this and determine the full name of the class by reading the class_codes.json file
-        InputStream is = context.getAssets().open("class_codes.json");
-        int size = is.available();
+        InputStream classCodeJson = context.getAssets().open("class_codes.json");
+        int size = classCodeJson.available();
         byte[] buffer = new byte[size];
-        is.read(buffer);
-        is.close();
-
+        classCodeJson.read(buffer);
+        classCodeJson.close();
         // Get the raw json
         String rawJson = new String(buffer, "UTF-8");
-
         // Parse this json
         JSON json = new JSON(rawJson);
 
         return json.key(subjectCode).stringValue();
     }
-
 }

@@ -9,55 +9,49 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 
 /**
- * Created by varun on 22/01/2018. Coz varun is awesome as hell :)
+ * Created by varun on 22/01/2018.
  */
 
+
+// ReminderColours is simply a class that allows users to set and edit the colours for specific types of reminders
 public class ReminderColours {
 
     public HashMap<String, String> tagColours;
     private SharedPreferences preferences;
 
+
+
+
+    // Constructor
     public ReminderColours(SharedPreferences preferences) {
-        // Gson
-        Gson gson = new Gson();
-        // Tag colours
+        Gson jsonDecoder = new Gson();
         String tagColourJson = preferences.getString("tag-colours", "{}");
 
         // Convert json to hashmap
         Type stringStringMap = new TypeToken<HashMap<String, String>>(){}.getType();
-        this.tagColours = gson.fromJson(tagColourJson, stringStringMap);
-
-        // Store the prefs
+        this.tagColours = jsonDecoder.fromJson(tagColourJson, stringStringMap);
         this.preferences = preferences;
     }
 
 
-    /* createTag creates a tag from a given tag and colour
-            @params;
-                String tag
-                String colour
 
-     */
+
+    // createTag creates a tag from a given tag and colour
     public boolean createTag(String tag, String colour) {
         tagColours.put(tag, colour);
         return this.save();
     }
 
 
-    /* save saves the current hashmap into the shared preferences
-            @params;
-               nil
-     */
-    private boolean save() {
-        // Gson instances
-        Gson gson = new Gson();
-        // Convert existing hashmap into json for the shared prefs
-        String hashMapString = gson.toJson(this.tagColours);
 
-        // Save this into our shared prefs
+
+    // save saves the current colour hashmap into the shared preferences for the application
+    private boolean save() {
+        Gson jsonEncoder = new Gson();
+        String jsonEncoded = jsonEncoder.toJson(this.tagColours);
+
         SharedPreferences.Editor editor = this.preferences.edit();
-        // Push the data into the appropriate var
-        editor.putString("tag-colours", hashMapString);
+        editor.putString("tag-colours", jsonEncoded);
         editor.apply();
 
         return true;
@@ -67,4 +61,5 @@ public class ReminderColours {
 /*
     Usage: ReminderColours(Sharedprefs) x;
     x.createTag("x", "#colour")
+    x.save()
  */

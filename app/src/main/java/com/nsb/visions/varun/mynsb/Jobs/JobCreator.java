@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import com.evernote.android.job.Job;
 
 /**
- * Created by varun on 22/01/2019. Coz varun is awesome as hell :)
+ * Created by varun on 22/01/2019.
  */
 
 public class JobCreator implements com.evernote.android.job.JobCreator {

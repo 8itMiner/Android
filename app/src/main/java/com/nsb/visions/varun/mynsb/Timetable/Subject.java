@@ -11,7 +11,7 @@ public class Subject {
     public String period;
     public String time;
 
-    public Subject(String className, String room, String teacher, String period, String time) {
+    Subject(String className, String room, String teacher, String period, String time) {
         this.className = className;
         this.room = room;
         this.teacher = teacher;

@@ -1,19 +1,21 @@
 package com.nsb.visions.varun.mynsb.Common;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
 
 import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 
 import eu.amirs.JSON;
-import okhttp3.Request;
 import okhttp3.Response;
 
 import static java.util.Calendar.DATE;
@@ -22,15 +24,14 @@ import static java.util.Calendar.SUNDAY;
 import static java.util.Calendar.getInstance;
 
 /**
- * Created by varun on 8/02/2018. Coz varun is awesome as hell :)
+ * Created by varun on 8/02/2018
  */
 
+// Simple utility class
 public class Util {
 
-    /* dayAsInt returns the current day as an integer
-        @params;
-            nil
-    */
+
+    // dayAsInt returns the curret day as an integer, NOTE: Monday integer equivalent is 1
     private static int dayAsInt() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getDefault());
@@ -39,9 +40,11 @@ public class Util {
         return calendar.get(Calendar.DAY_OF_WEEK) - 1;
     }
 
-    public static String intToDaystr(int day) {
 
-        // Switch statement for conversion
+
+
+    // intToDayStr takes an integer and converts it into a Day string, NOTE: this is meant to be used with Java's calendar class which sets Monday's integer value to 2
+    public static String intToDaystr(int day) {
         switch (day) {
             case 2:
                 return "Monday";
@@ -53,11 +56,15 @@ public class Util {
                 return "Thursday";
             case 6:
                 return "Friday";
+            default:
+                return "";
         }
-
-        return "";
     }
 
+
+
+
+    // stringToDayInt takes a day as a String and returns its integer representation NOTE: This is meant to be used with the myNSB API where Monday is 1
     public static int stringToDayInt(String day) {
         switch (day) {
             case "Monday":
@@ -70,85 +77,40 @@ public class Util {
                 return 4;
             case "Friday":
                 return 5;
+            default:
+                return 0;
         }
-
-        return 0;
     }
 
 
 
 
+    // getStartAndEndWeek returns the date for the current week's Sunday along with the date for this week's Saturday, first index is Sunday, last index is Saturday
+    public static String[] getStartAndEndWeek() {
 
+        SimpleDateFormat baseFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
-
-
-
-
-    /* getDateRange returns the date for the current day along with the date for this week's saturday
-         @params;
-             String format
-                specifies the format the response dates should be in
-    */
-    @SuppressLint("all")
-    public static String[] getDateRange(String format) {
-        // Setup a sdf for formatting of the date
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-
-        // Setup our calendars
-        // Determine the sunday week
         Calendar sunday = getInstance(TimeZone.getDefault());
-        // Get the respective minmaxes
         sunday.add(DATE, (SUNDAY - Util.dayAsInt()));
-        String sundayTxt = simpleDateFormat.format(sunday.getTime());
+        String sundayTxt = baseFormat.format(sunday.getTime());
 
         Calendar saturday = getInstance(TimeZone.getDefault());
         saturday.add(DATE, (SATURDAY - Util.dayAsInt()));
-        String saturdayTxt = simpleDateFormat.format(saturday.getTime());
+        String saturdayTxt = baseFormat.format(saturday.getTime());
 
-        // Convert these into dates and return it
         return new String[]{sundayTxt, saturdayTxt};
     }
 
 
 
-    /* getDateRangeStart returns the date range for a specific date, it adds a week to the current date and returns the range
-            @params;
-               String format
-                    Specifies the format of the date
-     */
-    @SuppressLint("all")
-    public static String[] getDateRangeStart(String format) {
-        // Setup a sdf for formatting the date
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
 
-        // Setup our calendars
-        Calendar future = Calendar.getInstance(TimeZone.getDefault());
-        Calendar today = Calendar.getInstance(TimeZone.getDefault());
-
-        // Add seven days to today to get when the week ends
-        future.add(DATE,7);
-
-        // Parse our dates
-        String futureTxt = simpleDateFormat.format(future);
-        String todayTxt = simpleDateFormat.format(today);
-
-        // Return our dates
-        return new String[]{todayTxt, futureTxt};
-    }
-
-
-    /* calculateDate returns the day of the week suitable for the api e.g.. 10, 4, 5,
-        it sends to the API's week/get feature which returns the week through a calculation made from data on the school's calendar
-            @params;
-                nil
-     */
+    // calculateDate returns the day of the week suitable for the api e.g.. 10, 4, 5,
+    // it sends to the API's week/get feature which returns the week through a calculation made from data on the school's calendar
     public static int calculateDay(String week) {
         int today = dayAsInt();
-
         // If today is a saturday or a sunday set it to a monday because there are no timetables for sunday and monday
         if (today == 6 || today == 0) {
             today = 1;
-
             // Reset our week, e.g if its week b on a sunday set it to week a for the monday
             if (Objects.equals(week.trim(), "A")) {
                 week = "B";
@@ -156,13 +118,10 @@ public class Util {
                 week = "A";
             }
         }
-
         // Determine if we need to +5 or if we just leave it as is
         if (week.equals("B")) {
             today += 5;
         }
-
-
         // Return the day
         return today;
     }
@@ -170,55 +129,58 @@ public class Util {
 
 
 
-    /* weekAorB tells us if it is week a or b using the API
-            @params;
-                Context context
-     */
+    // weekAorB tells us if it is week a or b using the API
     public static String weekAorB(Context context) {
         // Setup a http client
         HTTP httpclient = new HTTP(context);
-        final String[] responseStr = {null};
 
-
-        Thread requester = new Thread(() -> {
-            // Setup a request
-            Request request = new Request.Builder()
-                .get()
-                .url(HTTP.API_URL + "/week/get")
-                .header("Connection", "close")
-                .build();
-
-
-            try {
-                Response response = httpclient.performRequest(request);
-                // Parse the response into JSON
-                JSON json = new JSON(response.body().string());
-                responseStr[0] = json.key("Message").key("Body").stringValue();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        requester.start();
         try {
-            requester.join();
-        } catch (InterruptedException e) {
+            Response response = httpclient.performRequest(
+                httpclient.buildRequest(HTTP.GET,  "/week/get", null), false);
+            // Parse the response into JSON
+            JSON json = new JSON(response.body().string());
+            return json.key("Message").key("Body").stringValue();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-        return responseStr[0];
+        return null;
     }
 
 
 
 
-    public static boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivityManager
-            = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    // showErrors determine if error should be exposed to a user or not
+    public static void showErrors(RecyclerView recyclerView, TextView errorHolder, boolean showError) {
+        if (showError) {
+            recyclerView.swapAdapter(new RecyclerViewEmpty(), true);
+            errorHolder.setVisibility(View.VISIBLE);
+        } else {
+            errorHolder.setVisibility(View.GONE);
+        }
     }
 
 
 
+
+    // parseDate parses a specific date into the format used throughout the app
+    public static Date parseDate(String date, String format) {
+        SimpleDateFormat postFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+        Date tempDate = Calendar.getInstance().getTime();
+        try {
+            tempDate = postFormat.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return tempDate;
+    }
+
+
+
+
+    // formateDate takes a date and formats it into everyone's favourite API format
+    public static String formateDate(Date date, String format) {
+        SimpleDateFormat returnFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+        return returnFormat.format(date);
+    }
 }

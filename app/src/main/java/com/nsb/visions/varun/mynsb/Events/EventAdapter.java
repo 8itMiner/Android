@@ -1,6 +1,7 @@
 package com.nsb.visions.varun.mynsb.Events;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,24 +11,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nsb.visions.varun.mynsb.Common.Util;
 import com.nsb.visions.varun.mynsb.R;
 import com.squareup.picasso.Picasso;
 
 import java.net.URI;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by varun on 22/01/2018. Coz varun is awesome as hell :)
+ * Created by varun on 22/01/2018
  */
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
-    public List<Event> events = new ArrayList<>();
+    private List<Event> events = new ArrayList<>();
     private Context context;
+
+
+
 
     // Constructor
     public EventAdapter(List<Event> events, Context context) {
@@ -38,56 +42,49 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
 
 
-
-    /*
-        Methods that must be overridden ==================================
-        documentation for overridden methods is minimal pleas check the android developer documentation
-        for more information
-     */
+    @NonNull
     @Override
-    public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
             .inflate(R.layout.event_card, parent, false);
-
         return new EventViewHolder(v);
     }
 
-    @Override
-    public void onBindViewHolder(EventViewHolder holder, int position) {
 
+
+
+    // onBindViewHolder setups the event card used to hold all our data in the recyclerview, see res/layout/event_card.xml
+    @Override
+    public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         Event event = events.get(position);
-        // Start setting the text fields
+
         holder.eventName.setText(event.eventName);
         holder.shortDesc.setText(event.eventShortDesc);
         holder.longDesc.setText(event.eventLongDesc);
-        // Set the image into the eventImage box
         setImage(event, holder.eventImage);
 
-        // Base format
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy");
-        String start = formatter.format(event.eventStart);
-        String end = formatter.format(event.eventEnd);
+        String eventStart = Util.formateDate(event.eventStart, "dd/MM/yy");
+        String eventEnd = Util.formateDate(event.eventEnd, "dd/MM/yy");
 
-        holder.timeData.setText(start + " - " + end);
-
+        // Set the timeholder
+        holder.timeData.setText(eventStart + " - " + eventEnd);
+        // On click listener for the readMore button
         holder.readMore.setOnClickListener((v) -> {
             String message = String.format(Locale.ENGLISH, "Created By: %s", event.eventOrganiser);
             Toast.makeText(this.context, message, Toast.LENGTH_LONG).show();
         });
-
     }
+
+
+
 
     @Override
-    public int getItemCount() {
-        return events.size();
-    }
-     /*
-        End Methods that must be overridden ==================================
-     */
+    public int getItemCount() {return events.size();}
 
 
-    // View holder class for the event instance
-    @SuppressWarnings("ALL")
+
+
+    // View holder class for the event instance, see res/layout/event_card.xml
     class EventViewHolder extends RecyclerView.ViewHolder {
         TextView eventName;
         TextView shortDesc;
@@ -110,10 +107,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
 
 
-
-    /*
-        UTILITY METHODS ===============================
-     */
+    // setImage takes an imageView and an event and loads the event's image into the imageView
     private void setImage(Event event, ImageView imageView) {
         try {
             // Start encoding the URL
@@ -134,8 +128,4 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             e.printStackTrace();
         }
     }
-    /*
-        END UTILITY METHODS ===============================
-     */
-
 }

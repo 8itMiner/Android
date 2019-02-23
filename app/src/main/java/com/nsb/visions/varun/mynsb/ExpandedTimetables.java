@@ -1,7 +1,5 @@
 package com.nsb.visions.varun.mynsb;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -14,89 +12,65 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.nsb.visions.varun.mynsb.Common.Util;
-import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 import com.nsb.visions.varun.mynsb.Timetable.Timetables;
 
-// Expanded timetables are an overall view of your future timetables, the feature is rather sinmple and therefore should be prioritised for completion only after the other components are complete
 
-
+// The ExpandedTimetables is a simple interface that allows students to look up their timetable for any day/week
 public class ExpandedTimetables extends AppCompatActivity {
 
 
-    private SharedPreferences sharePref;
-    private Handler handler = new Handler();
-
-
+    // Constructor for the activity, AKA, acitivity entry point
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expanded_timetables);
 
-        // Load the share prefs
-        this.sharePref = getSharedPreferences("MyNSB", Context.MODE_PRIVATE);
-
-        // Do this once a spinner option has been pressed
-        // Attain the corresponding variables
-
         // Create a new timetable instance
         Timetables timetables = new Timetables(getApplicationContext(), true);
         SwipeRefreshLayout swiper = findViewById(R.id.swiperefresh);
 
-
         // Get the parsed day along with us just so that we can easily load the previous thing the dude saw
         timetables.loadUI(findViewById(R.id.recycler), swiper, findViewById(R.id.loader), findViewById(R.id.errorText), new Handler());
 
-
-
-        // Setup our spinners
+        // Setup up spinners that hold the selections for the user
         Spinner day = findViewById(R.id.day);
         Spinner week = findViewById(R.id.week);
-
+        // Determine the ID of the week and day
         int weekID = timetables.getWeek().equals("A") ? 0 : 1;
         int dayID = Util.stringToDayInt(timetables.getDayStr())-1;
+        // Load up the spinners
         day.setSelection(dayID);
         week.setSelection(weekID);
-
         // Initialize our spinner colours
         initSpinner(day);
         initSpinner(week);
 
 
-        // Determine if the submit button has been clicked
+        // Click listener on the submit button
         findViewById(R.id.submissionButton).setOnClickListener((v) -> {
-            // Get the content from the spinners
-            String dayStr = day.getSelectedItem().toString();
-            String weekStr = week.getSelectedItem().toString();
+            String selectedDay = day.getSelectedItem().toString();
+            String selectedWeek = week.getSelectedItem().toString();
 
-
-            // Convert the day into a number that the api can read
-            // Trim the week
-            String splitWeek = weekStr.split(" ")[1];
-
-            // Convert the day into an integer
-            int dayInt = Util.stringToDayInt(dayStr);
+            // Convert the day and week into a number that the API can read
+            String splitWeek = selectedWeek.split(" ")[1];
+            int dayInt = Util.stringToDayInt(selectedDay);
             // Format the day based on the week
             if (splitWeek.equals("B")) {
                 dayInt += 5;
             }
 
-
-
-            // Set the new url for the timetable class and reload the content
-            timetables.setURL(HTTP.API_URL + "/timetable/get?Day=" + String.valueOf(dayInt));
-            timetables.setDayAndUpdateBellTimes(dayStr);
+            // Set the new day for the timetable class and reload the content
+            timetables.setCurrDay(dayInt);
+            timetables.setDayAndUpdateBellTimes(selectedDay);
             timetables.loadUI(findViewById(R.id.recycler), swiper, findViewById(R.id.loader), findViewById(R.id.errorText), new Handler());
-
-
-
         });
-        // Get the recycler view and load the selected date into it
     }
 
 
 
 
-    // Function that allows us to set the selected colour for our spinner
+
+    // initSpinner sets up the individual spinners for data entry
     private void initSpinner(Spinner spinner) {
         // Set the triangle colour
         spinner.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
@@ -106,7 +80,6 @@ public class ExpandedTimetables extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 ((TextView) parentView.getChildAt(0)).setTextColor(Color.WHITE);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) { }
         });

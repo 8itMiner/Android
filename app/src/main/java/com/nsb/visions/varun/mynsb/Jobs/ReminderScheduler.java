@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by varun on 23/01/2019. Coz varun is awesome as hell :)
+ * Created by varun on 23/01/2019.
  */
 
 public class ReminderScheduler extends DailyJob {

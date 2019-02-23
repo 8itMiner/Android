@@ -11,15 +11,14 @@ import com.nsb.visions.varun.mynsb.Timetable.Extended.ExtendTimetablesHandler;
 import com.nsb.visions.varun.mynsb.Timetable.Timetables;
 
 /**
- * Created by varun on 25/04/2018. Coz varun is awesome as hell :)
+ * Created by varun on 25/04/2018.
  */
 
 
 // Class handles when a FAB is clicked and what to do with it when it is
 public class HandleFABClicks {
 
-    // Function switches what handler to apply to the FAB based on some small info provided to it
-    // current selection refers to what is current pressed in the bottom drawer
+    // switchHandler takes a FAB button and performs the appropriate action for that FAB button based off the class that is calling the function
     public static void switchHandler(Loader loader, FloatingActionButton fab, LayoutInflater inflater, Context context, Application application) {
         // Timetables
         if (loader.getClass() == Timetables.class) {

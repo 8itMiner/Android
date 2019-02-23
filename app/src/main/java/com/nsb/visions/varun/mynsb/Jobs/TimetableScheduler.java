@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by varun on 22/01/2019. Coz varun is awesome as hell :)
+ * Created by varun on 22/01/2019.
  */
 
 public class TimetableScheduler extends DailyJob {

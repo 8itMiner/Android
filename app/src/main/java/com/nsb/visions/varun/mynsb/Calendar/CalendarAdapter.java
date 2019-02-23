@@ -15,41 +15,35 @@ import java.util.List;
  */
 
 
-// ADAPTERS NEED 0 DOCUMENTATION, YOU SHOULD KNOW ALL THIS ALREADY
 
 // Calendar adapter is an adapter class used to generate the appropriate recyclerViews
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarView> {
-
-    // Calendar list of all calendar instances
-    private List<Calendar> calendars = new ArrayList<>();
-
-
-    /* constructor is just a constructor lmao
-           @params;
-               Context context
-
-    */
-    CalendarAdapter(List<Calendar> calendars) {
-        this.calendars = calendars;
-    }
+    private List<Calendar> calendar = new ArrayList<>();
 
 
 
-    // Create a calendarview from the given viewgroup parent and viewtype
+
+    // Constructor
+    CalendarAdapter(List<Calendar> calendars) {this.calendar = calendars;}
+
+
+
+
+    // onCreateViewHolder is just an overridden method from the base RecyclerAdapter, it handles the creation of new CalendarRecyclerViews
     @Override
     public CalendarView onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
             .inflate(R.layout.calendar_card, parent, false);
-
-        // Return the created viewholder
         return new CalendarView(v);
     }
 
 
 
+
+    // onBindViewHolder is also an overriden method that handles new view bindings to the recyclerview
     @Override
     public void onBindViewHolder(CalendarView holder, int position) {
-        Calendar calendar = calendars.get(position);
+        Calendar calendar = this.calendar.get(position);
         // Set up the fields we want
         holder.entryTime.setText(calendar.time);
         holder.entryName.setText(calendar.name);
@@ -58,13 +52,16 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
 
 
+    // getItemCount does what it says
     @Override
-    public int getItemCount() {
-        return calendars.size();
-    }
+    public int getItemCount() {return calendar.size();}
 
 
-    // View class
+
+
+
+    // ViewHolder class contains the single item being used to hold all our information
+    // see: res/layout/calendar_card.xml
     class CalendarView extends RecyclerView.ViewHolder {
 
         TextView entryName;

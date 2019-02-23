@@ -10,6 +10,7 @@ import com.nsb.visions.varun.mynsb.Jobs.TimetableScheduler;
 /**
  */
 
+// App class is the instance that starts off the app and handles pre launch activities
 public class App extends Application{
 
     @Override

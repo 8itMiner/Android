@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,35 +24,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Article adapter class to make it easier to display articles given a list of them
-
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleView> {
 
-    // Article list
     private List<Article> articles = new ArrayList<>();
     private Context context;
 
-    /*
-        CONTEXT IS REQUIRED SO WE CAN REDIRECT THE USER ON A CLICK
-     */
-    public ArticleAdapter(List<Article> articles, Context context) {
+
+
+
+    // Constructor
+    ArticleAdapter(List<Article> articles, Context context) {
         this.articles = articles;
         this.context = context;
     }
 
 
-    /*
-        @ MUST OVERRIDE FUNCTIONS =====================================
-     */
+
+
+    // OnBindViewHolder is a quick function thats called whenever the recylerview updates
     @Override
-    public void onBindViewHolder(ArticleView holder, int position) {
+    public void onBindViewHolder(@NonNull ArticleView holder, int position) {
         Article article = articles.get(position);
         holder.mainDesc.setText(article.LongDesc);
         holder.title.setText(article.name);
         setImage(article, holder.backdrop);
-        // Set a click listener
+        // Set a click listener on the read button
         holder.readButton.setOnClickListener((v) -> {
             String articleURL = article.issuuLink;
 
+            // Redirect them to chrome
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(articleURL));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setPackage("com.android.chrome");
@@ -62,17 +63,18 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
                 Toast.makeText(context, "Chrome is not installed, to read this article please visit: " + articleURL, Toast.LENGTH_LONG).show();
             }
         });
-
-
         // Set the click listener for the download button
         holder.downlaodButton.setOnClickListener((v) -> {
-            Toast.makeText(this.context, "Download feature not working", Toast.LENGTH_LONG).show();
+            Toast.makeText(this.context, "Download feature not working as of yet", Toast.LENGTH_LONG).show();
         });
     }
 
 
+
+
+    @NonNull
     @Override
-    public ArticleView onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ArticleView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
             .inflate(R.layout.four_u_card, parent, false);
 
@@ -81,22 +83,15 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
     }
 
 
+
+
     @Override
-    public int getItemCount() {
-        return articles.size();
-    }
-    /*
-        @ END MUST OVERRIDE FUNCTIONS =====================================
-     */
+    public int getItemCount() {return articles.size();}
 
 
 
 
-
-    /*
-        @ UTILITY CLASSES =================================================
-     */
-    // Class articleView is a view holder, it contains all the required views for our article
+    // Class articleView is a view holder, it contains all the required views for our article, see res/layout/4u_card.xml
     class ArticleView extends RecyclerView.ViewHolder {
         TextView title;
         TextView mainDesc;
@@ -115,45 +110,19 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
             downlaodButton = itemView.findViewById(R.id.downloadID);
         }
     }
-    /*
-        @ END UTILITY CLASSES =================================================
-     */
 
 
 
 
-
-    /*
-        @ UTIL FUNCTIONS =====================================================
-     */
-    /* clearData clears all articles currently in our list it then notifies that adapter than stuff has been deleted
-        @params;
-            nil
-     */
-    public void clearData() {
-        int size = articles.size();
-        articles.clear();
-        notifyItemRangeRemoved(0, size);
-    }
-
-
-    /* setImage takes an article and an imageView it then reads the image URL from the article and sets the image view to that image
-        @params;
-            Article article
-            ImageView imageView
-     */
+    // setImage takes an article and an imageView it then reads the image URL from the article and sets the image view to that image
     private void setImage(Article article, ImageView imageView) {
-
         try {
             // Start encoding the URL
             URL url = new URL(article.ImageURL);
             URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
             url = uri.toURL();
-
-
             // Attain context
             Context context = imageView.getContext();
-
             // Load the image with picasso
             Picasso.with(context)
                 .load(url.toString())
@@ -162,7 +131,4 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
             e.printStackTrace();
         }
     }
-    /*
-        @ END UTIL FUNCTIONS =====================================================
-     */
 }

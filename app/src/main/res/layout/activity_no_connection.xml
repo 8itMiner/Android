@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#fff">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="0dp"
+        android:layout_marginTop="0dp"
+        android:background="@color/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="20dp"
+            android:text="No Connection!"
+            android:id="@+id/message"
+            android:fontFamily="sans-serif"
+            android:textColor="#fff"/>
+
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:id="@+id/refresher"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/centerImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="98dp"
+                android:layout_marginBottom="15dp"
+                android:src="@mipmap/mynsb_logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_below="@+id/centerImage"
+                android:layout_centerVertical="true"
+                android:textAlignment="center"
+                android:text="Hmmm... we can't seem to connect to our servers right now... This could be because you are not connected to the internet or you are sitting behind a proxy... Or because our servers are down."
+                android:textColor="@color/colorPrimary"
+                android:textSize="17dp"
+                android:id="@+id/textHolder" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textHolder"
+                android:layout_centerHorizontal="true"
+                android:textStyle="bold"
+                android:layout_marginTop="15dp"
+                android:textSize="14dp"
+                android:textColor="@color/colorSecondaryAccent"
+                android:text="Sorry :("/>
+        </RelativeLayout>
+
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</LinearLayout>

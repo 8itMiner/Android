@@ -12,7 +12,6 @@ import com.nsb.visions.varun.mynsb.HTTP.HTTP;
 import java.util.List;
 
 import eu.amirs.JSON;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class FourU extends Loader<Article> {
@@ -39,18 +38,9 @@ public class FourU extends Loader<Article> {
     @Override
     public Response sendRequest() {
         HTTP httpClient = new HTTP(context);
-
-
-
-        // Set up a request for the client to send
-        Request request = new Request.Builder()
-            .get()
-            .url(HTTP.API_URL + "/4U/get")
-            .header("Connection", "close")
-            .build();
-
         try {
-            return httpClient.performRequest(request);
+            return httpClient.performRequest(
+                httpClient.buildRequest(HTTP.GET, "/4U/get", null), false);
         } catch (Exception e) {
             e.printStackTrace();
         }

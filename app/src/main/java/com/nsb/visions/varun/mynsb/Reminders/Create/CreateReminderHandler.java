@@ -7,7 +7,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -16,19 +15,20 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.nsb.visions.varun.mynsb.Common.Util;
 import com.nsb.visions.varun.mynsb.R;
 import com.nsb.visions.varun.mynsb.Reminders.Reminder;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 import static java.util.TimeZone.getDefault;
 
 /**
- * Created by varun on 11/02/2018. Coz varun is awesome as hell :)
+ * Created by varun on 11/02/2018.
  */
 
 public class CreateReminderHandler {
@@ -44,34 +44,21 @@ public class CreateReminderHandler {
 
 
 
-
-
-
-    /*
-    UTIL FUNCTIONS ======================
-    */
-    /* handleCreate reminders handles all reminder creation stuff once the create reminder FAB has been clicked
-            @params;
-                FloatingActionButton fab,
-                LayoutInflater inflater,
-                Context context,
-                Application application
-     */
+    // handleCreateReminderButton handles all reminder creation stuff once the create reminder FAB has been clicked
     public static void handleCreateReminderButton(FloatingActionButton fab, LayoutInflater inflater, Context context, Application application) {
-        // Setup a dialog
+
+        // Create the dialogue that shows us the form
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-        // Get the views
         View createView = inflater.inflate(R.layout.create_reminder_dialog, null);
         dialogBuilder.setView(createView);
         AlertDialog alertDialog = dialogBuilder.create();
+
         // Make the dialog fill the screen
         Window window = alertDialog.getWindow();
+        assert window != null;
         window.setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT);
 
-        // Show the dialog if they want us to open it
         alertDialog.show();
-
-        // Stop the fab from being clicked in the future
         fab.setClickable(false);
 
         // Set up the sub buttons in the modal
@@ -95,21 +82,18 @@ public class CreateReminderHandler {
 
 
 
-
-
-    /* setupHandlers sets up the button click handlers so that the buttons respond to certain actions
-            @params;
-                Context context
-                Application application
-     */
+    // setupHandlers sets up the button click handlers so that the buttons respond to certain actions
     private static void setupHandlers(Context context, Application application) {
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(getDefault());
+
         // Close button handler
         closeButton.setOnClickListener((v) -> {
             alertDialog.cancel();
             fab.setClickable(true);
         });
+
         // Set up the date/time picker buttons
         pickDate.setOnClickListener((v) -> {
             // Init a datePicker dialog
@@ -122,6 +106,7 @@ public class CreateReminderHandler {
                 calendar.get(Calendar.DAY_OF_MONTH));
             picker.show();
         });
+
         // Setup the time picker button
         pickTime.setOnClickListener((v) -> {
             // Initiate a timePicker dialog
@@ -133,117 +118,57 @@ public class CreateReminderHandler {
             picker.setTitle("");
             picker.show();
         });
+
         // Setup a click listener for handling a createReminder click
         createReminder.setOnClickListener((v) -> {
             handleReminderSubmission(context, application);
         });
-
     }
 
 
 
 
-
-
-
-    /* handleReminderCreation creates a reminder given specific details and parameters
-            @params;
-                String reminderSubject
-                String reminderBody
-                String reminderDate
-                String reminderTime
-                String tag
-                Application application
-
-     */
-    private static boolean handleReminderCreation(String reminderSubject, String reminderBody,
-                                                  String reminderDate, String reminderTime, String tag, Application application) {
-        // The format the dates will be in post reminder push
-        SimpleDateFormat endParse = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        // The format the dates will be in pre reminder push
-        SimpleDateFormat startParse = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-
-        // Try catch to determine if there was an error during reminder creation
+    // handleReminderCreation creates a reminder and pushes it into the API given specific details and parameters
+    private static void handleReminderCreation(String reminderSubject, String reminderBody, String reminderDate, String reminderTime, String tag, Application application) {
         try {
             // Create a time that can be parsed into the reminders class
             String reminderDateTimeRaw = reminderDate + " " + reminderTime;
-            Date prePass = startParse.parse(reminderDateTimeRaw);
-            // Post parse string
-            String finalDate = endParse.format(prePass);
+            Date prePass = Util.parseDate(reminderDateTimeRaw, "dd/MM/yyyy HH:mm");
+            String finalDate = Util.formateDate(prePass, "yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-            Log.d("Reminder-Response: ", finalDate);
-
-            CreateReminder.createReminder(application.getApplicationContext(),
+            CreateReminder.create(application.getApplicationContext(),
                 new Reminder(reminderSubject, reminderBody, new JSONArray().put(0, tag), finalDate));
-        } catch (Exception e) {
+        } catch (JSONException e) {
             e.printStackTrace();
-            return false;
         }
-
-        return true;
     }
 
 
 
 
-
-
-
-    /* handleDateEntry handles the logic of date entry and what to do with invalid dates
-            @params;
-               AlertDialog alertDialog
-               Calendar calendar
-               int year
-               int monthOfYear
-               int dayOfMonth
-     */
+    // handleDateEntry handles the logic of date entry and what to do with invalid dates
     private static void handledDateEntry(Calendar calendar, int year, int monthOfYear, int dayOfMonth) {
         // Create a calendar instance
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, monthOfYear);
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-        // SDF for formatting the response
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
-        pickDate.setText(dateFormat.format(calendar.getTime()));
+        pickDate.setText(Util.formateDate(calendar.getTime(), "dd/MM/yyyy"));
     }
 
 
 
 
-
-
-
-    /* handleTimeEntry is like handleDateEntry except for times
-            @params;
-               AlertDialog alertDialog
-               Calendar calendar
-               int hourOfDay
-               int minuteOfHour
-     */
+    // handleTimeEntry is like handleDateEntry except for times
     private static void handleTimeEntry(Calendar calendar, int hourOfDay, int minuteOfHour) {
         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
         calendar.set(Calendar.MINUTE, minuteOfHour);
-
-        // SDF for formatting the response
-        SimpleDateFormat dateFormat = new SimpleDateFormat("kk:mm");
-
-        // Set the selected time
-        pickTime.setText(dateFormat.format(calendar.getTime()));
+        pickTime.setText(Util.formateDate(calendar.getTime(), "kk:mm"));
     }
 
 
 
 
-
-
-
-    /* handleReminderSubmission handles the submission of a reminder whenever the create reminder button is clicked
-            @params;
-                Context context
-                Application application
-     */
+    // handleReminderSubmission handles the submission of a reminder whenever the create reminder button is clicked, It also performs error checks on the fields within the form
     private static void handleReminderSubmission(Context context, Application application) {
         String body =  ((EditText)  alertDialog.findViewById(R.id.reminderBody)).getText().toString();
         String date =  ((EditText)  alertDialog.findViewById(R.id.reminderDate)).getText().toString();
@@ -260,6 +185,4 @@ public class CreateReminderHandler {
         alertDialog.cancel();
         fab.setClickable(true);
     }
-
-
 }

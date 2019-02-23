@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+
+
+// TODO: this activity is DEAD and has to be updated post myNSB Beta
 public class Webview extends AppCompatActivity {
 
     @SuppressLint("All")

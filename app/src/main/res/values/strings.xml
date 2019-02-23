@@ -77,9 +77,8 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
-    
-    
-    
+
+
     <string name="day_prompt">Day</string>
     <string-array name="day_arrays">
         <item>Monday</item>
@@ -94,6 +93,7 @@
         <item>Week A</item>
         <item>Week B</item>
     </string-array>
+    <string name="title_activity_no_connection">NoConnection</string>
 
 
 </resources>

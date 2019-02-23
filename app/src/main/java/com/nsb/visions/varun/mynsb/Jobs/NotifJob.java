@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.Random;
 
 /**
- * Created by varun on 22/01/2019. Coz varun is awesome as hell :)
+ * Created by varun on 22/01/2019.
  */
 
 public class NotifJob extends Job {

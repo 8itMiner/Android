@@ -1,10 +1,9 @@
 package com.nsb.visions.varun.mynsb.Reminders;
 
-import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +11,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nsb.visions.varun.mynsb.Common.ReminderColours;
+import com.nsb.visions.varun.mynsb.Common.Util;
 import com.nsb.visions.varun.mynsb.R;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +22,6 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private List<Reminder> reminders = new ArrayList<>();
     private SharedPreferences preferences;
-
 
 
 
@@ -37,16 +35,9 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
 
-
-
-
-
-
-    /*
-        OVERRIDDEN FUNCTIONS =========================
-     */
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
             case 1:
                 View v = LayoutInflater.from(parent.getContext())
@@ -57,19 +48,16 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                  v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.reminder_card, parent, false);
                 return new ReminderHolder(v);
-
+            default:
+                return null;
         }
-        // Btw this will never happen
-        return null;
     }
 
 
 
 
-
-
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         // Determine the view type of the current item and perform actions accordingly
         switch (getItemViewType(position)) {
             case 1:
@@ -97,9 +85,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
 
-
-
-    // Determine the item's view type
+    // getItemViewType determines the item's view type
     @Override
     public int getItemViewType(int position) {
         // Get the current item with our position
@@ -115,26 +101,13 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
 
-
     @Override
-    public int getItemCount() {
-        return reminders.size();
-    }
-    /*
-        END OVERRIDDEN FUNCTIONS =========================
-     */
+    public int getItemCount() {return reminders.size();}
 
 
 
 
-
-
-
-
-    /*
-        HOLDER CLASSES =========================
-     */
-    // Reminder holder class
+    // Reminder holder class, see res/layout/reminder_card.xml
     class ReminderHolder extends RecyclerView.ViewHolder {
         TextView reminderBody;
         TextView time;
@@ -154,47 +127,25 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
 
-
     // Holds the text for a reminder for a specific day
     class DayHolder extends RecyclerView.ViewHolder {
-
         private TextView dayTitle;
 
-        public DayHolder(View itemView) {
+        DayHolder(View itemView) {
             super(itemView);
             this.dayTitle = itemView.findViewById(R.id.dayTextTitle);
         }
     }
-    /*
-        END HOLDER CLASSES =========================
-     */
 
 
 
 
-
-
-
-
-
-    /*
-        Utility functions ====================
-     */
-    /* convertToAMPM takes a date and spits out the string version of that date in am pm form
-        @params;
-            Date time
-     */
+    // convertToAMPM takes a date and spits out the string version of that date in am pm form
     private String convertToAMPM(Date time) {
-        // Convert the date into the format we need
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
         String modifier = "";
+        String dateTime = Util.formateDate(time, "yyyy-MM-dd HH:mm");
 
-
-        // Format the date
-        String dateTime = simpleDateFormat.format(time);
-
-        Log.d("Requested-DateTime", dateTime);
 
         // Get the raw time
         String rawTime = dateTime.split(" ")[1];
@@ -205,16 +156,12 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Integer hour = Integer.parseInt(hour24);
 
         if (hour != 12 && hour != 0) {
-            // Determine the modifier
             modifier = hour < 12 ? "am" : "pm";
-            // Round the modifier
             hour %= 12;
         } else {
             modifier = (hour == 12 ? "pm" : "am");
             hour = 12;
         }
-
-        // Deal with AM AND PM for early morning and noon
         // Concat and return
         return hour.toString() + ":" + minutes + " " + modifier;
     }
@@ -222,17 +169,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
 
-
-
-
-
-    /* getColour reads the sharedPreferences for a user, gets the tag colours and determines what colour is the correct one
-        for the reminder
-        @params;
-            Reminder reminder
-            SharedPreferences preferences
-
-     */
+    // getColour reads the sharedPreferences for a user, gets the tag colours and determines what colour is the correct one
     private String getColour(Reminder reminder) {
         // Get the full hashmap of colours
         ReminderColours colours = new ReminderColours(this.preferences);
@@ -250,7 +187,4 @@ public class ReminderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         return colour;
     }
-    /*
-        End Utility functions ====================
-     */
 }

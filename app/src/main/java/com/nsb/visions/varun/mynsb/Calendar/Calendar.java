@@ -1,10 +1,6 @@
 package com.nsb.visions.varun.mynsb.Calendar;
 
-import android.annotation.SuppressLint;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.nsb.visions.varun.mynsb.Common.Util;
 
 /**
  */
@@ -15,33 +11,10 @@ public class Calendar {
     public String name;
     public String time;
 
-    /* constructor is just a constructor lmao, name = calendar entry, time = calendar entry time
-            @params;
-                String name
-                String tim
-     */
+    // Simple constructor
     public Calendar(String name, String time) {
-
-        // Convert the date into the format we can
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat postFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        // Format our date
-        Date tempDate = null;
-        try {
-            tempDate = postFormat.parse(time);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        // Parse our new date format
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat returnFormat = new SimpleDateFormat("dd-MM-yyyy");
-
-        // Set the vars
         this.name = name;
-        this.time = returnFormat.format(tempDate);
-
+        this.time = Util.formateDate(Util.parseDate(time, "yyyy-MM-dd"), "dd-MM-yyyy");
     }
 
 }

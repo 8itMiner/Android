@@ -1,25 +1,21 @@
 package com.nsb.visions.varun.mynsb.Common;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 /**
- * Created by varun on 6/12/2018. Coz varun is awesome as hell :)
+ * Created by varun on 6/12/2018.
  */
 
+
+// RecyclerViewEmpty is just a sample empty RecyclerView class, this acts as a template for an empty RecyclerView
 public class RecyclerViewEmpty extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
-    }
-
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {return null;}
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-    }
-
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position){}
     @Override
-    public int getItemCount() {
-        return 0;
-    }
+    public int getItemCount() {return 0;}
 }

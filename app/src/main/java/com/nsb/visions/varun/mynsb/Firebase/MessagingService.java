@@ -5,14 +5,12 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 
 /**
- * Created by varun on 23/01/2019. Coz varun is awesome as hell :)
+ * Created by varun on 23/01/2019.
  */
 
 public class MessagingService extends FirebaseMessagingService {
 
     @Override
-    public void onNewToken(String token) {
-        Log.d("FCM-TOKEN: ", token);
-    }
+    public void onNewToken(String token) {Log.d("FCM-TOKEN: ", token);}
 
 }
