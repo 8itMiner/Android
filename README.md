@@ -11,14 +11,14 @@
 This is the Android version of the myNSB application. It features all the features supported by all other myNSB apps.
 
 ## Setup
-Setup of the Application requires opening this project in Android studio and executing all the Gradle Scripts (Note: If using Android Studio this is done for you automatically). After the environment has been setup ensure that you set up an emulated device to test the application on, for more information about this please click [https://developer.android.com/studio/run/device](here)
+Setup of the Application requires opening this project in Android studio and executing all the Gradle Scripts (Note: If using Android Studio this is done for you automatically). After the environment has been setup ensure that you set up an emulated device to test the application on, for more information about this please click (https://developer.android.com/studio/run/device)[here]
 
 
 
 ## Developing
 Contribution is simple, all files are located in the `app/src/main` folder    
  - <b>IDE Setup</b>
-    - The perfered IDE for development is Android Studio and can be downloaded from [https://developer.android.com/studio/](here)
+    - The perfered IDE for development is Android Studio and can be downloaded from (https://developer.android.com/studio/)[here]
     - Do also note that the Firebase API key has been excluded from the build so in order to contribute code you must either test the application on your personal Firebase Account or disable all Firebase realted features in the application. This can be easilly acheived by editing the `App.java` file.
  - <b>Testing</b>
     - Before creating a pull request ensure that you have tested your new feature/improvements on a variety of devices, both emulated and physical. 
