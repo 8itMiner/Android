@@ -2,9 +2,9 @@
 # &nbsp;&nbsp; MyNSB Android
 
 [![Code Climate](https://img.shields.io/codeclimate/maintainability/MyNSB/Android.svg?style=flat-square)](https://codeclimate.com/github/MyNSB/Android)
-[![license](https://img.shields.io/github/license/MyNSB/API.svg?style=flat-square)]()
-[![GitHub release](https://img.shields.io/github/release/MyNSB/API.svg?style=flat-square)]()
-[![GitHub contributors](https://img.shields.io/github/contributors/MyNSB/API.svg?style=flat-square)](https://github.com/MyNSB/API)
+[![license](https://img.shields.io/github/license/MyNSB/Android.svg?style=flat-square)]()
+[![GitHub release](https://img.shields.io/github/release/MyNSB/Android.svg?style=flat-square)]()
+[![GitHub contributors](https://img.shields.io/github/contributors/MyNSB/Android.svg?style=flat-square)](https://github.com/MyNSB/API)
 
 
 
