@@ -18,7 +18,7 @@ public class FourU extends Loader<Article> {
 
 
     public FourU(Context context) {
-        super(context, FourU.class);
+        super(context);
     }
 
     @Override
