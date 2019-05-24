@@ -17,13 +17,13 @@
         android:theme="?attr/actionBarTheme">
 
         <TextView
+            android:id="@+id/message"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textSize="20dp"
-            android:text="No Connection!"
-            android:id="@+id/message"
             android:fontFamily="sans-serif"
-            android:textColor="#fff"/>
+            android:text="Whoops!"
+            android:textColor="#fff"
+            android:textSize="20dp" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -47,29 +47,31 @@
                 android:src="@mipmap/mynsb_logo" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/textHolder"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/centerImage"
                 android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="23dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:layout_below="@+id/centerImage"
-                android:layout_centerVertical="true"
+                android:text="Error 3.14159... - Servers ate too much pi"
                 android:textAlignment="center"
-                android:text="Hmmm... we can't seem to connect to our servers right now... This could be because you are not connected to the internet or you are sitting behind a proxy... Or because our servers are down."
-                android:textColor="@color/colorPrimary"
-                android:textSize="17dp"
-                android:id="@+id/textHolder" />
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="17dp" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="359dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textHolder"
                 android:layout_centerHorizontal="true"
-                android:textStyle="bold"
                 android:layout_marginTop="15dp"
+                android:text="Hey there! Looks like you're not connected to the internet. Don't get triggered at us if you are, because because you might be behind a proxy, or our servers might be down. We apologize for any inconvenience caused."
+                android:textColor="@color/colorPrimary"
                 android:textSize="14dp"
-                android:textColor="@color/colorSecondaryAccent"
-                android:text="Sorry :("/>
+                android:textStyle="bold" />
         </RelativeLayout>
 
 
