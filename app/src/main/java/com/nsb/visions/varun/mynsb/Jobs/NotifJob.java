@@ -31,6 +31,7 @@ public class NotifJob extends Job {
 
     @NonNull
     @Override
+    @Deprecated
     protected Result onRunJob(@NonNull Params params) {
         Intent resultIntent = new Intent(getContext(), App.class);
         resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
